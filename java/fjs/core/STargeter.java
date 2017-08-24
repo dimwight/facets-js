@@ -1,4 +1,4 @@
-package fjs.superficial;
+package fjs.core;
 
 /** 
 Superficial targeter. 
@@ -19,7 +19,7 @@ public interface STargeter extends SRetargetable,Notifying,Facetable{
 and those of any <code>elements</code> or other {@link STargeter} members. 
 <p>Also sets the {@link STargeter} as notification monitor of 
 its {@link STargeter} members and of its target.
-@see fjs.superficial.Notifying
+@see fjs.core.Notifying
    */
   void retarget(STarget target,NotifyingImpact impact);
 	/**

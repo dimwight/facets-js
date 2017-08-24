@@ -1,4 +1,4 @@
-package fjs.superficial;
+package fjs.core;
 /**
   Allows a {@link Notifying} to refine its notification.
   <p>The members of {@link NotifyingImpact} can define the scope of the event 

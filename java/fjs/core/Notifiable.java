@@ -1,4 +1,4 @@
-package fjs.superficial;
+package fjs.core;
 import fjs.util.Titled;
 /**
 Undertakes to respond to notification. 

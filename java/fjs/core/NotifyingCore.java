@@ -1,4 +1,4 @@
-package fjs.superficial;
+package fjs.core;
 import fjs.util.Debug;
 import fjs.util.Tracer;
 /**

@@ -1,4 +1,4 @@
-package fjs.superficial;
+package fjs.core;
 import fjs.util.Debug;
 import fjs.util.NumberPolicy;
 import fjs.util.Util;
@@ -6,7 +6,7 @@ import fjs.util.Util;
 {@link STarget} representing a numeric value. 
 <p>{@link SNumeric} represents a numeric value to 
   be exposed to user view and control in the surface; application-specific 
-  mechanism and policy can be defined in a {@link fjs.superficial.SNumeric.Coupler}. 
+  mechanism and policy can be defined in a {@link fjs.core.SNumeric.Coupler}. 
  */
 final public class SNumeric extends TargetCore{
 	public static boolean doRangeChecks=false;
@@ -17,14 +17,14 @@ final public class SNumeric extends TargetCore{
 	 */
 	public static class Coupler implements TargetCoupler{
 		/**
-		Returns the policy to be used by a {@link fjs.superficial.SNumeric} 
+		Returns the policy to be used by a {@link fjs.core.SNumeric} 
 		constructed with this {@link Coupler}.
 			 */
 		public NumberPolicy policy(SNumeric n){
 			return new NumberPolicy(0,0);
 		}
 		/**
-		Defines client-specific mechanism for a {@link fjs.superficial.SNumeric}. 
+		Defines client-specific mechanism for a {@link fjs.core.SNumeric}. 
 		<p>This method is called whenever <code>setValue</code> is called on <code>n</code>.
 		 */
 		public void valueSet(SNumeric n){
@@ -74,7 +74,7 @@ final public class SNumeric extends TargetCore{
   }
 	/**
 	Returns the current number policy. 
-	<p>The policy is that returned by the {@link fjs.superficial.SNumeric.Coupler} 
+	<p>The policy is that returned by the {@link fjs.core.SNumeric.Coupler} 
 	with which the {@link SNumeric} was constructed.
 	 */
 	public NumberPolicy policy(){return policy;}

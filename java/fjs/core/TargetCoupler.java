@@ -1,9 +1,9 @@
-package fjs.superficial;
+package fjs.core;
 import java.io.Serializable;
 /**
 Connects a facade {@link STarget} to the application. 
 <p>While {@link TargetCoupler} itself defines no specific functionality, 
-	the appropriate subtypes for each facade {@link fjs.superficial.STarget} 
+	the appropriate subtypes for each facade {@link fjs.core.STarget} 
 </p>
 <ul>
 	<li> define presentation policy of the {@link STarget} in the surface,</li>
@@ -18,9 +18,9 @@ Connects a facade {@link STarget} to the application.
 	further advantage that application code can often be simplified by sharing 
 	a single coupler between logically linked targets. 
 <p>The most fully worked out examples of this approach in Facets are the 
-	extensive built-in policy options provided by {@link fjs.superficial.SIndexing.Coupler}, 
-	and the use of {@link fjs.superficial.SNumeric.Coupler} to supply appropriate 
-	{@link fjs.util.NumberPolicy} instances to {@link fjs.superficial.SNumeric}s. 
+	extensive built-in policy options provided by {@link fjs.core.SIndexing.Coupler}, 
+	and the use of {@link fjs.core.SNumeric.Coupler} to supply appropriate 
+	{@link fjs.util.NumberPolicy} instances to {@link fjs.core.SNumeric}s. 
  
  */
 public interface TargetCoupler extends Serializable{

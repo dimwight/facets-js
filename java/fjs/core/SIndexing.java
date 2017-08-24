@@ -1,4 +1,4 @@
-package fjs.superficial;
+package fjs.core;
 import java.util.Arrays;
 import java.util.HashSet;
 import fjs.util.Debug;
@@ -8,7 +8,7 @@ import fjs.util.Titled;
 <p>{@link SIndexing} represents a list of items to be exposed 
   to user view and control in the surface, together with an index/indices 
   into that list; application-specific mechanism and policy can be defined in 
-	a {@link fjs.superficial.SIndexing.Coupler}. 
+	a {@link fjs.core.SIndexing.Coupler}. 
  */
 final public class SIndexing extends TargetCore{
 	/**Allows an indexing to be functionally empty. */

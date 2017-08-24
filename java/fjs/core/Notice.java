@@ -1,4 +1,4 @@
-package fjs.superficial;
+package fjs.core;
 import java.util.ArrayList;
 import java.util.List;
 import fjs.util.Debug;

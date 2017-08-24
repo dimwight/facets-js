@@ -1,4 +1,4 @@
-package fjs.superficial;
+package fjs.core;
 /**
 Superficial facet. 
 <p>{@link SFacet} abstracts an application surface 

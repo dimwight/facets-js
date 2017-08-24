@@ -1,36 +1,36 @@
 package fjs;
 import java.util.HashMap;
-import fjs.superficial.FacetUpdatable;
-import fjs.superficial.Notice;
-import fjs.superficial.Notifiable;
-import fjs.superficial.NotifyingImpact;
-import fjs.superficial.SFacet;
-import fjs.superficial.STarget;
-import fjs.superficial.STargeter;
-import fjs.superficial.STextual;
-import fjs.superficial.TargetCore;
-import fjs.superficial.TextualCoupler;
+import fjs.core.FacetUpdatable;
+import fjs.core.Notice;
+import fjs.core.Notifiable;
+import fjs.core.NotifyingImpact;
+import fjs.core.SFacet;
+import fjs.core.STarget;
+import fjs.core.STargeter;
+import fjs.core.STextual;
+import fjs.core.TargetCore;
+import fjs.core.TextualCoupler;
 import fjs.util.Debug;
 import fjs.util.Tracer;
 import fjs.util.Tracer.TracerTopped;
-public final class FacetsJs{
-	public final static boolean onlyJs=true;
+public final class Superficial{
+	public final static boolean onlyJs=false;
 	public static final String KEY_TEXTUAL_TEXT="text";
 	private final static NotifyingImpact IMPACT=NotifyingImpact.DEFAULT;
 	private final static HashMap<String,STargeter>titleTargeters=new HashMap();
-	private final static TracerTopped t=new Tracer.TracerTopped(true,"FacetsJs");
+	private final static TracerTopped t=new Tracer.TracerTopped(false,"Superficial");
 	private static STargeter targeterTree;
 	public static Object newTextual(String title,Object coupler){
-		TextualCoupler facets;
+		TextualCoupler facets=null;
 		if(coupler instanceof TextualCoupler)facets=(TextualCoupler)coupler;
-		else{
+		else{/*
 			String jsText=((def.js.Object)coupler).$get(KEY_TEXTUAL_TEXT);
 			facets=new TextualCoupler(){
 				protected String getText(String title){
 					return jsText;
 				};
 			};
-		}
+		*/}
 		Object textual=new STextual(title,facets);
 		t.trace(" > Created textual ",textual);
 		return textual;

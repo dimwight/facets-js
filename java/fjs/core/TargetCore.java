@@ -1,4 +1,4 @@
-package fjs.superficial;
+package fjs.core;
 import fjs.util.Debug;
 /**
  Implements {@link STarget}. 
@@ -54,7 +54,7 @@ public class TargetCore extends NotifyingCore implements STarget{
 	 <code>lazyElements</code>. 
 	 <p>Each call to this method also sets the {@link TargetCore} 
 	 as notification monitor of any element that is not a {@link 
-	 fjs.superficial.SFrameTarget}. 
+	 fjs.core.SFrameTarget}. 
 	  
 	 */
 	final public STarget[]elements(){

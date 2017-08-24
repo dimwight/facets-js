@@ -1,10 +1,10 @@
-package fjs.superficial;
+package fjs.core;
 import fjs.util.Debug;
 /**
 {@link STarget} representing a textual value. 
 <p> {@link STextual} represents a text value to be 
   exposed to user view and control in the surface; application-specific 
-  mechanism can be defined in a {@link fjs.superficial.TextualCoupler}. 
+  mechanism can be defined in a {@link fjs.core.TextualCoupler}. 
  */
 final public class STextual extends TargetCore{
 	public final TextualCoupler coupler;

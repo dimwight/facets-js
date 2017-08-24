@@ -1,4 +1,4 @@
-package fjs.superficial;
+package fjs.core;
 /**
 Potential element of the Facets notification tree. 
 <p>{@link Notifying} is the root of the Facets type hierarchy 
@@ -10,7 +10,7 @@ Potential element of the Facets notification tree.
   control consistency. 
 <p>Notification is triggered in the Facets implementation of by calling {@link #notify(Notice)} 
   target, and relayed to the application root via a tree of {@link Notifying}s, 
-  all either {@link fjs.superficial.STarget}s or {@link fjs.superficial.STargeter}s. 
+  all either {@link fjs.core.STarget}s or {@link fjs.core.STargeter}s. 
 <p>A {@link Notifying} is attached to the tree with {@link #setNotifiable(Notifiable)} 
   to set one of the following as its {@link #notifiable()}: 
 <ul>
