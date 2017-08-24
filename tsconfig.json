@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "dom",
+      "es2015",
+      "es2016"
+    ],
+    "watch": true,
+    "allowSyntheticDefaultImports": true,
+    "allowUnreachableCode": true,
+    "alwaysStrict": true,
+    "strictNullChecks": false,
+    "sourceMap": true,
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "target": "esnext",
+    "jsx": "react"
+  }
+}
