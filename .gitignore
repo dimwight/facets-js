@@ -1,6 +1,7 @@
 node_modules
 public/*.js.map
-src/**/*.ts
-src/**/*.js
-src/**/*.js.map
 *.log
+.idea/workspace.xml
+java/fjs/SimpleSurface.java
+java/fjs/swing/
+src/
