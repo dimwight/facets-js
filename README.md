@@ -21,7 +21,7 @@ with the admirable [JSweet](http://www.jsweet.org
 `The final argument to magicString.overwrite...`
 1. Build `appSrc`, launch fails:  
 `TypeError: Superficial.newTextual is not a function`
-1. Looking at .js, WS "Cannot find declaration..."
+1. Looking at .js, WS "Cannot find declaration..."!
  ```
   in/fjs/SimpleSurface.ts
  

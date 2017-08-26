@@ -4,4 +4,4 @@ public/*.js.map
 .idea/workspace.xml
 java/fjs/swing/
 in/
-*SimpleSurface*
+*.js*
