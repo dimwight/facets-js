@@ -3,5 +3,5 @@ public/*.js.map
 *.log
 .idea/workspace.xml
 java/fjs/swing/
-in/
+in/fjs/*
 *.js*
