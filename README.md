@@ -17,51 +17,63 @@ with the admirable [JSweet](http://www.jsweet.org
 1. Rename .ts to Facets externally and internally
 1. Adjust in/fjs/SimpleSurface.ts as below.   
 1. Build `appIn`, launches OK
-1. Build `module`, warning:  
+1. Build `moduleNode|modulePublic`. 
+1. `src/App.ts` 
+1. Build `appSrc` with either import, warning
 `The final argument to magicString.overwrite...`
-1. Build `appSrc`, launch fails:  
+1. Launch fails:  
 `TypeError: Facets.newTextual is not a function`
-1. Looking at .js, WS "Cannot find declaration..."!
+1. Looking at .ts/.js, WS "Cannot find declaration..."!
  ```
   in/fjs/SimpleSurface.ts
  
   import * as Facets from "./globals/Facets";
   ...
   let js : boolean = Facets.onlyJs;
-  
-  ------------------------------------------------------
-  rollup.config.js
-  
-  import resolve from 'rollup-plugin-node-resolve';
-  import commonjs from 'rollup-plugin-commonjs';
-  import sourcemaps from 'rollup-plugin-sourcemaps';
-  
-  const common = {
-    format: 'iife',
-    moduleName: 'Facets',
-    plugins: [
-      resolve(),
-      commonjs(),
-      sourcemaps()
-    ]
-  };
-  const app = Object.assign({}, common, {
-    sourceMap: true,
-    dest: 'App.js',
-  });
-  const appIn = Object.assign({}, app, {
-    entry: 'in/fjs/SimpleSurface.js',
-  });
-  const module = Object.assign({}, common, {
-    entry: 'in/fjs/globals/Facets.js',
-    dest: 'src/Facets.js',
-  });
-  const appSrc = Object.assign({}, app, {
-    entry: 'src/SimpleSurface.js',
-  });
-  
-  const bundle = appSrc;// |appIn|module|appSrc
-  console.log('Bundling to '+bundle.dest);
-  export default bundle;
-  ```
+ -------------------------------------------------------
+ src/App.ts
  
+ import Facets from 'Facets';
+ // import Facets from 'Facets.js';
+
+  
+ ------------------------------------------------------
+ import resolve from 'rollup-plugin-node-resolve';
+ import commonjs from 'rollup-plugin-commonjs';
+ import sourcemaps from 'rollup-plugin-sourcemaps';
+ 
+ const common = {
+   format: 'iife',
+   plugins: [
+     resolve(),
+     commonjs(),
+     sourcemaps()
+   ]
+ };
+ const app = Object.assign({}, common, {
+   sourceMap: true,
+   dest: 'public/App.js',
+ });
+ const appIn = Object.assign({}, app, {
+   entry: 'in/fjs/SimpleSurface.js',
+   moduleName: 'SimpleSurface',
+ });
+ const module = Object.assign({}, common, {
+   entry: 'in/fjs/globals/Facets.js',
+   moduleName: 'Facets',
+ });
+ const moduleNode = Object.assign({}, module, {
+   dest: 'node_modules/Facets.js',
+ });
+ const modulePublic= Object.assign({}, module, {
+   dest: 'public/Facets.js',
+ });
+ const appSrc= Object.assign({}, app, {
+   entry: 'src/App.js',
+   moduleName: 'App',
+   // external: ['Facets',],globals: {'Facets': module.moduleName,}
+ });
+ 
+ const bundle = appSrc; //appIn|moduleNode|modulePublic|appSrc
+ console.log('Bundling '+bundle.entry+' to '+bundle.dest);
+ export default bundle;

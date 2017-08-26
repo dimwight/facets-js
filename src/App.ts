@@ -1,4 +1,5 @@
-import Facets from './Facets';
+// import Facets from 'Facets';
+import Facets from 'Facets.js';
 const TITLE_FIRST : string = "First";
 const TITLE_SECOND : string = "Second";
 function buildSurface() {
