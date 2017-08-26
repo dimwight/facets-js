@@ -13,14 +13,19 @@ const common = {
 };
 const app = Object.assign({}, common, {
   sourceMap: true,
-  entry: 'src/fjs/SimpleSurface.js',
-  dest: 'SimpleSurface.js',
+  dest: 'App.js',
+});
+const appIn = Object.assign({}, app, {
+  entry: 'in/fjs/SimpleSurface.js',
 });
 const module = Object.assign({}, common, {
-  entry: 'src/fjs/Superficial.ts',
-  dest: 'Superficial.js',
+  entry: 'in/fjs/globals/Superficial.js',
+  dest: 'src/Superficial.js',
+});
+const appSrc = Object.assign({}, app, {
+  entry: 'src/SimpleSurface.js',
 });
 
-const bundle = app;// |app|module|
+const bundle = appSrc;// |appIn|module|appSrc
 console.log('Bundling to '+bundle.dest);
 export default bundle;

@@ -6,6 +6,7 @@
       "es2016"
     ],
     "watch": true,
+    "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "allowUnreachableCode": true,
     "alwaysStrict": true,
