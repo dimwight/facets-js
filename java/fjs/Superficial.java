@@ -13,12 +13,12 @@ import fjs.core.TextualCoupler;
 import fjs.util.Debug;
 import fjs.util.Tracer;
 import fjs.util.Tracer.TracerTopped;
-public final class Superficial{
+public final class Facets{
 	public final static boolean onlyJs=false;
 	public static final String KEY_TEXTUAL_TEXT="text";
 	private final static NotifyingImpact IMPACT=NotifyingImpact.DEFAULT;
 	private final static HashMap<String,STargeter>titleTargeters=new HashMap();
-	private final static TracerTopped t=new Tracer.TracerTopped(false,"Superficial");
+	private final static TracerTopped t=new Tracer.TracerTopped(false,"Facets");
 	private static STargeter targeterTree;
 	public static Object newTextual(String title,Object coupler){
 		TextualCoupler facets=null;

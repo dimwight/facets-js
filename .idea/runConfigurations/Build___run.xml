@@ -1,0 +1,15 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Build + run" type="NodeJSConfigurationType" factoryName="Node.js" singleton="false" path-to-node="project" path-to-js-file="$PROJECT_DIR$/public/App.js" working-dir="$PROJECT_DIR$">
+    <method>
+      <option name="NpmBeforeRunTask" enabled="true">
+        <package-json value="$PROJECT_DIR$/package.json" />
+        <command value="run" />
+        <scripts>
+          <script value="build" />
+        </scripts>
+        <node-interpreter value="project" />
+        <envs />
+      </option>
+    </method>
+  </configuration>
+</component>

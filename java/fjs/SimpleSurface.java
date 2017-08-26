@@ -16,27 +16,27 @@ public abstract class SimpleSurface extends Tracer implements Titled{
 	}
 	public void buildSurface(){
 		trace(" > Building surface");
-		Superficial.buildTargeterTree(newTargetTree());
+		Facets.buildTargeterTree(newTargetTree());
 		trace(" > Built targets, created targeters");
 		buildLayout();
 		trace(" > Attached and laid out facets");
-		Superficial.retargetFacets();
+		Facets.retargetFacets();
 		trace(" > Surface built");
 	}
 	protected Object newTargetTree(){
-		boolean js=Superficial.onlyJs;
+		boolean js=Facets.onlyJs;
 		String text="This text passed by "+ (js?"jsObject":"TextualCoupler")+ " in "+title;
 		Object coupler=
-//				js?jsweet.util.Lang.$map(/*Superficial.KEY_TEXTUAL_TEXT*/"text", text):
+//				js?jsweet.util.Lang.$map(/*Facets.KEY_TEXTUAL_TEXT*/"text", text):
 			new TextualCoupler(){
 				@Override
 				protected String getText(String title){
 					return text;
 				}
 			},
-			first=Superficial.newTextual(TITLE_FIRST,coupler),
-			second=Superficial.newTextual(TITLE_SECOND,coupler);
-		return Superficial.newTargetGroup("Textuals",first,second);
+			first=Facets.newTextual(TITLE_FIRST,coupler),
+			second=Facets.newTextual(TITLE_SECOND,coupler);
+		return Facets.newTargetGroup("Textuals",first,second);
 	}
 	protected abstract void buildLayout();
 	public static void main(String[]args){
@@ -50,12 +50,12 @@ public abstract class SimpleSurface extends Tracer implements Titled{
 						trace(".main: update=",update);
 					}
 				};
-				Superficial.attachFacet(TITLE_FIRST,updateFn);
+				Facets.attachFacet(TITLE_FIRST,updateFn);
 			}
 			@Override
 			public void buildSurface(){
 				super.buildSurface();
-				Superficial.updateTarget(TITLE_FIRST,"Some updated text");
+				Facets.updateTarget(TITLE_FIRST,"Some updated text");
 			}
 		}.buildSurface();
 	}

@@ -1,6 +1,6 @@
 package fjs.core;
 /**
-Superficial facet. 
+Facets facet.
 <p>{@link SFacet} abstracts an application surface 
 	element that defines and manages widgets providing view and control of a {@link 
 	STarget}. 

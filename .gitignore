@@ -1,7 +1,6 @@
 node_modules
-public/*.js.map
 *.log
 .idea/workspace.xml
 java/fjs/swing/
-in/fjs/*
-*.js*
+in
+public/*.js*

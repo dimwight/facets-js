@@ -1,7 +1,7 @@
 package fjs.core;
 
 /** 
-Superficial targeter. 
+Facets targeter.
 *<p>A {@link STargeter} mediates between a target, its exposing facet(s) and 
 the surface by extending three significant interfaces: 
  <ul> 
