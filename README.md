@@ -1,6 +1,6 @@
 # README for facets-js
 
-## [Facets](doc/Facets.pdf) as JS module
+## [Superficial](doc/Superficial.pdf) as JS module
 
 - Hybrid project, written in Java and transpiled to JS 
 with the admirable [JSweet](http://www.jsweet.org
