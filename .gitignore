@@ -7,3 +7,4 @@ src/*.js
 src/*.js.map
 !/node_modules/Facets.js
 .idea/workspace.xml
+public/
