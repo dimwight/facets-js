@@ -1,5 +1,4 @@
 import * as Facets from 'Facets.js';
-// import * as Facets from '../public/Facets.js';
 const TITLE_FIRST : string = 'First';
 const TITLE_SECOND : string = 'Second';
 function newTargetTree(){

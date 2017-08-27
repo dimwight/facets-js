@@ -20,5 +20,5 @@ public interface Facetable{
 	Retarget any attached facets. 
 	<p>Facets (if any) will have been attached with {@link #attachFacet(SFacet)}
 	 */
-	void retargetFacets(NotifyingImpact impact);
+	void retargetFacets();
 }

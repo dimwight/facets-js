@@ -4,28 +4,29 @@ import java.util.Collection;
 Utility superclass that can issue trace messages.
  */
 public abstract class Tracer implements Identified{
-	public static final class TracerTopped extends Tracer{
-		private final boolean live;
+	public static int ids;
+	public static class TracerTopped extends Tracer{
 		private final String top;
-		public TracerTopped(boolean live,String top){
+		public TracerTopped(String top){
 			super(top);
-			this.live=live;
 			this.top=top;
 		}
 		@Override
 		protected void traceOutput(String msg){
-			if(live)Util.printOut(top+msg);
+			if(doTrace())super.traceOutput(msg);
+		}
+		protected boolean doTrace(){
+			return true;
 		}
 	}
 	private final String top;
-	private static int ids;
 	private Integer id=++ids;
 	@Override
 	public Object identity(){
 		return id;
 	}
 	public static Tracer newTopped(final String top,final boolean live){
-		return new TracerTopped(live,top);
+		return new TracerTopped(top);
 	}
 	public Tracer(String top){
 		this.top=top;

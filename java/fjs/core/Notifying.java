@@ -8,7 +8,7 @@ Potential element of the Facets notification tree.
   input relayed by a surface) the surface must 
   be notified that a retargeting is needed to ensure view and 
   control consistency. 
-<p>Notification is triggered in the Facets implementation of by calling {@link #notify(Notice)} 
+<p>Notification is triggered in the Facets implementation of by calling {@link #notify(Object)} 
   target, and relayed to the application root via a tree of {@link Notifying}s, 
   all either {@link fjs.core.STarget}s or {@link fjs.core.STargeter}s. 
 <p>A {@link Notifying} is attached to the tree with {@link #setNotifiable(Notifiable)} 
@@ -41,17 +41,12 @@ public interface Notifying extends Notifiable{
 	Notifiable notifiable();
 	Notifying[]elements();
 	/**
-	Allows this {@link Notifying} to specify a default {@link NotifyingImpact}.
-	@return typically {@link NotifyingImpact#DEFAULT} 
-	 */
-	NotifyingImpact impact();
-	/**
-	Call {@link Notifiable#notify(Notice)} on any parent in the notification tree, 
-	typically with itself as parameter to the {@link Notice} passed. 
+	Call {@link Notifiable#notify(Object)} on any parent in the notification tree, 
+	typically with itself as parameter to the Notice passed. 
 	<p>The usual means to trigger a surface retargeting, being called
 	by an exposing {@link SFacet} on its target. 
 	@param impact suggests the level of retargeting required 
 			 */
-	void notifyParent(NotifyingImpact impact);
+	void notifyParent();
 	NotifyingType type();
 }

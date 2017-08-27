@@ -9,10 +9,7 @@ public final class Util{
 	  printOut(msg+o);
 	}
 	static String arrayPrintString(Object[]toPrint){
-		String msg=toPrint==null?"null"
-	  :false&&Debug.getMemberType(toPrint)==String.class?
-	  		Objects.toString(toPrint)
-		:Debug.toStringWithHeader(toPrint);
+		String msg=toPrint==null?"null":Debug.toStringWithHeader(toPrint);
 		return msg;
 	}
 	public static double sf(double val){

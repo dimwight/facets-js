@@ -124,4 +124,13 @@ public class TargetCore extends NotifyingCore implements STarget{
 	public NotifyingType type(){
 		return NotifyingType.Target;
 	}
+	@Override
+	public Object state(){
+		throw new RuntimeException("Not implemented in "+this);
+	}
+	@Override
+	public void updateState(Object update){
+		if(true)throw new RuntimeException("Not implemented in "+this);
+		
+	}
 }

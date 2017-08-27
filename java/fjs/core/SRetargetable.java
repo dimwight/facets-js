@@ -10,7 +10,7 @@ Application element targetable on a {@link STarget}.
 public interface SRetargetable{
   /**
  Set the target if changed, adjust to latest state.  
- <p>The {@link NotifyingImpact} allows for refining the retargeting response. 
+ <p>The NotifyingImpact allows for refining the retargeting response. 
  */
-	void retarget(STarget target,NotifyingImpact impact);
+	void retarget(STarget target);
 }

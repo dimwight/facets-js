@@ -1,7 +1,7 @@
 package fjs.core;
 
 /** 
-Facets targeter.
+Superficial targeter. 
 *<p>A {@link STargeter} mediates between a target, its exposing facet(s) and 
 the surface by extending three significant interfaces: 
  <ul> 
@@ -21,7 +21,7 @@ and those of any <code>elements</code> or other {@link STargeter} members.
 its {@link STargeter} members and of its target.
 @see fjs.core.Notifying
    */
-  void retarget(STarget target,NotifyingImpact impact);
+  void retarget(STarget target);
 	/**
 	Dynamically-defined children.   
 <p>Return any children created dynamically during initial retargeting to
@@ -37,7 +37,7 @@ correspond with the child <code>elements</code> of <code>target</code>.
 on the surface root targeter after retargeting following notification,
  and then recursively through the targeter tree. 
    */
-  void retargetFacets(NotifyingImpact impact);
+  void retargetFacets();
 	/**
 	The current target in the application.
 	<p>This will be the last {@link STarget} set with <code>retarget</code>. 

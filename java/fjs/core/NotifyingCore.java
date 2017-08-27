@@ -13,10 +13,6 @@ abstract class NotifyingCore extends Tracer implements Notifying{
 	private static int identities;
 	private final int identity=identities++;
 	@Override
-	public NotifyingImpact impact(){
-		return NotifyingImpact.DEFAULT;
-	}
-	@Override
 	protected void traceOutput(String msg){
 		super.traceOutput(getClass().getSimpleName()+msg);
 	}
@@ -26,20 +22,20 @@ abstract class NotifyingCore extends Tracer implements Notifying{
   	return notifiable;
   }
 	@Override
-	public void notify(Notice notice){
+	public void notify(Object notice){
 		if(Debug.trace)Debug.traceEvent("Notified in "+this+" with "+notice);
 		if(notifiable==null)return;
-		if(!blockNotification())notifiable.notify(notice.addSource(this));
+		if(!blockNotification())notifiable.notify(notice);
 		else if(Debug.trace)Debug.traceEvent("Notification blocked in "+this);
 	}
 	@Override
-  final public void notifyParent(NotifyingImpact impact){
+  final public void notifyParent(){
     if(notifiable==null)return;
-    notifiable.notify(new Notice(this,impact));
+    notifiable.notify(Debug.info(this));
   }
   /**
   Enables notification to be restricted to this member of the tree. 
-  <p>Checked by {@link #notify(Notice)}; default returns <code>false</code>.
+  <p>Checked by {@link #notify(Object)}; default returns <code>false</code>.
    */
   protected boolean blockNotification(){return false;}
 	@Override

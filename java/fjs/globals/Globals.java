@@ -1,9 +1,8 @@
-package fjs;
+package fjs.globals;
 import java.util.HashMap;
-import fjs.core.FacetUpdatable;
-import fjs.core.Notice;
+import fjs.CouplerLike;
+import fjs.UpdateFunction;
 import fjs.core.Notifiable;
-import fjs.core.NotifyingImpact;
 import fjs.core.SFacet;
 import fjs.core.STarget;
 import fjs.core.STargeter;
@@ -13,43 +12,41 @@ import fjs.core.TextualCoupler;
 import fjs.util.Debug;
 import fjs.util.Tracer;
 import fjs.util.Tracer.TracerTopped;
-public final class Facets{
-	public final static boolean onlyJs=false;
+public final class Globals{
+	public static boolean trace=true;
 	public static final String KEY_TEXTUAL_TEXT="text";
-	private final static NotifyingImpact IMPACT=NotifyingImpact.DEFAULT;
 	private final static HashMap<String,STargeter>titleTargeters=new HashMap();
-	private final static TracerTopped t=new Tracer.TracerTopped(false,"Facets");
+	private final static TracerTopped t=new Tracer.TracerTopped("Facets"){
+		protected boolean doTrace(){
+			return trace;
+		}
+	};
 	private static STargeter targeterTree;
-	public static Object newTextual(String title,Object coupler){
-		TextualCoupler facets=null;
-		if(coupler instanceof TextualCoupler)facets=(TextualCoupler)coupler;
-		else{/*
-			String jsText=((def.js.Object)coupler).$get(KEY_TEXTUAL_TEXT);
-			facets=new TextualCoupler(){
+	public static Object newTextual(String title,Object couplerLike){
+		TextualCoupler coupler=new TextualCoupler(){
 				protected String getText(String title){
-					return jsText;
-				};
+					return ((CouplerLike)couplerLike).text;
+				}
 			};
-		*/}
-		Object textual=new STextual(title,facets);
+		Object textual=new STextual(title,coupler);
 		t.trace(" > Created textual ",textual);
 		return textual;
 	}
 	public static Object newTargetGroup(String title,Object...members){
 		TargetCore group=new TargetCore(title,STarget.newTargets(members));
-		t.trace(" > Created group "+title+" ",members);
+		t.trace(" > Created group "+Debug.info(group)+" ",members);
 		return group;
 	}
 	public static void buildTargeterTree(Object targets){
 		targeterTree=((TargetCore)targets).newTargeter();
 		targeterTree.setNotifiable(new Notifiable(){
 			@Override
-			public void notify(Notice notice){
-				t.trace(" > Surface for "+Debug.info(targeterTree)+" notified with "+notice);
+			public void notify(Object notice){
+				t.trace(" > Surface for "+Debug.info(targeterTree)+" notified by "+notice);
 				STarget targets=targeterTree.target();
-				targeterTree.retarget(targets,notice.impact);
+				targeterTree.retarget(targets);
 			  t.trace(" > Targeters retargeted on ",targets);
-				targeterTree.retargetFacets(notice.impact);
+				targeterTree.retargetFacets();
 			  t.trace(" > Facets retargeted in ",targeterTree);
 			}
 			@Override
@@ -57,34 +54,41 @@ public final class Facets{
 				throw new RuntimeException("Not implemented in "+this);
 			}
 		});
-		targeterTree.retarget((STarget)targets,IMPACT);
+		targeterTree.retarget((STarget)targets);
 		for(STargeter targeter:targeterTree.elements()){
 			titleTargeters.put(targeter.title(),targeter);
 			t.trace(" > Created targeter ",targeter);
 		}
 	}
+	final private static class AttachFacet implements SFacet{
+		private Object updateFn;
+		AttachFacet(Object updateFn){
+			this.updateFn=updateFn;
+		}
+		@Override
+		public void retarget(STarget target){
+			((UpdateFunction)updateFn).apply(target.state());
+		}
+	}
 	public static void attachFacet(String title,Object updateFn){
+		if(updateFn==null)throw new IllegalArgumentException(
+				"Null updateFn for "+title);
+		else if(title==null||title.equals(""))throw new IllegalArgumentException(
+				"Null or empty title for "+updateFn);
 		STargeter targeter=titleTargeters.get(title);
 		if(targeter==null)throw new IllegalArgumentException(
 				"Null targeter for "+title);
-		else if(!(targeter.target()instanceof STextual))
-			throw new RuntimeException("Not implemented for "+title);
-		targeter.attachFacet(new SFacet(){
-			@Override
-			public void retarget(STarget target,NotifyingImpact impact){
-				((FacetUpdatable)updateFn).updateFromFacet(((STextual)target).text());
-			}
-		});
-		t.trace(" > Attached facet to ",targeter);
+		t.trace(" > Attaching facet to ",targeter);
+		AttachFacet facet=new AttachFacet(updateFn);
+		targeter.attachFacet(facet);
 	}
 	public static void retargetFacets(){
-		targeterTree.retargetFacets(IMPACT);
+		targeterTree.retargetFacets();
 		t.trace(" > Retargeted facets on ",targeterTree);
 	}
 	public static void updateTarget(String title,Object update){
 		STarget target=titleTargeters.get(title).target();
-		if(update instanceof String)((STextual)target).setText((String)update);
-		else throw new RuntimeException("Not implemented for "+title+" with update="+update);
-		target.notifyParent(IMPACT);
+		target.updateState(update);
+		target.notifyParent();
 	}
 }

@@ -48,5 +48,13 @@ final public class STextual extends TargetCore{
 			throw new IllegalStateException("Null or invalid text in "+Debug.info(this));
 		return text;
 	}
+	@Override
+	public Object state(){
+		return text();
+	}
+	@Override
+	public void updateState(Object update){
+		setText((String)update);
+	}
 	public String toString(){return super.toString()+(true?"":" "+text);}
 }

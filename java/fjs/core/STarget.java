@@ -35,12 +35,16 @@ public interface STarget extends Notifying{
 	static STarget[]newTargets(Object[]src){
 	  Class type=STarget.class;
 		STarget[]array=(STarget[])Array.newInstance(type,src.length);
+	  /*
 	  if(false&&src.length>0&&!type.isAssignableFrom(src[0].getClass()))
 	    throw new IllegalArgumentException(Debug.info(src[0])+" should be STarget: \n"+type);
 	  else if(false)for(Object s:src)
 	    if(!type.isAssignableFrom(s.getClass()))
 	      throw new IllegalArgumentException(Debug.info(s)+" should be STarget: \n"+type);
+	  */
 	  System.arraycopy(src,0,array,0,array.length);
 	  return array;
 	}
+	Object state();
+	void updateState(Object update);
 }

@@ -1,4 +1,5 @@
 package fjs.core;
+import facets.core.superficial.Notifying.Impact;
 import java.util.ArrayList;
 import java.util.List;
 import fjs.util.Debug;
@@ -25,7 +26,7 @@ public class TargeterCore extends NotifyingCore implements STargeter{
 	  if(Debug.trace)Debug.traceEvent("Created " +//"targeter " +targeters+" "+
 				this);
 	}
-	public void retarget(STarget target,NotifyingImpact impact){
+	public void retarget(STarget target){
 	  if(target==null)throw new IllegalArgumentException(
 	  		"Null target in "+Debug.info(this));
 	  if(false)trace(".retarget: Retargeting "+Debug.info(this)+" on "+Debug.info(target));
@@ -40,20 +41,23 @@ public class TargeterCore extends NotifyingCore implements STargeter{
 			}
 	  }
 		if(targets.length==elements.length)
-			for(int i=0;i<elements.length;i++)elements[i].retarget(targets[i],impact);			
+			for(int i=0;i<elements.length;i++)elements[i].retarget(targets[i]);			
 		if(((TargetCore)target).notifiesTargeter())target.setNotifiable(this);
 	}
 	final public void attachFacet(SFacet facet){
 		if(facet==null)throw new IllegalArgumentException("Null facet in "+Debug.info(this));
-		if(!facets.contains(facet))facets.add(facet);
+		if(!facets.contains(facet)){
+			facet.retarget(target);
+			facets.add(facet);
+		}
 		if(Debug.trace)Debug.traceEvent("Attached facet "+Debug.info(facet)+" to "+Debug.info(this));
 	}
-	public void retargetFacets(NotifyingImpact impact){
+	public void retargetFacets(){
 		SFacet[]facets=this.facets.toArray(new SFacet[]{});
-		for(int i=0;i<elements.length;i++)elements[i].retargetFacets(impact);
+		for(int i=0;i<elements.length;i++)elements[i].retargetFacets();
 		if(facets==null)return;
 	  for(int i=0;i<facets.length;i++){
-			facets[i].retarget(target,impact);
+			facets[i].retarget(target);
 			if(Debug.trace)Debug.traceEvent("Retargeted facet " +Debug.info(facets[i])+" in "+this);
 		}
 	}

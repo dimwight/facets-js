@@ -17,7 +17,7 @@ public final class Debug{
 			String text=(String)o;
 			int length=text.length();
 			return text.substring(0,Math.min(length,60))
-					+(": "+("length="+length));
+					+(true?"":(": "+("length="+length)));
 		}
 		return (o.getClass().getSimpleName())+
 				(o instanceof Identified?(" #"+((Identified)o).identity()):"")+
@@ -33,19 +33,6 @@ public final class Debug{
 		Util.printOut(">"+string);
 	}
 	public static boolean trace;
-	static Class getMemberType(Object[]array){
-		String fullName=array.getClass().getName(),
-			trimSemiColon=fullName.substring(0,fullName.length()-1),
-			trimDimensions=trimSemiColon.substring(fullName.indexOf("L")+1,trimSemiColon.length());
-		Class useClass=null;
-		try{
-			useClass=Class.forName(trimDimensions);
-		}
-		catch(ClassNotFoundException e){
-			throw new RuntimeException(e+" for "+info(trimDimensions));
-		}
-		return useClass;
-	}
 	public static String toStringWithHeader(Object[]array){
 		return info(array)+" ["+array.length+"] " +
 				Objects.toLines(array);

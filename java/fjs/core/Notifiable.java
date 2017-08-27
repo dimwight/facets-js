@@ -7,13 +7,13 @@ Undertakes to respond to notification.
  */
 public interface Notifiable extends Titled{
   /**
-Respond to the {@link Notice} passed. 
+Respond to the Notice passed. 
 <p>When this method is called, the {@link Notifiable} should
 respond based on 
 <ul>
 <li>its own nature and state 
-<li>the {@link Notice} passed. 
+<li>the Notice passed. 
 </ul>  
  */
-  void notify(Notice notice);
+  void notify(Object notice);
 }

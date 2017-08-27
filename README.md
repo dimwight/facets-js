@@ -8,19 +8,17 @@ with the admirable [JSweet](http://www.jsweet.org
 - Java based on the [core of the original Facets](https://github.com/dimwight/Facets/tree/master/Facets/facets/core)
 - Output bundled using [Rollup](https://rollupjs.org 
 )
-- API deliberately untyped for greatest flexibility
-- Demo app with [Palantir](https://github.com/palantir/blueprint 
+- Super-simple API in ES5/IIFE 
+- Demo React apps with [Palantir](https://github.com/palantir/blueprint 
 ) components
-### Getting to module
+### Getting to libs
 1. globals/Globals.java
 2. Clean ts/fjs
-1. Tidy up import, unused types.   
+1. Tidy up import, unused types   
 1. Build and run `appIn`
-1. Rename Globals.ts to Facets externally and internally
-1. Build `libNode`. 
-1. Build and run `appNode`
-1. Build `libWeb`. 
-1. Build and launch `appWeb` 
+1. Globals to Facets 
+1. Build `libInclude`, build, run and launch`appInclude`
+1. Build `libExclude`, build and launch `appExclude` 
 
  ```
  //rollup.config.js
@@ -28,7 +26,6 @@ with the admirable [JSweet](http://www.jsweet.org
  import resolve from 'rollup-plugin-node-resolve';
  import commonjs from 'rollup-plugin-commonjs';
  import sourcemaps from 'rollup-plugin-sourcemaps';
- import path from 'path';
  
  const common = {
    sourceMap: true,
@@ -51,24 +48,22 @@ with the admirable [JSweet](http://www.jsweet.org
    entry: 'in/fjs/globals/Facets.js',
    moduleName: 'Facets',
  });
- const libNode = Object.assign({}, module, {
+ const libInclude = Object.assign({}, module, {
    format: 'es',
    dest: 'node_modules/Facets.js',
  });
- const libWeb= Object.assign({}, module, {
+ const libExclude= Object.assign({}, module, {
    format: 'iife',
    dest: 'public/Facets.js',
  });
- const appNode= Object.assign({}, app, {
+ const appInclude= Object.assign({}, app, {
    entry: 'src/App.js',
  });
- const appWeb= Object.assign({}, appNode, {
-   external: [
-     path.resolve( './public/Facets.js')
-   ],
-   globals: {'Facets': module.moduleName,}
+ const appExclude= Object.assign({}, appInclude, {
+   external: ['Facets.js'],
+   globals: {'Facets.js': module.moduleName,}
  });
  
- const bundle = appWeb; //appIn|libNode|libWeb|appNode|appWeb
+ const bundle = appExclude; //appIn|libInclude|libExclude|appInclude|appExclude
  console.log('Bundling '+bundle.entry+' to '+bundle.dest);
  export default bundle;
