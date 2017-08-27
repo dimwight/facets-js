@@ -22,7 +22,7 @@ const module = Object.assign({}, common, {
   entry: 'in/fjs/globals/Facets.js',
   moduleName: 'Facets',
 });
-const moduleEs = Object.assign({}, module, {
+const moduleNode = Object.assign({}, module, {
   format: 'es',
   dest: 'node_modules/Facets.js',
 });
@@ -37,6 +37,6 @@ const appSrc= Object.assign({}, app, {
   globals: {'': module.moduleName,}
 });
 
-const bundle = appSrc; //appIn|moduleEs|publicUmd|appSrc
+const bundle = appSrc; //appIn|moduleNode|publicUmd|appSrc
 console.log('Bundling '+bundle.entry+' to '+bundle.dest);
 export default bundle;

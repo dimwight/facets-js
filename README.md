@@ -10,23 +10,16 @@ with the admirable [JSweet](http://www.jsweet.org
 )
 - API deliberately untyped for greatest flexibility
 - Demo app with [Palantir](https://github.com/palantir/blueprint 
-)components
+) components
 ### Getting to module
-
 1. globals/Globals.java
-1. Rename Globals.ts to Facets externally and internally
-1. Adjust `attachFacet  `
-1. Adjust in/fjs/SimpleSurface.ts as below.   
+2. Clean ts/fjs
+1. Tidy up import, unused types.   
 1. Build `appIn`, runs OK
-1. Build `moduleEs`. 
+1. Rename Globals.ts to Facets externally and internally
+1. Build `moduleNode`. 
 1. Build `appSrc`, runs OK  
  ```
-  in/fjs/SimpleSurface.ts
- 
-  import * as Facets from "./globals/Facets";
-  ...
-  let js : boolean = Facets.onlyJs;
- -------------------------------------------------------
  src/App.ts
  
  // import Facets from 'Facets';
@@ -61,7 +54,7 @@ with the admirable [JSweet](http://www.jsweet.org
    entry: 'in/fjs/globals/Facets.js',
    moduleName: 'Facets',
  });
- const moduleEs = Object.assign({}, module, {
+ const moduleNode = Object.assign({}, module, {
    format: 'es',
    dest: 'node_modules/Facets.js',
  });
@@ -76,6 +69,6 @@ with the admirable [JSweet](http://www.jsweet.org
    globals: {'': module.moduleName,}
  });
  
- const bundle = appSrc; //appIn|moduleEs|publicUmd|appSrc
+ const bundle = appSrc; //appIn|moduleNode|publicUmd|appSrc
  console.log('Bundling '+bundle.entry+' to '+bundle.dest);
  export default bundle;
