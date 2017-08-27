@@ -15,7 +15,7 @@ with the admirable [JSweet](http://www.jsweet.org
 
 1. globals/Globals.java
 1. Rename Globals.ts to Facets externally and internally
-1. Adjust `attachFacet`
+1. Adjust `attachFacet  `
 1. Adjust in/fjs/SimpleSurface.ts as below.   
 1. Build `appIn`, runs OK
 1. Build `moduleEs`. 
