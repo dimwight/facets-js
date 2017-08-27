@@ -7,7 +7,7 @@
     ],
     "watch": true,
     "allowJs": true,
-    "allowSyntheticDefaultImports": true,
+    "allowSyntheticDefaultImports": false,
     "allowUnreachableCode": true,
     "alwaysStrict": true,
     "strictNullChecks": false,

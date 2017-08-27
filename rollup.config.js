@@ -3,7 +3,7 @@ import commonjs from 'rollup-plugin-commonjs';
 import sourcemaps from 'rollup-plugin-sourcemaps';
 
 const common = {
-  format: 'iife',
+  sourceMap: true,
   plugins: [
     resolve(),
     commonjs(),
@@ -11,7 +11,7 @@ const common = {
   ]
 };
 const app = Object.assign({}, common, {
-  sourceMap: true,
+  format: 'iife',
   dest: 'public/App.js',
 });
 const appIn = Object.assign({}, app, {
@@ -22,18 +22,21 @@ const module = Object.assign({}, common, {
   entry: 'in/fjs/globals/Facets.js',
   moduleName: 'Facets',
 });
-const moduleNode = Object.assign({}, module, {
+const moduleEs = Object.assign({}, module, {
+  format: 'es',
   dest: 'node_modules/Facets.js',
 });
-const modulePublic= Object.assign({}, module, {
+const publicUmd= Object.assign({}, module, {
+  format: 'umd',
   dest: 'public/Facets.js',
 });
 const appSrc= Object.assign({}, app, {
   entry: 'src/App.js',
   moduleName: 'App',
-  // external: ['Facets',],globals: {'Facets': module.moduleName,}
+  external: ['Facets',],
+  globals: {'': module.moduleName,}
 });
 
-const bundle = appSrc; //appIn|moduleNode|modulePublic|appSrc
+const bundle = appSrc; //appIn|moduleEs|publicUmd|appSrc
 console.log('Bundling '+bundle.entry+' to '+bundle.dest);
 export default bundle;
