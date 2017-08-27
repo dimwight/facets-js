@@ -11,19 +11,15 @@ with the admirable [JSweet](http://www.jsweet.org
 - API deliberately untyped for greatest flexibility
 - Demo app with [Palantir](https://github.com/palantir/blueprint 
 )components
-### Getting to module?
+### Getting to module
 
 1. globals/Globals.java
-1. Rename .ts to Facets externally and internally
+1. Rename Globals.ts to Facets externally and internally
+1. Adjust `attachFacet`
 1. Adjust in/fjs/SimpleSurface.ts as below.   
-1. Build `appIn`, launches OK
-1. Build `moduleNode|modulePublic`. 
-1. `src/App.ts` 
-1. Build `appSrc` with either import, warning
-`The final argument to magicString.overwrite...`
-1. Launch fails:  
-`TypeError: Facets.newTextual is not a function`
-1. Looking at .ts/.js, WS "Cannot find declaration..."!
+1. Build `appIn`, runs OK
+1. Build `moduleEs`. 
+1. Build `appSrc`, runs OK  
  ```
   in/fjs/SimpleSurface.ts
  
@@ -33,17 +29,20 @@ with the admirable [JSweet](http://www.jsweet.org
  -------------------------------------------------------
  src/App.ts
  
- import Facets from 'Facets';
- // import Facets from 'Facets.js';
+ // import Facets from 'Facets';
+ import * as Facets from 'Facets.js';
+ // import * as Facets from '../in/fjs/globals/Facets';
 
   
  ------------------------------------------------------
+ rollup.config.js
+ 
  import resolve from 'rollup-plugin-node-resolve';
  import commonjs from 'rollup-plugin-commonjs';
  import sourcemaps from 'rollup-plugin-sourcemaps';
  
  const common = {
-   format: 'iife',
+   sourceMap: true,
    plugins: [
      resolve(),
      commonjs(),
@@ -51,7 +50,7 @@ with the admirable [JSweet](http://www.jsweet.org
    ]
  };
  const app = Object.assign({}, common, {
-   sourceMap: true,
+   format: 'iife',
    dest: 'public/App.js',
  });
  const appIn = Object.assign({}, app, {
@@ -62,18 +61,21 @@ with the admirable [JSweet](http://www.jsweet.org
    entry: 'in/fjs/globals/Facets.js',
    moduleName: 'Facets',
  });
- const moduleNode = Object.assign({}, module, {
+ const moduleEs = Object.assign({}, module, {
+   format: 'es',
    dest: 'node_modules/Facets.js',
  });
- const modulePublic= Object.assign({}, module, {
+ const publicUmd= Object.assign({}, module, {
+   format: 'umd',
    dest: 'public/Facets.js',
  });
  const appSrc= Object.assign({}, app, {
    entry: 'src/App.js',
    moduleName: 'App',
-   // external: ['Facets',],globals: {'Facets': module.moduleName,}
+   external: ['Facets',],
+   globals: {'': module.moduleName,}
  });
  
- const bundle = appSrc; //appIn|moduleNode|modulePublic|appSrc
+ const bundle = appSrc; //appIn|moduleEs|publicUmd|appSrc
  console.log('Bundling '+bundle.entry+' to '+bundle.dest);
  export default bundle;
