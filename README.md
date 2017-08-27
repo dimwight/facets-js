@@ -9,8 +9,7 @@ with the admirable [JSweet](http://www.jsweet.org
 - Output bundled using [Rollup](https://rollupjs.org 
 )
 - Super-simple API in ES5/IIFE 
-- Demo React apps with [Palantir](https://github.com/palantir/blueprint 
-) components
+- Demo React apps planned to use  [Blueprint](http://blueprintjs.com/) components
 ### Getting to libs
 1. globals/Globals.java
 2. Clean ts/fjs
