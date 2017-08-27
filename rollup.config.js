@@ -1,6 +1,7 @@
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import sourcemaps from 'rollup-plugin-sourcemaps';
+import path from 'path';
 
 const common = {
   sourceMap: true,
@@ -13,6 +14,7 @@ const common = {
 const app = Object.assign({}, common, {
   format: 'iife',
   dest: 'public/App.js',
+  moduleName: 'App',
 });
 const appIn = Object.assign({}, app, {
   entry: 'in/fjs/SimpleSurface.js',
@@ -22,21 +24,24 @@ const module = Object.assign({}, common, {
   entry: 'in/fjs/globals/Facets.js',
   moduleName: 'Facets',
 });
-const moduleNode = Object.assign({}, module, {
+const libNode = Object.assign({}, module, {
   format: 'es',
   dest: 'node_modules/Facets.js',
 });
-const publicUmd= Object.assign({}, module, {
-  format: 'umd',
+const libWeb= Object.assign({}, module, {
+  format: 'iife',
   dest: 'public/Facets.js',
 });
-const appSrc= Object.assign({}, app, {
+const appNode= Object.assign({}, app, {
   entry: 'src/App.js',
-  moduleName: 'App',
-  external: ['Facets',],
-  globals: {'': module.moduleName,}
+});
+const appWeb= Object.assign({}, appNode, {
+  external: [
+    path.resolve( './public/Facets.js')
+  ],
+  globals: {'Facets': module.moduleName,}
 });
 
-const bundle = appSrc; //appIn|moduleNode|publicUmd|appSrc
+const bundle = appNode; //appIn|libNode|libWeb|appNode|appWeb
 console.log('Bundling '+bundle.entry+' to '+bundle.dest);
 export default bundle;

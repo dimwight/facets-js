@@ -15,24 +15,20 @@ with the admirable [JSweet](http://www.jsweet.org
 1. globals/Globals.java
 2. Clean ts/fjs
 1. Tidy up import, unused types.   
-1. Build `appIn`, runs OK
+1. Build and run `appIn`
 1. Rename Globals.ts to Facets externally and internally
-1. Build `moduleNode`. 
-1. Build `appSrc`, runs OK  
- ```
- src/App.ts
- 
- // import Facets from 'Facets';
- import * as Facets from 'Facets.js';
- // import * as Facets from '../in/fjs/globals/Facets';
+1. Build `libNode`. 
+1. Build and run `appNode`
+1. Build `libWeb`. 
+1. Build and launch `appWeb` 
 
-  
- ------------------------------------------------------
- rollup.config.js
+ ```
+ //rollup.config.js
  
  import resolve from 'rollup-plugin-node-resolve';
  import commonjs from 'rollup-plugin-commonjs';
  import sourcemaps from 'rollup-plugin-sourcemaps';
+ import path from 'path';
  
  const common = {
    sourceMap: true,
@@ -45,6 +41,7 @@ with the admirable [JSweet](http://www.jsweet.org
  const app = Object.assign({}, common, {
    format: 'iife',
    dest: 'public/App.js',
+   moduleName: 'App',
  });
  const appIn = Object.assign({}, app, {
    entry: 'in/fjs/SimpleSurface.js',
@@ -54,21 +51,24 @@ with the admirable [JSweet](http://www.jsweet.org
    entry: 'in/fjs/globals/Facets.js',
    moduleName: 'Facets',
  });
- const moduleNode = Object.assign({}, module, {
+ const libNode = Object.assign({}, module, {
    format: 'es',
    dest: 'node_modules/Facets.js',
  });
- const publicUmd= Object.assign({}, module, {
-   format: 'umd',
+ const libWeb= Object.assign({}, module, {
+   format: 'iife',
    dest: 'public/Facets.js',
  });
- const appSrc= Object.assign({}, app, {
+ const appNode= Object.assign({}, app, {
    entry: 'src/App.js',
-   moduleName: 'App',
-   external: ['Facets',],
-   globals: {'': module.moduleName,}
+ });
+ const appWeb= Object.assign({}, appNode, {
+   external: [
+     path.resolve( './public/Facets.js')
+   ],
+   globals: {'Facets': module.moduleName,}
  });
  
- const bundle = appSrc; //appIn|moduleNode|publicUmd|appSrc
+ const bundle = appWeb; //appIn|libNode|libWeb|appNode|appWeb
  console.log('Bundling '+bundle.entry+' to '+bundle.dest);
  export default bundle;
