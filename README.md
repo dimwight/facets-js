@@ -1,6 +1,6 @@
 # README for facets-js
 
-## [Superficial](doc/Superficial.pdf) in a JS module
+## [Superficial](http://superficial.sourceforge.net/) in a JS module
 
 - Hybrid project, written in Java and transpiled to JS 
 with the admirable [JSweet](http://www.jsweet.org
