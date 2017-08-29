@@ -11,11 +11,11 @@ with the admirable [JSweet](http://www.jsweet.org
 - Super-simple API in ES5/IIFE 
 - Demo React apps planned using [Blueprint](http://blueprintjs.com/)
 ### Getting to libs
-1. globals/Globals.java
-2. Clean ts/fjs
-1. Tidy up import, unused types   
+1. `globals/Globals.java`
+2. Clean `ts/` and copy `ts/fjs/` to `ws-in`
+1. Tidy up `SimpleSurface.ts` import   
 1. Build and run `appIn`
-1. Globals to Facets 
+1. _Globals_ to _Facets_ 
 1. Build `libInclude`, build, run and launch`appInclude`
 1. Build `libExclude`, build and launch `appExclude` 
 

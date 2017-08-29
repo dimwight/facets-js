@@ -1,35 +1,34 @@
 import * as Facets from 'Facets.js';
-const TITLE_FIRST : string = 'First';
-const TITLE_SECOND : string = 'Second';
-function newTargetTree(){
-  let text:string='This text passed using "import * as Facets from \'Facets.js\'" ';
-  console.info('.newTargetTree: text=',text);
-  let coupler:any={
-    text:text,
-    stateUpdated : (title) => console.info("stateUpdated: title=" + title)
 
+const TITLE_FIRST = 'First', TITLE_SECOND = 'Second';
+
+function newTargetTree(){
+  const text='Some text';
+  trace('newTargetTree(): text='+text);
+  const coupler ={
+    text:text,
+    stateUpdated : (title) => trace("coupler.stateUpdated: title=" + title)
   };
-  let first:any=Facets.newTextual(TITLE_FIRST,coupler);
-  let second:any=Facets.newTextual(TITLE_SECOND,coupler);
+  const first:any=Facets.newTextual(TITLE_FIRST,coupler),
+    second:any=Facets.newTextual(TITLE_SECOND,coupler);
   return Facets.newTargetGroup('Textuals',first,second);
 }
 function buildLayout(){
-  const accept=function(update):void{
-    console.log(update)
-  };
-  Facets.attachFacet(TITLE_FIRST,accept);
+  trace('buildLayout()')
+  Facets.attachFacet(TITLE_FIRST,
+      update=>trace('Facet updating with '+update));
 }
-function buildSurface(){
-  console.info(' > Building surface');
-  Facets.buildTargeterTree(newTargetTree());
-  console.info(' > Built targets, created targeters');
-  buildLayout();
-  console.info(' > Attached and laid out facets');
-  Facets.retargetFacets();
-  console.info(' > Surface built');
-  Facets.updateTarget(TITLE_FIRST,'Some updated text');
-  if(typeof document=='undefined') return;
+function trace(text){
+  console.info('App > ' +text);
+}
+trace('Building surface');
+Facets.buildTargeterTree(newTargetTree());
+trace('Built targets, created targeters');
+buildLayout();
+trace('Attached and laid out facets');
+Facets.retargetFacets();
+trace('Surface built');
+Facets.updateTarget(TITLE_FIRST,'Some updated text');
+if(typeof document!=='undefined')
   document.getElementById('pageTitle').innerText=document.title;
-}
-buildSurface();
 
