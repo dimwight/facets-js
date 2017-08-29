@@ -20,6 +20,10 @@ with the admirable [JSweet](http://www.jsweet.org
 1. Build `libExclude`, build and launch `appExclude` 
 
  ```
+//in/js/SimpleSurface.ts
+ 
+ import * as Globals from './globals/Globals';
+
  //rollup.config.js
  
  import resolve from 'rollup-plugin-node-resolve';

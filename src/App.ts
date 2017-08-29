@@ -4,7 +4,11 @@ const TITLE_SECOND : string = 'Second';
 function newTargetTree(){
   let text:string='This text passed using "import * as Facets from \'Facets.js\'" ';
   console.info('.newTargetTree: text=',text);
-  let coupler:any={text:text};
+  let coupler:any={
+    text:text,
+    stateUpdated : (title) => console.info("stateUpdated: title=" + title)
+
+  };
   let first:any=Facets.newTextual(TITLE_FIRST,coupler);
   let second:any=Facets.newTextual(TITLE_SECOND,coupler);
   return Facets.newTargetGroup('Textuals',first,second);

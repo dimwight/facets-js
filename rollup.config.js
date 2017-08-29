@@ -39,6 +39,6 @@ const appExclude= Object.assign({}, appInclude, {
   globals: {'Facets.js': module.moduleName,}
 });
 
-const bundle = appExclude; //appIn|libInclude|libExclude|appInclude|appExclude
+const bundle = appInclude; //appIn|libInclude|libExclude|appInclude|appExclude
 console.log('Bundling '+bundle.entry+' to '+bundle.dest);
 export default bundle;
