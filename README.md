@@ -17,7 +17,8 @@ with the admirable [JSweet](http://www.jsweet.org
 1. Build and run `appIn`
 1. _Globals_ to _Facets_ 
 1. Build `libInclude`, build, run and launch`appInclude`
-1. Build `libExclude`, build and launch `appExclude` 
+1. Build `libExclude`, build and launch `appExclude`; 
+run fails with _Facets is not defined_
 
  ```
 //in/js/SimpleSurface.ts
