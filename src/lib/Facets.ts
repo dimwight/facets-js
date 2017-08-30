@@ -1,12 +1,12 @@
 /* Generated from Java with JSweet 2.0.0-rc1 - http://www.jsweet.org */
-import { Notifiable } from '../in/fjs/core/Notifiable';
-import { SFacet } from '../in/fjs/core/SFacet';
-import { STarget } from '../in/fjs/core/STarget';
-import { STargeter } from '../in/fjs/core/STargeter';
-import { STextual } from '../in/fjs/core/STextual';
-import { TargetCore } from '../in/fjs/core/TargetCore';
-import { Debug } from '../in/fjs/util/Debug';
-import { Tracer } from '../in/fjs/util/Tracer';
+import { Notifiable } from '../../in/fjs/core/Notifiable';
+import { SFacet } from '../../in/fjs/core/SFacet';
+import { STarget } from '../../in/fjs/core/STarget';
+import { STargeter } from '../../in/fjs/core/STargeter';
+import { STextual } from '../../in/fjs/core/STextual';
+import { TargetCore } from '../../in/fjs/core/TargetCore';
+import { Debug } from '../../in/fjs/util/Debug';
+import { Tracer } from '../../in/fjs/util/Tracer';
 export let trace : boolean = false;
 
 let t : Tracer.TracerTopped; function t_$LI$() : Tracer.TracerTopped { if(t == null) t = new Facets.Globals$0("FacetsLib"); return t; };
