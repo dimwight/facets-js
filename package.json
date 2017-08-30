@@ -14,6 +14,7 @@
     "rollup-watch": "^4.0.0"
   },
   "scripts": {
+    "delLibs": "node tool/delLibs.js",
     "build": "rollup -c",
     "watch": "rollup -c -w"
   }

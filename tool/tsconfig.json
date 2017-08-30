@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "allowUnreachableCode": true,
+    "alwaysStrict": true,
+    "sourceMap": false,
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "target": "es5"
+  }
+}
