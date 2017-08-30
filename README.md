@@ -15,7 +15,8 @@ with the admirable [JSweet](http://www.jsweet.org
 2. Clean `ts/` and copy `ts/fjs/` to `ws-in`
 1. Tidy up `SimpleSurface.ts` import   
 1. Build and run `appIn`
-1. _Globals_ to _Facets_ in file and code
+1. _Globals_ to _Facets_ in file and code, 
+move to `/src/lib`
 1. Build `libInclude`, build, run and launch`appInclude`
 1. Build `libExclude`, build and launch `appExclude`; 
 run fails with _Facets is not defined_

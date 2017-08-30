@@ -4,5 +4,6 @@ java/fjs/swing/
 public/*.js*
 src/**/*.js
 src/**/*.js.map
+tool/*.js
 .idea/workspace.xml
 in/
