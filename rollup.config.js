@@ -2,7 +2,7 @@ import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import sourcemaps from 'rollup-plugin-sourcemaps';
 
-const common = {
+const base = {
   sourceMap: true,
   plugins: [
     resolve(),
@@ -10,7 +10,7 @@ const common = {
     sourcemaps()
   ]
 };
-const app = Object.assign({}, common, {
+const app = Object.assign({}, base, {
   format: 'iife',
   dest: 'public/App.js',
   moduleName: 'App',
@@ -19,15 +19,15 @@ const appIn = Object.assign({}, app, {
   entry: 'in/fjs/SimpleSurface.js',
   moduleName: 'SimpleSurface',
 });
-const module = Object.assign({}, common, {
-  entry: 'in/fjs/globals/Facets.js',
+const lib = Object.assign({}, base, {
+  entry: (false?'in/fjs/globals/':'lib/')+'Facets.js',
   moduleName: 'Facets',
 });
-const libInclude = Object.assign({}, module, {
+const libInclude = Object.assign({}, lib, {
   format: 'es',
   dest: 'node_modules/Facets.js',
 });
-const libExclude= Object.assign({}, module, {
+const libExclude= Object.assign({}, lib, {
   format: 'iife',
   dest: 'public/Facets.js',
 });
@@ -36,9 +36,9 @@ const appInclude= Object.assign({}, app, {
 });
 const appExclude= Object.assign({}, appInclude, {
   external: ['Facets.js'],
-  globals: {'Facets.js': module.moduleName,}
+  globals: {'Facets.js': lib.moduleName,}
 });
 
-const bundle = appExclude; //appIn|libInclude|libExclude|appInclude|appExclude
-console.log('Bundling '+bundle.entry+' to '+bundle.dest);
+const bundle = appExclude; //appIn|libInclude|appInclude|libExclude|appExclude
+console.log('Bundling: entry='+bundle.entry+' dest='+bundle.dest + ' format='+bundle.format);
 export default bundle;

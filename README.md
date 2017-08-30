@@ -8,7 +8,7 @@ with the admirable [JSweet](http://www.jsweet.org
 - Java based on the [core of the original Facets](https://github.com/dimwight/Facets/tree/master/Facets/facets/core)
 - Output bundled using [Rollup](https://rollupjs.org 
 )
-- Super-simple API in ES5/IIFE 
+- Stupidly simple API in ES5/IIFE 
 - Demo React apps planned using [Blueprint](http://blueprintjs.com/)
 ### Getting to libs
 1. `globals/Globals.java`

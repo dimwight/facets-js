@@ -1,12 +1,13 @@
-import * as Facets from 'Facets.js';
+import * as Facets from 'Facets';
+// import * as Facets from '../lib/Facets';
 
 const TITLE_FIRST = 'First', TITLE_SECOND = 'Second';
 
 function newTargetTree(){
   const text='Some text';
   trace('.newTargetTree: text='+text);
-  const coupler ={
-    text:text,
+  const coupler:Facets.TextualCoupler ={
+    passText:text,
     stateUpdated : (title) => trace("coupler.stateUpdated: title=" + title)
   };
   const first:any=Facets.newTextual(TITLE_FIRST,coupler),
@@ -14,7 +15,7 @@ function newTargetTree(){
   return Facets.newTargetGroup('Textuals',first,second);
 }
 function buildLayout(){
-  trace('.buildLayout')
+  trace('.buildLayout');
   Facets.attachFacet(TITLE_FIRST,
       update=>trace('Facet updating with '+update));
 }
@@ -26,7 +27,6 @@ Facets.buildTargeterTree(newTargetTree());
 trace('Built targets, created targeters');
 buildLayout();
 trace('Attached and laid out facets');
-Facets.retargetFacets();
 trace('Surface built');
 Facets.updateTarget(TITLE_FIRST,'Some updated text');
 if(typeof document!=='undefined')

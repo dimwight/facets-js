@@ -1,6 +1,7 @@
 {
   "include": [
     "in/**/*",
+    "lib/**/*",
     "src/**/*"
   ],
   "compilerOptions": {
