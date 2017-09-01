@@ -17,7 +17,7 @@ const app = Object.assign({}, base, {
 });
 const appIn = Object.assign({}, app, {
   entry: 'in/fjs/SimpleSurface.js',
-  moduleName: 'SimpleSurface',
+  moduleName: 'unused',
 });
 const lib = Object.assign({}, base, {
   entry: (false?'in/fjs/globals/':'src/lib/')+'Facets.js',
@@ -39,6 +39,6 @@ const appExclude= Object.assign({}, appInclude, {
   globals: {'Facets.js': lib.moduleName,}
 });
 
-const bundle = libExclude; //appIn|libInclude|appInclude|libExclude|appExclude
+const bundle = appExclude; //appIn|libInclude|appInclude|libExclude|appExclude
 console.log('Bundling: entry='+bundle.entry+' dest='+bundle.dest + ' format='+bundle.format);
 export default bundle;

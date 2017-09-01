@@ -34,7 +34,6 @@ public final class Debug{
 	}
 	public static boolean trace;
 	public static String toStringWithHeader(Object[]array){
-		return info(array)+" ["+array.length+"] " +
-				Objects.toLines(array);
+		return info(array)+" ["+array.length+"] " +Objects.toLines(array);
 	}
 }

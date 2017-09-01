@@ -32,7 +32,10 @@ public abstract class Tracer implements Identified{
 		this.top=top;
 	}
 	public Tracer(){
-		this.top=Debug.info(this);
+		top=null;
+	}
+	final public void trace(String msg,Object o){
+		traceOutput(""+msg+traceObjectText(o));		
 	}
 	/**
 	Outputs complete trace messages to console or elsewhere. 
@@ -40,10 +43,10 @@ public abstract class Tracer implements Identified{
 	@param msg passed from one of the <code>public</code> methods
 	 */
 	protected void traceOutput(String msg){
-		traceOutputWithId(msg);
+		traceOutputWithId(""+msg);
 	}
 	final public void traceOutputWithId(String msg){
-		Util.printOut(top+" #"+id+" "+msg);
+		Util.printOut((top!=null?(top+" #"+id):Debug.info(this))+" "+msg);
 	}
 	final public void trace(String msg){
 		traceOutput(msg);
@@ -54,9 +57,6 @@ public abstract class Tracer implements Identified{
 			t.printStackTrace();
 		}
 		else traceOutput(msg+traceObjectText(t));		
-	}
-	final public void trace(String msg,Object o){
-		traceOutput(msg+traceObjectText(o));		
 	}
 	final public void trace(String msg,Collection c){
 		traceOutput(msg+traceArrayText(c.toArray()));		

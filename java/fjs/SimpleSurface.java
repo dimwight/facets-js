@@ -14,41 +14,50 @@ public abstract class SimpleSurface extends Tracer implements Titled{
 		return title;
 	}
 	public void buildSurface(){
-		trace(" > Building surface");
-		Globals.buildTargeterTree(newTargetTree());
-		trace(" > Built targets, created targeters");
+		Object targets=newTargetTree();
+		trace(" > Generating targeters...");
+		Globals.buildTargeterTree(targets);
+		trace(" > Building layout...");
 		buildLayout();
-		trace(" > Attached and laid out facets");
-		Globals.retargetFacets();
-		trace(" > Surface built");
+		trace(" > Surface built!");
 	}
 	protected Object newTargetTree(){
-		String passText="This text passed [by CouplerLike] in "+title;
-		trace(".newTargetTree: text=",passText);
-		Object coupler=new CouplerLike(){{this.text=passText;}},
-			first=Globals.newTextual(TITLE_FIRST,coupler),
-			second=Globals.newTextual(TITLE_SECOND,coupler);
-		return Globals.newTargetGroup("Textuals",first,second);
+		trace(" > Generating targets...");
+		return Globals.newTargetsGroup("Textuals",
+				newTextual(TITLE_FIRST),newTextual(TITLE_SECOND));
+	}
+	private Object newTextual(String title){
+		String text=title+" text in "+SimpleSurface.this.title;
+		trace(" > Generating textual target text=",text);
+		return Globals.newTextualTarget(title,new Globals.TextualCoupler(){{
+			passText=true?null:text;
+			getText=title->text;
+			targetStateUpdated=title->targetStateUpdated(title);
+		}});
 	}
 	protected abstract void buildLayout();
+	protected void targetStateUpdated(String title){
+		trace(" > Target state updated: title="+title+" update=",
+				Globals.getTargetState(title));
+	}
+	private static final class LocalSurface extends SimpleSurface{
+		private LocalSurface(String title){
+			super(title);
+		}
+		@Override
+		protected void buildLayout(){
+			trace(" > Generating facet  for ",TITLE_FIRST);
+			Globals.attachFacet(TITLE_FIRST,value -> trace(" > Facet updated: value=",value));
+		}
+		@Override
+		public void buildSurface(){
+			super.buildSurface();
+			String update="Some updated text";
+			trace(" > Simulating input: update=",update);
+			Globals.updateTargetState(TITLE_FIRST,update);
+		}
+	}
 	public static void main(String[]args){
-		new SimpleSurface(SimpleSurface.class.getSimpleName()){
-			@Override
-			protected void buildLayout(){
-				UpdateFunction updateJs=new UpdateFunction() {
-					@Override
-					public Object apply(Object value){
-						trace(".UpdateFunction: value=",value);		
-						return null;
-					}};
-				trace(".buildLayout: attaching facet [with UpdateFunction] in ",title);
-				Globals.attachFacet(TITLE_FIRST,updateJs);
-			}
-			@Override
-			public void buildSurface(){
-				super.buildSurface();
-				Globals.updateTarget(TITLE_FIRST,"Some updated text");
-			}
-		}.buildSurface();
+		new LocalSurface("SimpleSurface").buildSurface();
 	}
 }

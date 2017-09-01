@@ -13,10 +13,6 @@ abstract class NotifyingCore extends Tracer implements Notifying{
 	private static int identities;
 	private final int identity=identities++;
 	@Override
-	protected void traceOutput(String msg){
-		super.traceOutput(getClass().getSimpleName()+msg);
-	}
-	@Override
   final public Notifiable notifiable(){
   	if(false&&notifiable==null)throw new IllegalStateException("No monitor in "+Debug.info(this));
   	return notifiable;
