@@ -1,8 +1,10 @@
-// import * as Facets from 'Facets'; //libInclude
-// import * as Facets from 'Facets.js'; //libExclude
-import * as Facets from './lib/Facets';
+import {Facets} from 'Facets'; //libInclude
+// import * as Facets from 'app.js'; //libExclude
+// import { Facets } from './lib/Facets';
 
 const TITLE_FIRST = 'First', TITLE_SECOND = 'Second';
+
+const app : Facets = Facets.newInstance(true);
 
 function newTargetTree(){
   const text='Some text';
@@ -11,25 +13,25 @@ function newTargetTree(){
     passText:text,
     targetStateUpdated : (title) => trace("coupler.stateUpdated: title=" + title)
   };
-  const first:any=Facets.newTextualTarget(TITLE_FIRST,coupler),
-    second:any=Facets.newTextualTarget(TITLE_SECOND,coupler);
-  return Facets.newTargetsGroup('Textuals',first,second);
+  const first:any=app.newTextualTarget(TITLE_FIRST,coupler),
+    second:any=app.newTextualTarget(TITLE_SECOND,coupler);
+  return app.newTargetsGroup('Textuals',first,second);
 }
 function buildLayout(){
   trace('.buildLayout');
-  Facets.attachFacet(TITLE_FIRST,
+  app.attachFacet(TITLE_FIRST,
       update=>trace('Facet updating with '+update));
 }
 function trace(text){
   console.info('App > ' +text);
 }
 trace('Building surface');
-Facets.buildTargeterTree(newTargetTree());
+app.buildTargeterTree(newTargetTree());
 trace('Built targets, created targeters');
 buildLayout();
 trace('Attached and laid out facets');
 trace('Surface built');
-Facets.updateTargetState(TITLE_FIRST,'Some updated text');
+app.updateTargetState(TITLE_FIRST,'Some updated text');
 if(typeof document!=='undefined')
   document.getElementById('pageTitle').innerText=document.title;
 

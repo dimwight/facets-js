@@ -11,13 +11,9 @@ with the admirable [JSweet](http://www.jsweet.org
 - Stupidly simple API in ES5/IIFE 
 - Demo React apps planned using [Blueprint](http://blueprintjs.com/)
 ### Getting to libs
-1. `globals/Globals.java`
-2. Clean `ts/` and copy `ts/fjs/` to `ws-in`
-1. Tidy up `SimpleSurface.ts` import   
+1. Clean `ts/` and copy `ts/fjs/` to `ws-in`
 1. Build and run `appIn`
-1. _Globals_ to _Facets_ in file and code, 
-move to `/src/lib`, shift `TextualCoupler` to top. 
-1. Tidy up `App.ts`
+1. Move _Facets_ to `/src/lib`, shift `TextualCoupler` to top. 
 1. Build `libInclude`, build, run and launch`appInclude`
 1. Build `libExclude`, build and launch `appExclude`; 
 run fails with _Facets is not defined_
