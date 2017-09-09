@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Build lib" type="js.build_tools.npm" factoryName="npm">
+  <configuration default="false" name="Build clean" type="js.build_tools.npm" factoryName="npm">
     <package-json value="$PROJECT_DIR$/package.json" />
     <command value="run" />
     <scripts>
@@ -12,7 +12,7 @@
         <package-json value="$PROJECT_DIR$/package.json" />
         <command value="run" />
         <scripts>
-          <script value="delLibs" />
+          <script value="clean" />
         </scripts>
         <node-interpreter value="project" />
         <envs />

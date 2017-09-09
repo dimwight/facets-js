@@ -1,8 +1,10 @@
 import * as fs from 'fs';
-
 const gone=[],missing=[];
-['in/fjs/globals/Facets.js','public/Facets.js','node_modules/Facets.js']
-  .forEach((path)=>{
+[
+  // 'in/fjs/globals/Facets.js',
+  'public/FacetsPublic.js',
+  'node_modules/FacetsNode.js'
+].forEach((path)=>{
     if(fs.existsSync(path)){
       gone.push(path);
       fs.unlinkSync(path);

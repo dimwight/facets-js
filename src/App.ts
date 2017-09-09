@@ -1,15 +1,16 @@
-import {Facets} from 'Facets'; //libInclude
-// import * as Facets from 'app.js'; //libExclude
-// import { Facets } from './lib/Facets';
+import * as ff from '../in/fjs/globals/Globals'; //libInclude
+// import * as ff from 'Facets'; //libInclude
+// import * as  ff  from './Facets.js'; //libExclude
+// import  * as  ff   from './lib/Facets';
 
 const TITLE_FIRST = 'First', TITLE_SECOND = 'Second';
 
-const app : Facets = Facets.newInstance(true);
+const app : any = ff.newInstance(true);
 
 function newTargetTree(){
   const text='Some text';
   trace('.newTargetTree: text='+text);
-  const coupler:Facets.TextualCoupler ={
+  const coupler={
     passText:text,
     targetStateUpdated : (title) => trace("coupler.stateUpdated: title=" + title)
   };

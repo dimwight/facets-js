@@ -11,17 +11,24 @@ with the admirable [JSweet](http://www.jsweet.org
 - Stupidly simple API in ES5/IIFE 
 - Demo React apps planned using [Blueprint](http://blueprintjs.com/)
 ### Getting to libs
-1. Clean `ts/` and copy `ts/fjs/` to `ws-in`
-1. Build and run `appIn`
-1. Move _Facets_ to `/src/lib`, shift `TextualCoupler` to top. 
-1. Build `libInclude`, build, run and launch`appInclude`
+1. `globals/Globals.java`
+2. Clean `ts/` and copy `ts/fjs/` to `ws-in`
+1. Tidy up `SimpleSurface.ts` import   
+1. Build and run `simple`
+1. Build, run and launch `appIn`
+1. Build clean `libInclude`, build, run and launch`appInclude`
 1. Build `libExclude`, build and launch `appExclude`; 
 run fails with _Facets is not defined_
 
  ```
 //in/js/SimpleSurface.ts
  
- import * as Globals from './globals/Globals';
+import * as Facets from './globals/Facets';
+
+//in/fjs/globals/Facets.ts
+export function newInstance(trace:boolean):Facets{
+  return new Facets("Facets",trace);
+}
 
  //rollup.config.js
  
