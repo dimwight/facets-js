@@ -3,6 +3,7 @@ import commonjs from 'rollup-plugin-commonjs';
 import sourcemaps from 'rollup-plugin-sourcemaps';
 
 const base = {
+  format: 'iife',
   sourceMap: true,
   plugins: [
     resolve(),
@@ -11,7 +12,6 @@ const base = {
   ]
 };
 const app = Object.assign({}, base, {
-  format: 'iife',
   dest: 'public/index.js',
   moduleName: 'unused',
 });
@@ -30,7 +30,6 @@ const libInclude = Object.assign({}, lib, {
   dest: 'node_modules/Facets.js',
 });
 const libExclude= Object.assign({}, lib, {
-  format: 'iife',
   dest: 'public/Facets.js',
 });
 const appInclude= Object.assign({}, appIn, {
@@ -40,6 +39,6 @@ const appExclude= Object.assign({}, appIn, {
   globals: {'Facets': lib.moduleName,}
 });
 
-const bundle = appExclude; //simple|appIn|libInclude|appInclude|libExclude|appExclude
+const bundle = appInclude; //simple|appIn|libInclude|appInclude|libExclude|appExclude
 console.log('Bundling: entry='+bundle.entry+' dest='+bundle.dest + ' format='+bundle.format);
 export default bundle;

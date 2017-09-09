@@ -2,7 +2,7 @@ import * as fs from 'fs';
 const gone=[],missing=[];
 [
   // 'in/fjs/globals/Facets.js',
-  // 'node_modules/Facets.js',
+  'node_modules/Facets.js',
   'src/Facets.js',
   'public/Facets.js',
 ].forEach((path)=>{
