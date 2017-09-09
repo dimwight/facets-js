@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="run" type="NodeJSConfigurationType" factoryName="Node.js" path-to-node="project" path-to-js-file="App.js" working-dir="$PROJECT_DIR$/public">
+  <configuration default="false" name="run" type="NodeJSConfigurationType" factoryName="Node.js" path-to-node="project" path-to-js-file="$PROJECT_DIR$/public/index.js" working-dir="$PROJECT_DIR$/public">
     <method />
   </configuration>
 </component>

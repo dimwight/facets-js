@@ -12,16 +12,14 @@ const base = {
 };
 const app = Object.assign({}, base, {
   format: 'iife',
-  dest: 'public/App.js',
-  moduleName: 'App',
+  dest: 'public/index.js',
+  moduleName: 'unused',
 });
 const simple = Object.assign({}, app, {
   entry: 'in/fjs/SimpleSurface.js',
-  moduleName: 'unused',
 });
 const appIn = Object.assign({}, app, {
-  entry: 'src/App.js',
-  moduleName: 'unused',
+  entry: 'src/main.js',
 });
 const lib = Object.assign({}, base, {
   entry: (false ? 'src/lib/Facets.js' : 'in/fjs/globals/Globals.js'),

@@ -1,5 +1,4 @@
-// import * as ff from '../in/fjs/globals/Globals'; //appIn
-import * as Facets from 'Facets'; //appInclude appExclude
+import * as Facets from 'Facets';
 
 const TITLE_FIRST = 'First', TITLE_SECOND = 'Second';
 
