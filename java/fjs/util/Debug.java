@@ -13,7 +13,8 @@ public final class Debug{
 			 */
 	public static String info(Object o){
 		if(o==null)return "null";
-		if(o instanceof String){
+		if(o instanceof Integer)return String.valueOf(o);
+		else if(o instanceof String){
 			String text=(String)o;
 			int length=text.length();
 			return text.substring(0,Math.min(length,60))
@@ -29,10 +30,10 @@ public final class Debug{
 	public static String arrayInfo(Object[]array){
 		return "arrayInfo";
 	}
+	public static boolean trace=false;
 	public static void traceEvent(String string){
-		Util.printOut(">"+string);
+		Util.printOut(">>"+string);
 	}
-	public static boolean trace;
 	public static String toStringWithHeader(Object[]array){
 		return info(array)+" ["+array.length+"] " +Objects.toLines(array);
 	}

@@ -3,7 +3,7 @@ import fjs.util.Debug;
 import fjs.util.Tracer;
 /**
 Core implementation of key interfaces. 
-<p>{@link NotifyingCore} is the shared superclass of both the {@link STarget} and
+<p>{@link NotifyingCore} is the base class of both the {@link STarget} and
 {@link STargeter} class hierarchies. 
 <p>Declared <code>public</code> for documentation purposes only; client code should 
 use the concrete subclass hierarchies. 
@@ -14,8 +14,8 @@ abstract class NotifyingCore extends Tracer implements Notifying{
 	private final int identity=identities++;
 	@Override
   final public Notifiable notifiable(){
-  	if(false&&notifiable==null)throw new IllegalStateException("No monitor in "+Debug.info(this));
-  	return notifiable;
+  	if(notifiable==null)throw new IllegalStateException("No notifiable in "+Debug.info(this));
+  	else return notifiable;
   }
 	@Override
 	public void notify(Object notice){
@@ -36,7 +36,6 @@ abstract class NotifyingCore extends Tracer implements Notifying{
   protected boolean blockNotification(){return false;}
 	@Override
 	public final void setNotifiable(Notifiable n){
-  	if(false)trace(".setNotifiable: n=",n);
 		this.notifiable=n;
 	}
 	@Override

@@ -1,19 +1,19 @@
 package fjs.core;
 import java.io.Serializable;
 /**
-Connects a facade {@link STarget} to the application. 
+Connects a simple {@link STarget} to the application. 
 <p>While {@link TargetCoupler} itself defines no specific functionality, 
-	the appropriate subtypes for each facade {@link fjs.core.STarget} 
+	the appropriate subtypes for each simple {@link fjs.core.STarget} 
 </p>
 <ul>
-	<li> define presentation policy of the {@link STarget} in the surface,</li>
+	<li>define presentation policy of the {@link STarget} in the surface,</li>
 	<li>enable the application to handle the {@link STarget}'s responses 
 		to surface events. </li>
 </ul>
 <p> A {@link TargetCoupler} subtype instance can either be subclassed 
 	as required (usually trivially) to meet application-specific requirements, 
 	or simply provide default presentation policy and event handling. This 
-	approach (rather than subclassing the facade {@link STarget}s themselves) 
+	approach (rather than subclassing the {@link STarget}s themselves) 
 	minimises coupling between application and framework classes, with the 
 	further advantage that application code can often be simplified by sharing 
 	a single coupler between logically linked targets. 

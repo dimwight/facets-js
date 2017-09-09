@@ -4,9 +4,9 @@ import java.util.HashSet;
 import fjs.util.Debug;
 import fjs.util.Titled;
 /**
-{@link STarget} representing one or more indices into a list of items. 
+{@link STarget} representing an index into a list of items. 
 <p>{@link SIndexing} represents a list of items to be exposed 
-  to user view and control in the surface, together with an index/indices 
+  in the surface, together with an index 
   into that list; application-specific mechanism and policy can be defined in 
 	a {@link fjs.core.SIndexing.Coupler}. 
  */
@@ -21,6 +21,18 @@ final public class SIndexing extends TargetCore{
 	 */
 	public static class Coupler implements TargetCoupler{
 		/**
+		Called whenever an index changes. 
+		 */
+		public void indexSet(SIndexing i){}
+		/**
+		Can return dynamic indexables. 
+		<p>Called by {@link SIndexing#indexables()} if none set during construction. 
+		@return a non-empty array
+		 */
+		protected Object[]getIndexables(){
+			throw new RuntimeException("Not implemented in "+Debug.info(this));
+		}
+		/**
 		Returns strings to represent the indexables.  
 		<p>These will appear in facet lists, or as labels for menu items or 
 		radio buttons. 
@@ -34,7 +46,7 @@ final public class SIndexing extends TargetCore{
 		empty {@link String}[].
 		</ul> 		 
 		 */
-		public String[]newIndexableTitles(SIndexing i){
+		protected String[]newIndexableTitles(SIndexing i){
 		  Object[]indexables=i.indexables();
 			if(indexables==NO_INDEXABLES)return new String[]{};
 			else if(indexables instanceof String[])return(String[])indexables;
@@ -45,18 +57,6 @@ final public class SIndexing extends TargetCore{
 		      indexables[t].toString();
 		  return titles;
 		}
-		/**
-		Called whenever an index changes. 
-		 */
-		public void indexSet(SIndexing i){}
-		/**
-		Can return dynamic indexables. 
-		<p>Called by {@link SIndexing#indexables()} if none set during construction. 
-		@return a non-empty array
-		 */
-		public Object[]getIndexables(){
-			throw new RuntimeException("Not implemented in "+Debug.info(this));
-		}
 	}
 	/**
 	The <code>Indexing.Coupler</code> passed to the core constructor. 
@@ -65,27 +65,18 @@ final public class SIndexing extends TargetCore{
 	private int[]indices=null;
 	private transient Object[]indexables,indexings;  
 	/**
-	Core constructor. 
-	<p>Declared visibly for documentation purposes only. 
+	Unique constructor. 
 	 @param title passed to superclass
 	 @param indexables the objects to be indexed; may not be empty but 
 	 may be <code>null</code> in which case they are 
 	 read dynamically from the coupler
 	 @param coupler supplies application-specific mechanism and policy
 	 */
-	protected SIndexing(String title,Object[]indexables,Coupler coupler){
+	public SIndexing(String title,Object[]indexables,Coupler coupler){
 		super(title);this.coupler=coupler;
 		if(indexables!=null&&indexables.length==0)
 			throw new IllegalArgumentException("Null or empty indexables in "+Debug.info(this));
 		this.indexables=indexables;
-	}
-	/**
-	Convenience constructor setting initial index. 
-	 @param index the initial index
-	 */
-	public SIndexing(String title,Object[]indexables,int index,Coupler coupler){
-		this(title,indexables,coupler);
-		setIndex(index);
 	}
 	/**
 	The first index into the <code>indexables</code>. 
@@ -157,6 +148,15 @@ final public class SIndexing extends TargetCore{
 	public Object[]indexings(){
 	  if(indexings==null)throw new IllegalStateException("Null indexings in "+this);
 	  return indexings;
+	}
+	@Override
+	public Object state(){
+		return index();
+	}
+	@Override
+	public void updateState(Object update){
+		if(false)trace(" > Updating state: update=",update);
+		setIndex((Integer)update);
 	}
 	public String toString(){
 		return super.toString()+" "+indices().length;

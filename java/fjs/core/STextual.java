@@ -4,13 +4,13 @@ import fjs.util.Tracer;
 /**
 {@link STarget} representing a textual value. 
 <p> {@link STextual} represents a text value to be 
-  exposed to user view and control in the surface; application-specific 
+  exposed to in the surface; application-specific 
   mechanism can be defined in a {@link fjs.core.STextual.Coupler}. 
  */
 final public class STextual extends TargetCore{
 	/**Connects a {@link STextual} to the application. 
 	<p>A {@link Coupler} is required to supply a {@link STextual}
-	with client-specific mechanism.
+	with client-specific policy or mechanism.
 	 */
 	public static class Coupler extends Tracer implements TargetCoupler{
 		/**
@@ -47,10 +47,6 @@ final public class STextual extends TargetCore{
 		super(title);
 		if((this.coupler=coupler)==null)throw new IllegalArgumentException(
 				"Null coupler in "+Debug.info(this));
-	}
-	@Override
-	protected boolean notifiesTargeter(){
-		return true;
 	}
 	/**
 	 Sets the text value to be exposed. 

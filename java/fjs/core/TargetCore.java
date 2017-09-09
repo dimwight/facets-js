@@ -7,10 +7,10 @@ import fjs.util.Debug;
  a means of grouping other simple targets. 
  */
 public class TargetCore extends NotifyingCore implements STarget{
-	private STarget[]elements;
-	private boolean live=true,wantsFocus;
-	private final String title;
 	public static int targets;
+	private final String title;
+	private STarget[]elements;
+	private boolean live=true;
 	/**
 	 Convenience constructor that sets no child elements. 
 	 */
@@ -26,11 +26,12 @@ public class TargetCore extends NotifyingCore implements STarget{
 	 passed to {@link #setElements(STarget[])}
 	 */
 	public TargetCore(String title,STarget...elements){
-		targets++;
-		if((this.title=title)==null||title.equals(""))
-			throw new IllegalArgumentException("Null or empty title in "+Debug.info(this));
+		this.title=title;
 		if(elements!=null)setElements(elements);
+		if(title==null||title.equals(""))
+			throw new IllegalArgumentException("Null or empty title in "+Debug.info(this));
 		if(Debug.trace)Debug.traceEvent("Created "+Debug.info(this));
+		targets++;
 	}
 	/**
 	 Sets the {@link STarget} children of the {@link TargetCore}. 
@@ -42,7 +43,8 @@ public class TargetCore extends NotifyingCore implements STarget{
 	final protected void setElements(STarget[]elements){
 		if(this.elements!=null)throw new RuntimeException("Immutable elements in "
 				+Debug.info(this));
-		else if((this.elements=elements)==null)
+		this.elements=elements;
+		if((this.elements=elements)==null)
 			throw new IllegalArgumentException("Null elements in "+Debug.info(this));
 		else for(int i=0;i<elements.length;i++)
 			if(elements[i]==null)
@@ -103,9 +105,6 @@ public class TargetCore extends NotifyingCore implements STarget{
 	}
 	public void setLive(boolean live){
 		this.live=live;
-		if(false&&title.equals("P&aste")){
-			trace(".setLive: ",Debug.info(this)+": "+live+": "+isLive());
-		}
 	}
 	public String title(){
 		return title;
@@ -118,7 +117,7 @@ public class TargetCore extends NotifyingCore implements STarget{
 	<p><b>NOTE</b> This method must NOT be overridden in application code. 
 	 */
 	protected boolean notifiesTargeter(){
-		return false;
+		return true&&elements!=null;
 	}
 	@Override
 	public NotifyingType type(){
@@ -130,7 +129,6 @@ public class TargetCore extends NotifyingCore implements STarget{
 	}
 	@Override
 	public void updateState(Object update){
-		if(true)throw new RuntimeException("Not implemented in "+this);
-		
+		throw new RuntimeException("Not implemented in "+this);
 	}
 }

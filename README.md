@@ -16,23 +16,24 @@ with the admirable [JSweet](http://www.jsweet.org
 1. Tidy up `SimpleSurface.ts` import   
 1. Build and run `simple`; launch fails. 
 1. Build, run and launch `appIn`
-1. Build clean `libInclude`, tweak `main.ts`
+1. Clean and build `libInclude`
 1. Build, run and launch `appInclude`
-1. Build clean `libExclude`, tweak `main.ts`
+1. Build `libExclude`
 1. Build and launch `appExclude`; run fails with `Facets is not defined`. 
 
  ```
 //in/js/SimpleSurface.ts
  
-import * as Facets from './globals/Facets';
+import * as Globals from './globals/Globals';
 
- //rollup.config.js
+//rollup.config.js
  
 import resolve from 'rollup-plugin-node-resolve';
 import commonjs from 'rollup-plugin-commonjs';
 import sourcemaps from 'rollup-plugin-sourcemaps';
 
 const base = {
+  format: 'iife',
   sourceMap: true,
   plugins: [
     resolve(),
@@ -41,7 +42,6 @@ const base = {
   ]
 };
 const app = Object.assign({}, base, {
-  format: 'iife',
   dest: 'public/index.js',
   moduleName: 'unused',
 });
@@ -60,7 +60,6 @@ const libInclude = Object.assign({}, lib, {
   dest: 'node_modules/Facets.js',
 });
 const libExclude= Object.assign({}, lib, {
-  format: 'iife',
   dest: 'public/Facets.js',
 });
 const appInclude= Object.assign({}, appIn, {
