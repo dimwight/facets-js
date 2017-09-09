@@ -22,7 +22,7 @@ const appIn = Object.assign({}, app, {
   entry: 'src/main.js',
 });
 const lib = Object.assign({}, base, {
-  entry: (false ? 'src/lib/Facets.js' : 'in/fjs/globals/Globals.js'),
+  entry: 'in/fjs/globals/Globals.js',
   moduleName: 'Facets',
 });
 const libInclude = Object.assign({}, lib, {

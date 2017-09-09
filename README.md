@@ -8,7 +8,7 @@ with the admirable [JSweet](http://www.jsweet.org
 - Java based on the [core of the original Facets](https://github.com/dimwight/Facets/tree/master/Facets/facets/core)
 - Output bundled using [Rollup](https://rollupjs.org 
 )
-- Stupidly simple API in ES5/IIFE 
+- Stupidly simple API in ES6/IIFE 
 - Demo React apps planned using [Blueprint](http://blueprintjs.com/)
 ### Getting to libs
 1. `globals/Globals.java`
@@ -18,7 +18,7 @@ with the admirable [JSweet](http://www.jsweet.org
 1. Build, run and launch `appIn`
 1. Clean and build `libInclude`
 1. Build, run and launch `appInclude`
-1. Build `libExclude`
+1. Clean and build `libExclude`
 1. Build and launch `appExclude`; run fails with `Facets is not defined`. 
 
  ```
