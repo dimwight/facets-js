@@ -2,8 +2,9 @@ import * as fs from 'fs';
 const gone=[],missing=[];
 [
   // 'in/fjs/globals/Facets.js',
-  'public/FacetsPublic.js',
-  'node_modules/FacetsNode.js'
+  // 'node_modules/Facets.js',
+  'src/Facets.js',
+  'public/Facets.js',
 ].forEach((path)=>{
     if(fs.existsSync(path)){
       gone.push(path);

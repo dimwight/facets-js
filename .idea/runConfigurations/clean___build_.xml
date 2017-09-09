@@ -1,11 +1,18 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Build and launch" type="JavascriptDebugType" factoryName="JavaScript Debug" singleton="false" uri="http://localhost:63342/facets-js/public/index.html">
+  <configuration default="false" name="clean + build " type="js.build_tools.npm" factoryName="npm">
+    <package-json value="$PROJECT_DIR$/package.json" />
+    <command value="run" />
+    <scripts>
+      <script value="build" />
+    </scripts>
+    <node-interpreter value="project" />
+    <envs />
     <method>
       <option name="NpmBeforeRunTask" enabled="true">
         <package-json value="$PROJECT_DIR$/package.json" />
         <command value="run" />
         <scripts>
-          <script value="build" />
+          <script value="clean" />
         </scripts>
         <node-interpreter value="project" />
         <envs />

@@ -24,24 +24,24 @@ const appIn = Object.assign({}, app, {
   moduleName: 'unused',
 });
 const lib = Object.assign({}, base, {
-  entry: (true?'in/fjs/globals/Globals.js':'src/lib/Facets.js'),
+  entry: (false ? 'src/lib/Facets.js' : 'in/fjs/globals/Globals.js'),
   moduleName: 'Facets',
 });
 const libInclude = Object.assign({}, lib, {
   format: 'es',
-  dest: 'node_modules/FacetsNode.js',
+  dest: 'node_modules/Facets.js',
 });
 const libExclude= Object.assign({}, lib, {
   format: 'iife',
-  dest: 'public/FacetsPublic.js',
+  dest: 'public/Facets.js',
 });
 const appInclude= Object.assign({}, appIn, {
 });
-const appExclude= Object.assign({}, appInclude, {
-  external: ['Facets.js'],
-  globals: {'Facets.js': lib.moduleName,}
+const appExclude= Object.assign({}, appIn, {
+  external: ['Facets'],
+  globals: {'Facets': lib.moduleName,}
 });
 
-const bundle = appIn; //simple|appIn|libInclude|appInclude|libExclude|appExclude
+const bundle = appExclude; //simple|appIn|libInclude|appInclude|libExclude|appExclude
 console.log('Bundling: entry='+bundle.entry+' dest='+bundle.dest + ' format='+bundle.format);
 export default bundle;

@@ -1,11 +1,9 @@
-import * as ff from '../in/fjs/globals/Globals'; //libInclude
-// import * as ff from 'Facets'; //libInclude
-// import * as  ff  from './Facets.js'; //libExclude
-// import  * as  ff   from './lib/Facets';
+// import * as ff from '../in/fjs/globals/Globals'; //appIn
+import * as Facets from 'Facets'; //appInclude appExclude
 
 const TITLE_FIRST = 'First', TITLE_SECOND = 'Second';
 
-const app : any = ff.newInstance(true);
+const app : any = Facets.newInstance(true);
 
 function newTargetTree(){
   const text='Some text';

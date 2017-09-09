@@ -16,8 +16,10 @@ with the admirable [JSweet](http://www.jsweet.org
 1. Tidy up `SimpleSurface.ts` import   
 1. Build and run `simple`
 1. Build, run and launch `appIn`
-1. Build clean `libInclude`, build, run and launch`appInclude`
-1. Build `libExclude`, build and launch `appExclude`; 
+1. Build clean `libInclude`, tweak `App.ts`
+1. Build, run and launch `appInclude`
+1. Build clean `libExclude`, tweak `App.ts`
+1. Build and launch `appExclude`; 
 run fails with _Facets is not defined_
 
  ```
