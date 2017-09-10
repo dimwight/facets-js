@@ -6,15 +6,15 @@ function trace(text){
 const TITLE_FIRST = 'First', TITLE_SECOND = 'Second';
 const app : Facets = Facets.newInstance(true);
 
-function newTargetTree(){
+function newTargetTree():Facets.Target{
   const text='Some text';
   trace('.newTargetTree: text='+text);
-  const coupler:Facets={
+  const coupler:Facets.TextualCoupler={
     passText:text,
     targetStateUpdated : (title) => trace("coupler.stateUpdated: title=" + title)
   };
-  const first:any=app.newTextualTarget(TITLE_FIRST,coupler as Facets.TextualCoupler),
-    second:any=app.newTextualTarget(TITLE_SECOND,coupler as Facets.TextualCoupler);
+  const first:Facets.Target=app.newTextualTarget(TITLE_FIRST,coupler),
+    second:Facets.Target=app.newTextualTarget(TITLE_SECOND,coupler);
   return app.newTargetsGroup('Textuals',first,second);
 }
 function buildLayout(){
