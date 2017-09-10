@@ -74,17 +74,18 @@ console.log('Bundling: entry='+bundle.entry+' dest='+bundle.dest + ' format='+bu
 export default bundle;
 
 node_modules/@types/facets-js/index.d.ts:
-export as namespace FacetsJs;
-export = FacetsJs;
+export as namespace Facets;
+export = Facets;
 
-declare namespace FacetsJs{
+export default Facets;
+
+declare namespace Facets{
   /**
    Marker interface
    */
   interface Target{}
   interface TargetCoupler {
     targetStateUpdated: (p1: string, p2: any) => void;
-    constructor();
   }
   /**
   Connects a textual target with client code.
@@ -93,17 +94,17 @@ declare namespace FacetsJs{
     /**
      Sets initial state of the textual.
      */
-    passText?:string;
+    passText:string;
     isValidText?:(p1:string,p2:string)=>boolean;
     getText?:(p1:string)=>string;
-    updateInterim?:(p1:string)=>boolean;
+    updateInterim?:(p1:string)=>void;
   }
   interface IndexingCoupler extends TargetCoupler{
     passIndexables:any[];
     passIndex:number;
   }
+  function newInstance(trace:boolean):Facets;
   interface Facets{
-    newInstance():Facets;
     updatedTarget(target:any,c:TargetCoupler):void;
     newIndexingTarget(title:string,c:IndexingCoupler):Target;
     /**
