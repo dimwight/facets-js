@@ -3,7 +3,7 @@ import commonjs from 'rollup-plugin-commonjs';
 import sourcemaps from 'rollup-plugin-sourcemaps';
 
 const base = {
-  format: 'iife',
+  format: 'umd',
   sourceMap: true,
   plugins: [
     resolve(),
@@ -39,6 +39,6 @@ const appExclude= Object.assign({}, appIn, {
   globals: {'Facets': lib.moduleName,}
 });
 
-const bundle = libInclude; //simple|appIn|libInclude|appInclude|libExclude|appExclude
+const bundle = appExclude; //simple|appIn|libInclude|appInclude|libExclude|appExclude
 console.log('Bundling: entry='+bundle.entry+' dest='+bundle.dest + ' format='+bundle.format);
 export default bundle;

@@ -7,4 +7,4 @@ src/**/*.js.map
 tool/*.js
 .idea/workspace.xml
 in/
-!/node_modules/@types/facets/Facets.d.ts
+!/node_modules/@types/facets-js/index.d.ts
