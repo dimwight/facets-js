@@ -72,3 +72,51 @@ const appExclude= Object.assign({}, appIn, {
 const bundle = appExclude; //simple|appIn|libInclude|appInclude|libExclude|appExclude
 console.log('Bundling: entry='+bundle.entry+' dest='+bundle.dest + ' format='+bundle.format);
 export default bundle;
+
+node_modules/@types/facets-js/index.d.ts:
+export as namespace FacetsJs;
+export = FacetsJs;
+
+declare namespace FacetsJs{
+  /**
+   Marker interface
+   */
+  interface Target{}
+  interface TargetCoupler {
+    targetStateUpdated: (p1: string, p2: any) => void;
+    constructor();
+  }
+  /**
+  Connects a textual target with client code.
+   */
+  interface TextualCoupler extends TargetCoupler{
+    /**
+     Sets initial state of the textual.
+     */
+    passText?:string;
+    isValidText?:(p1:string,p2:string)=>boolean;
+    getText?:(p1:string)=>string;
+    updateInterim?:(p1:string)=>boolean;
+  }
+  interface IndexingCoupler extends TargetCoupler{
+    passIndexables:any[];
+    passIndex:number;
+  }
+  interface Facets{
+    newInstance():Facets;
+    updatedTarget(target:any,c:TargetCoupler):void;
+    newIndexingTarget(title:string,c:IndexingCoupler):Target;
+    /**
+     *
+     * @param {string} title
+     * @param {Facets.TextualCoupler} c
+     * @returns {Facets.Target}
+     */
+    newTextualTarget(title:string,c:TextualCoupler):Target;
+    newTargetsGroup(title:string,...members:Target[]):Target;
+    buildTargeterTree(targets:any):void;
+    attachFacet(title:string,facetUpdated:any):void;
+    updateTargetState(title:string,update:any):void;
+    getTargetState(title:string):any;
+  }
+}

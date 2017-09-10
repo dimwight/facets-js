@@ -1,20 +1,20 @@
-import * as Facets from 'facets-js';
+import FacetsJs from 'facets-js';
 
 function trace(text){
   console.info('App > ' +text);
 }
 const TITLE_FIRST = 'First', TITLE_SECOND = 'Second';
-const app : Facets = Facets.newInstance(true);
+const app : FacetsJs.Facets = FacetsJs.Facets.newInstance(true);
 
-function newTargetTree():Facets.Target{
+function newTargetTree():FacetsJs.Target{
   const text='Some text';
   trace('.newTargetTree: text='+text);
-  const coupler:Facets.TextualCoupler={
+  const coupler:FacetsJs.TextualCoupler={
     passText:text,
     targetStateUpdated : (title) => trace("coupler.stateUpdated: title=" + title)
   };
-  const first:Facets.Target=app.newTextualTarget(TITLE_FIRST,coupler),
-    second:Facets.Target=app.newTextualTarget(TITLE_SECOND,coupler);
+  const first:FacetsJs.Target=app.newTextualTarget(TITLE_FIRST,coupler),
+    second:FacetsJs.Target=app.newTextualTarget(TITLE_SECOND,coupler);
   return app.newTargetsGroup('Textuals',first,second);
 }
 function buildLayout(){
