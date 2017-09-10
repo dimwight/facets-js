@@ -1,4 +1,4 @@
-import * as Facets from 'Facets';
+import * as Facets from 'facets-js';
 
 function trace(text){
   console.info('App > ' +text);
@@ -19,8 +19,7 @@ function newTargetTree():Facets.Target{
 }
 function buildLayout(){
   trace('.buildLayout');
-  app.attachFacet(TITLE_FIRST,
-      update=>trace('Facet updating with '+update));
+  app.attachFacet(TITLE_FIRST,update=>trace('Facet updating with '+update));
 }
 trace('Building surface');
 app.buildTargeterTree(newTargetTree());

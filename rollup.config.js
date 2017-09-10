@@ -27,7 +27,7 @@ const lib = Object.assign({}, base, {
 });
 const libInclude = Object.assign({}, lib, {
   format: 'es',
-  dest: 'node_modules/Facets.js',
+  dest: 'node_modules/facets-js/index.js',
 });
 const libExclude= Object.assign({}, lib, {
   dest: 'public/Facets.js',
