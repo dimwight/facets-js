@@ -1,10 +1,10 @@
-import Facets from 'facets-js';
+import * as Facets from 'facets-js';
 
 function trace(text){
   console.info('App > ' +text);
 }
 const TITLE_FIRST = 'First', TITLE_SECOND = 'Second';
-const core : Facets.Facets = Facets.newInstance(true);
+const core : Facets = Facets.newInstance(true);
 
 function newTargetTree():Facets.Target{
   const text='Some text';

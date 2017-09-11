@@ -3,7 +3,7 @@ import commonjs from 'rollup-plugin-commonjs';
 import sourcemaps from 'rollup-plugin-sourcemaps';
 
 const base = {
-  format: 'umd',
+  format: 'iife',
   sourceMap: true,
   plugins: [
     resolve(),
@@ -35,8 +35,8 @@ const libExclude= Object.assign({}, lib, {
 const appInclude= Object.assign({}, appIn, {
 });
 const appExclude= Object.assign({}, appIn, {
-  external: ['Facets'],
-  globals: {'Facets': lib.moduleName,}
+  external: ['facets-js'],
+  globals: {'facets-js': lib.moduleName,}
 });
 
 const bundle = appExclude; //simple|appIn|libInclude|appInclude|libExclude|appExclude

@@ -15,9 +15,11 @@ with the admirable [JSweet](http://www.jsweet.org
 2. Clean `ts/` and copy `ts/fjs/` to `ws-in`
 1. Tidy up `SimpleSurface.ts` import   
 1. Build and run `simple`; launch fails. 
-1. Build, run and launch `appIn`
+1. ??Build, run and launch `appIn` 
+
 1. Clean and build `libInclude`
-1. Build, run and launch `appInclude`
+1. Build, run and launch `appInclude` with 
+`import * as Facets from 'facets-js';`
 1. Clean and build `libExclude`
 1. Build and launch `appExclude`; run fails with `Facets is not defined`. 
 
