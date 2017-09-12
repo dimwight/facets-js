@@ -34,11 +34,15 @@ import commonjs from 'rollup-plugin-commonjs';
 import sourcemaps from 'rollup-plugin-sourcemaps';
 
 const base = {
-  format: 'iife',
+  format: true?'iife':'umd',
   sourceMap: true,
   plugins: [
     resolve(),
-    commonjs(),
+    commonjs({
+      namedExports: {
+        'node_modules/facets-js/index.js': [ 'Facets' ]
+      }
+    }),
     sourcemaps()
   ]
 };

@@ -14,8 +14,8 @@ function newTargetTree():Facets.Target{
     targetStateUpdated : (title) => trace("coupler.stateUpdated: title=" + title),
     updateInterim:()=>false,
   };
-  const first=core.newTextualTarget(TITLE_FIRST,coupler),
-    second=core.newTextualTarget(TITLE_SECOND,coupler);
+  const first:Facets.Target=core.newTextualTarget(TITLE_FIRST,coupler),
+    second:Facets.Target=core.newTextualTarget(TITLE_SECOND,coupler);
   return core.newTargetsGroup('Textuals',first,second);
 }
 function buildLayout(){

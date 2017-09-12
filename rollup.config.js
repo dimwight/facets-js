@@ -3,11 +3,15 @@ import commonjs from 'rollup-plugin-commonjs';
 import sourcemaps from 'rollup-plugin-sourcemaps';
 
 const base = {
-  format: 'iife',
+  format: true?'iife':'umd',
   sourceMap: true,
   plugins: [
     resolve(),
-    commonjs(),
+    commonjs({
+      namedExports: {
+        'node_modules/facets-js/index.js': [ 'Facets' ]
+      }
+    }),
     sourcemaps()
   ]
 };
@@ -39,6 +43,6 @@ const appWeb= Object.assign({}, main, {
   globals: {'facets-js': lib.moduleName,}
 });
 
-const bundle = appNode; //simple|libNode|appNode|libWeb|appWeb
+const bundle = appWeb; //simple|libNode|appNode|libWeb|appWeb
 console.log('Bundling: entry='+bundle.entry+' dest='+bundle.dest + ' format='+bundle.format);
 export default bundle;
