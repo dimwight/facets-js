@@ -18,27 +18,27 @@ const app = Object.assign({}, base, {
 const simple = Object.assign({}, app, {
   entry: 'in/fjs/SimpleSurface.js',
 });
-const appIn = Object.assign({}, app, {
+const main = Object.assign({}, app, {
   entry: 'src/main.js',
 });
 const lib = Object.assign({}, base, {
-  entry: 'in/fjs/globals/Globals.js',
+  entry: 'in/fjs/globals/' +(false?'Facets.js':'Globals.js'),
   moduleName: 'Facets',
 });
-const libInclude = Object.assign({}, lib, {
+const libNode = Object.assign({}, lib, {
   format: 'es',
   dest: 'node_modules/facets-js/index.js',
 });
-const libExclude= Object.assign({}, lib, {
+const libWeb= Object.assign({}, lib, {
   dest: 'public/Facets.js',
 });
-const appInclude= Object.assign({}, appIn, {
+const appNode= Object.assign({}, main, {
 });
-const appExclude= Object.assign({}, appIn, {
+const appWeb= Object.assign({}, main, {
   external: ['facets-js'],
   globals: {'facets-js': lib.moduleName,}
 });
 
-const bundle = appExclude; //simple|appIn|libInclude|appInclude|libExclude|appExclude
+const bundle = appWeb; //simple|libNode|appNode|libWeb|appWeb
 console.log('Bundling: entry='+bundle.entry+' dest='+bundle.dest + ' format='+bundle.format);
 export default bundle;

@@ -12,19 +12,18 @@ with the admirable [JSweet](http://www.jsweet.org
 - Demo React apps planned using [Blueprint](http://blueprintjs.com/)
 ### Getting to libs
 1. `globals/Globals.java`
-2. Clean `ts/` and copy `ts/fjs/` to `ws-in`
-1. Tidy up `SimpleSurface.ts` import   
-1. Build and run `simple`; launch fails. 
-1. ??Build, run and launch `appIn` 
-
-1. Clean and build `libInclude`
-1. Build, run and launch `appInclude` with 
+2. Clean `ts/` and copy `ts/Facets/` to `ws-in`
+1. Tidy up _SimpleSurface.ts_ import   
+1. Build and run `simple`; launch fails.
+1. ??Move `newInstance` into _SimpleSurface.ts_ 
+1. Clean and build `libNode`
+1. Build, run and launch `appNode` with 
 `import * as Facets from 'facets-js';`
-1. Clean and build `libExclude`
-1. Build and launch `appExclude`; run fails with `Facets is not defined`. 
+1. (?Clean and) build `libWeb`
+1. Build and launch `appWeb`; run fails with `Facets is not defined`. 
 
  ```
-//in/js/SimpleSurface.ts
+//in/Facets/SimpleSurface.ts
  
 import * as Globals from './globals/Globals';
 
@@ -50,28 +49,27 @@ const app = Object.assign({}, base, {
 const simple = Object.assign({}, app, {
   entry: 'in/fjs/SimpleSurface.js',
 });
-const appIn = Object.assign({}, app, {
+const main = Object.assign({}, app, {
   entry: 'src/main.js',
 });
 const lib = Object.assign({}, base, {
-  entry: (false ? 'src/lib/Facets.js' : 'in/fjs/globals/Globals.js'),
+  entry: 'in/fjs/globals/' +(false?'Facets.js':'Globals.js'),
   moduleName: 'Facets',
 });
-const libInclude = Object.assign({}, lib, {
+const libNode = Object.assign({}, lib, {
   format: 'es',
-  dest: 'node_modules/Facets.js',
+  dest: 'node_modules/facets-js/index.js',
 });
-const libExclude= Object.assign({}, lib, {
+const libWeb= Object.assign({}, lib, {
   dest: 'public/Facets.js',
 });
-const appInclude= Object.assign({}, appIn, {
+const appNode= Object.assign({}, main, {
 });
-const appExclude= Object.assign({}, appIn, {
-  external: ['Facets'],
-  globals: {'Facets': lib.moduleName,}
+const appWeb= Object.assign({}, main, {
+  external: ['facets-js'],
+  globals: {'facets-js': lib.moduleName,}
 });
 
-const bundle = appExclude; //simple|appIn|libInclude|appInclude|libExclude|appExclude
+const bundle = appWeb; //simple|libNode|appNode|libWeb|appWeb
 console.log('Bundling: entry='+bundle.entry+' dest='+bundle.dest + ' format='+bundle.format);
 export default bundle;
-

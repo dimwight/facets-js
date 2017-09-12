@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 const gone=[],missing=[];
 [
-  // 'in/fjs/globals/Facets.js',
+  // 'in/Facets/globals/Facets.js',
   'node_modules/facets-js/index.js',
   'src/Facets.js',
   'public/Facets.js',
