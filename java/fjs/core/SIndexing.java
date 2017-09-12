@@ -1,14 +1,14 @@
-package fjs.core;
+package Facets.core;
 import java.util.Arrays;
 import java.util.HashSet;
-import fjs.util.Debug;
-import fjs.util.Titled;
+import Facets.util.Debug;
+import Facets.util.Titled;
 /**
 {@link STarget} representing an index into a list of items. 
 <p>{@link SIndexing} represents a list of items to be exposed 
   in the surface, together with an index 
   into that list; application-specific mechanism and policy can be defined in 
-	a {@link fjs.core.SIndexing.Coupler}. 
+	a {@link Facets.core.SIndexing.Coupler}.
  */
 final public class SIndexing extends TargetCore{
 	/**Allows an indexing to be functionally empty. */
@@ -40,7 +40,7 @@ final public class SIndexing extends TargetCore{
 		<code>indexables</code>:
 		<ul>
 		<li>if they are {@link String}s, returns them</li> 
-		<li>if they are {@link fjs.util.Titled}s, returns their <code>title</code>  properties</li> 
+		<li>if they are {@link Facets.util.Titled}s, returns their <code>title</code>  properties</li>
 		<li>otherwise, returns their <code>toString</code> properties</li> 
 		<li>if they the {@link SIndexing#NO_INDEXABLES} constant, returns an 
 		empty {@link String}[].

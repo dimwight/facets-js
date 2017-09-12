@@ -14,7 +14,7 @@ with the admirable [JSweet](http://www.jsweet.org
 1. `globals/Globals.java`
 2. Clean `ts/` and copy `ts/Facets/` to `ws-in`
 1. Tidy up _SimpleSurface.ts_ import   
-1. Build and run `simple`; launch fails.
+1. Build, run and launch `simple`.
 1. ??Move `newInstance` into _SimpleSurface.ts_ 
 1. Clean and build `libNode`
 1. Build, run and launch `appNode` with 

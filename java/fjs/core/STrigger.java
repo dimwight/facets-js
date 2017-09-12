@@ -1,11 +1,11 @@
-package fjs.core;
-import fjs.util.Debug;
+package Facets.core;
+import Facets.util.Debug;
 /**
 {@link STarget} representing an application process. 
 <p>{@link STrigger} represents an application process  
   to be exposed to user view and control in the surface; additional 
   mechanism must be defined in a 
-  {@link fjs.core.STrigger.Coupler}. 
+  {@link Facets.core.STrigger.Coupler}.
  */
 final public class STrigger extends TargetCore{
 	/**

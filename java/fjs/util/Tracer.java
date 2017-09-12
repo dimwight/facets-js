@@ -1,4 +1,4 @@
-package fjs.util;
+package Facets.util;
 import java.util.Collection;
 /**
 Utility superclass that can issue trace messages.

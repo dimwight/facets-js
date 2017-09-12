@@ -1,6 +1,6 @@
-package fjs.core;
-import fjs.util.Debug;
-import fjs.util.Titled;
+package Facets.core;
+import Facets.util.Debug;
+import Facets.util.Titled;
 /**
 Extends {@link TargetCore} by framing 
   application content to be exposed directly to facets. 

@@ -1,4 +1,4 @@
-package fjs.core;
+package Facets.core;
 enum NotifyingType{
 	Target,
 	Targeter,

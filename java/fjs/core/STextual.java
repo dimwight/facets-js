@@ -1,11 +1,11 @@
-package fjs.core;
-import fjs.util.Debug;
-import fjs.util.Tracer;
+package Facets.core;
+import Facets.util.Debug;
+import Facets.util.Tracer;
 /**
 {@link STarget} representing a textual value. 
 <p> {@link STextual} represents a text value to be 
   exposed to in the surface; application-specific 
-  mechanism can be defined in a {@link fjs.core.STextual.Coupler}. 
+  mechanism can be defined in a {@link Facets.core.STextual.Coupler}.
  */
 final public class STextual extends TargetCore{
 	/**Connects a {@link STextual} to the application. 

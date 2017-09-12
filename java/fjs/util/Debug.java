@@ -1,4 +1,4 @@
-package fjs.util;
+package Facets.util;
 /**
 Utilities for use during development. 
  */

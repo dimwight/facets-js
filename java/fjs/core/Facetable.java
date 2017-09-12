@@ -1,4 +1,4 @@
-package fjs.core;
+package Facets.core;
 
 /**
 Application element that may have an attached facet. 

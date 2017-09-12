@@ -1,4 +1,4 @@
-package fjs.core;
+package Facets.core;
 /**
 Connects a {@link SToggling} to the application. 
 <p>A {@link TogglingCoupler} supplies application-specific mechanism 

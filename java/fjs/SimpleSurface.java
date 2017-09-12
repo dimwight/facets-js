@@ -1,8 +1,8 @@
-package fjs;
-import fjs.globals.Facets;
-import fjs.globals.Globals;
-import fjs.util.Titled;
-import fjs.util.Tracer;
+package Facets;
+import Facets.globals.Facets;
+import Facets.globals.Globals;
+import Facets.util.Titled;
+import Facets.util.Tracer;
 public abstract class SimpleSurface extends Tracer implements Titled{
 	public enum FacetTest{Textual,Indexing}
 	protected final FacetTest test;

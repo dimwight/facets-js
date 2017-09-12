@@ -1,4 +1,4 @@
-package fjs.core;
+package Facets.core;
 public final class EmptyTarget extends TargetCore{
 	EmptyTarget(String title){
 		super(title);

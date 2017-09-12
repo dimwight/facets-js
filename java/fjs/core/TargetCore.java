@@ -1,5 +1,5 @@
-package fjs.core;
-import fjs.util.Debug;
+package Facets.core;
+import Facets.util.Debug;
 /**
  Implements {@link STarget}. 
  <p>{@link TargetCore} is the core implementation of {@link STarget}, 
@@ -56,7 +56,7 @@ public class TargetCore extends NotifyingCore implements STarget{
 	 <code>lazyElements</code>. 
 	 <p>Each call to this method also sets the {@link TargetCore} 
 	 as notification monitor of any element that is not a {@link 
-	 fjs.core.SFrameTarget}. 
+	 Facets.core.SFrameTarget}.
 	  
 	 */
 	final public STarget[]elements(){

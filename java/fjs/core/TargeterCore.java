@@ -1,14 +1,14 @@
-package fjs.core;
+package Facets.core;
 import facets.core.superficial.Notifying.Impact;
 import java.util.ArrayList;
 import java.util.List;
-import fjs.util.Debug;
-import fjs.util.Util;
+import Facets.util.Debug;
+import Facets.util.Util;
 /**
 Implements {@link STargeter}. 
 <p>{@link TargeterCore} is a public implementation of {@link STargeter} 
   to provide for extension in other packages; instances are generally 
-  created by an implementation of {@link fjs.core.TargetCore#newTargeter()}. 
+  created by an implementation of {@link Facets.core.TargetCore#newTargeter()}.
 */
 public class TargeterCore extends NotifyingCore implements STargeter{
 	public static List<STargeter>targeters=new ArrayList();

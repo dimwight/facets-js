@@ -1,4 +1,4 @@
-package fjs.core;
+package Facets.core;
 /**
 Application element targetable on a {@link STarget}. 
 <p>{@link SRetargetable} captures two distinct types of retargeting: 

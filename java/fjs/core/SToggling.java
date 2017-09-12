@@ -1,10 +1,10 @@
-package fjs.core;
+package Facets.core;
 
 /**
 {@link STarget} representing a Boolean value. 
 <p>{@link SToggling} represents a Boolean value to 
   be exposed to user view and control in the surface; application-specific 
-  mechanism can be defined in a {@link fjs.core.TogglingCoupler}. 
+  mechanism can be defined in a {@link Facets.core.TogglingCoupler}.
  */
 final public class SToggling extends TargetCore{
 	public final TogglingCoupler coupler;
@@ -30,7 +30,7 @@ final public class SToggling extends TargetCore{
 	}
 	/**
 	Sets the Boolean state. 
-	<p> Subsequently calls {@link fjs.core.TogglingCoupler#stateSet(SToggling)}.
+	<p> Subsequently calls {@link Facets.core.TogglingCoupler#stateSet(SToggling)}.
 	*/
 	public void set(boolean state){
 		this.state=state;

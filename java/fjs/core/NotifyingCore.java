@@ -1,6 +1,6 @@
-package fjs.core;
-import fjs.util.Debug;
-import fjs.util.Tracer;
+package Facets.core;
+import Facets.util.Debug;
+import Facets.util.Tracer;
 /**
 Core implementation of key interfaces. 
 <p>{@link NotifyingCore} is the base class of both the {@link STarget} and
