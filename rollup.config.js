@@ -7,11 +7,7 @@ const base = {
   sourceMap: true,
   plugins: [
     resolve(),
-    commonjs({
-      namedExports: {
-        'node_modules/facets-js/index.js': [ 'Facets' ]
-      }
-    }),
+    commonjs(),
     sourcemaps()
   ]
 };

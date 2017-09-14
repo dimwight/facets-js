@@ -13,9 +13,9 @@ with the admirable [JSweet](http://www.jsweet.org
 ### Getting to libs
 1. `globals/Globals.java`
 2. Clean `ts/` and copy `ts/Facets/` to `ws-in`
-1. Tidy up _SimpleSurface.ts_ import   
+1. [Tidy up _SimpleSurface.ts_ import   
 1. Build, run and launch `simple`.
-1. ??Move `newInstance` into _SimpleSurface.ts_ 
+1. ??Move `newInstance` into _SimpleSurface.ts_] 
 1. Clean and build `libNode`
 1. Build, run and launch `appNode` with 
 `import * as Facets from 'facets-js';`
