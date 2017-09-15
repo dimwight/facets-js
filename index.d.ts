@@ -50,6 +50,9 @@ export {Facets};
     passIndexables:any[];
     passIndex:number;
   }
+  interface TogglingCoupler extends TargetCoupler {
+    passSet: boolean;
+  }
   /**
    * Constructs a new Superficial application core.
    * @param {boolean} trace
@@ -69,6 +72,7 @@ export {Facets};
      * @returns textual {Facets.Target}
      */
     newTextualTarget(title:string,coupler:TextualCoupler):Target;
+    newTogglingTarget(title: string, c: TogglingCoupler): Target;
     /**
      *
      * @param {string} title for the target
@@ -99,5 +103,7 @@ export {Facets};
      * @returns {TargetState} the state
      */
     getTargetState(title:string):TargetState;
+    setTargetLive(title: string, live: boolean): void;
+    isTargetLive(title: string): boolean;
   // }
 }
