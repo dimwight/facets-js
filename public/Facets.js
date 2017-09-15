@@ -110,8 +110,8 @@ class Objects {
             return o1 === o2;
         } })(spacer, "\n");
         let at = 0;
-        for (let index144 = 0; index144 < items.length; index144++) {
-            let item = items[index144];
+        for (let index136 = 0; index136 < items.length; index136++) {
+            let item = items[index136];
             /* add */ (list.push((item == null ? "null" : trim ? item.toString().trim() : item) + (++at === items.length ? "" : spacer)) > 0);
         }
         return ('[' + list.join(', ') + ']');
@@ -1182,11 +1182,12 @@ class Facets extends Tracer {
         this.addTitleTargeters(this.targeterTree);
     }
     addTitleTargeters(t) {
-        let then = (this.titleTargeters[t.title()] = t);
+        let title = t.title();
+        let then = (this.titleTargeters[title] = t);
         {
-            let array143 = t.elements();
-            for (let index142 = 0; index142 < array143.length; index142++) {
-                let e = array143[index142];
+            let array135 = t.elements();
+            for (let index134 = 0; index134 < array135.length; index134++) {
+                let e = array135[index134];
                 this.addTitleTargeters(e);
             }
         }
