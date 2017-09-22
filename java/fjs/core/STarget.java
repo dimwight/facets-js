@@ -1,6 +1,6 @@
-package Facets.core;
+package fjs.core;
 import java.lang.reflect.Array;
-import Facets.util.Debug;
+import fjs.util.Debug;
 /**
 Superfical target. 
 <p>{@link STarget} represents an application element to one or more 

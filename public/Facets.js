@@ -110,8 +110,8 @@ class Objects {
             return o1 === o2;
         } })(spacer, "\n");
         let at = 0;
-        for (let index136 = 0; index136 < items.length; index136++) {
-            let item = items[index136];
+        for (let index143 = 0; index143 < items.length; index143++) {
+            let item = items[index143];
             /* add */ (list.push((item == null ? "null" : trim ? item.toString().trim() : item) + (++at === items.length ? "" : spacer)) > 0);
         }
         return ('[' + list.join(', ') + ']');
@@ -159,7 +159,7 @@ class Debug {
     static info(o) {
         if (o == null)
             return "null";
-        if (typeof o === 'boolean')
+        else if (typeof o === 'boolean')
             return o.toString();
         else if (typeof o === 'number')
             return new String(o).toString();
@@ -168,7 +168,14 @@ class Debug {
             let length = text.length;
             return text.substring(0, Math.min(length, 60)) + ("");
         }
-        return ((c => c["__class"] ? c["__class"].substring(c["__class"].lastIndexOf('.') + 1) : c["name"].substring(c["name"].lastIndexOf('.') + 1))(o.constructor)) + ((o != null && (o["__interfaces"] != null && o["__interfaces"].indexOf("fjs.util.Identified") >= 0 || o.constructor != null && o.constructor["__interfaces"] != null && o.constructor["__interfaces"].indexOf("fjs.util.Identified") >= 0)) ? (" #" + o.identity()) : "") + ((o != null && (o["__interfaces"] != null && o["__interfaces"].indexOf("fjs.util.Titled") >= 0 || o.constructor != null && o.constructor["__interfaces"] != null && o.constructor["__interfaces"].indexOf("fjs.util.Titled") >= 0)) ? (" " + o.title()) : "");
+        let name = (c => c["__class"] ? c["__class"].substring(c["__class"].lastIndexOf('.') + 1) : c["name"].substring(c["name"].lastIndexOf('.') + 1))(o.constructor);
+        let id = "";
+        let title = "";
+        if (o != null && (o["__interfaces"] != null && o["__interfaces"].indexOf("fjs.util.Identified") >= 0 || o.constructor != null && o.constructor["__interfaces"] != null && o.constructor["__interfaces"].indexOf("fjs.util.Identified") >= 0))
+            id = " #" + o.identity();
+        if (o != null && (o["__interfaces"] != null && o["__interfaces"].indexOf("fjs.util.Titled") >= 0 || o.constructor != null && o.constructor["__interfaces"] != null && o.constructor["__interfaces"].indexOf("fjs.util.Titled") >= 0))
+            title = " \'" + o.title() + "\'";
+        return name + id + title;
     }
     /**
      * Returns an array of <code>Debug.info</code>s.
@@ -228,7 +235,7 @@ class Tracer {
         return new Tracer.TracerTopped(top);
     }
     trace$java_lang_String$java_lang_Object(msg, o) {
-        this.traceOutput("" + msg + this.traceObjectText(o));
+        this.traceOutput(msg + Debug.info(o));
     }
     /**
      * Outputs complete trace messages to console or elsewhere.
@@ -250,7 +257,7 @@ class Tracer {
             console.error(t.message, t);
         }
         else
-            this.traceOutput(msg + this.traceObjectText(t));
+            this.traceOutput(msg + Debug.info(t));
     }
     trace(msg, t, stack) {
         if (((typeof msg === 'string') || msg === null) && ((t != null && (t["__classes"] && t["__classes"].indexOf("java.lang.Throwable") >= 0) || t != null && t instanceof Error) || t === null) && ((typeof stack === 'boolean') || stack === null)) {
@@ -293,9 +300,6 @@ class Tracer {
         else
             throw new Error('invalid overload');
     }
-    traceObjectText(o) {
-        return Debug.info(o);
-    }
     traceArrayText(array) {
         return Util.arrayPrintString(array);
     }
@@ -334,14 +338,20 @@ Tracer["__interfaces"] = ["fjs.util.Identified"];
  * {@link STargeter} class hierarchies.
  * <p>Declared <code>public</code> for documentation purposes only; client code should
  * use the concrete subclass hierarchies.
- * @extends Tracer
+ * @param {string} title
  * @class
+ * @extends Tracer
  */
 class NotifyingCore extends Tracer {
-    constructor() {
+    constructor(title) {
         super();
         /*private*/ this.__identity = NotifyingCore.identities++;
+        this.__title = null;
         this.__notifiable = null;
+        this.__title = title;
+    }
+    title() {
+        return this.__title;
     }
     /**
      *
@@ -359,7 +369,7 @@ class NotifyingCore extends Tracer {
      */
     notify(notice) {
         if (Debug.trace)
-            Debug.traceEvent("Notified in " + this + " with " + notice);
+            Debug.traceEvent("Notified in " + this + " with " + notice + ": notifiable=" + this.__notifiable);
         if (this.__notifiable == null)
             return;
         if (!this.blockNotification())
@@ -419,7 +429,7 @@ var NotifyingType;
  */
 class TargeterCore extends NotifyingCore {
     constructor(targetType) {
-        super();
+        super("Untargeted");
         /*private*/ this.facets = ([]);
         this.__elements = null;
         this.__target = null;
@@ -440,11 +450,23 @@ class TargeterCore extends NotifyingCore {
         if (targets == null)
             throw Object.defineProperty(new Error("No targets in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
         if (this.__elements == null) {
-            this.__elements = new Array(targets.length);
-            for (let i = 0; i < this.__elements.length; i++) {
-                this.__elements[i] = targets[i].newTargeter();
-                this.__elements[i].setNotifiable(this);
+            let list = ([]);
+            for (let index140 = 0; index140 < targets.length; index140++) {
+                let t = targets[index140];
+                {
+                    let targeter = t.newTargeter();
+                    targeter.setNotifiable(this);
+                    /* add */ (list.push(targeter) > 0);
+                }
             }
+            this.__elements = ((a1, a2) => { if (a1.length >= a2.length) {
+                a1.length = 0;
+                a1.push.apply(a1, a2);
+                return a1;
+            }
+            else {
+                return a2.slice(0);
+            } })([], list);
             
         }
         if (targets.length === this.__elements.length)
@@ -494,7 +516,7 @@ class TargeterCore extends NotifyingCore {
         return this.__target;
     }
     title() {
-        return this.__target == null ? "Untargeted" : this.__target.title();
+        return this.__target == null ? super.title() : this.__target.title();
     }
     toString() {
         let targetInfo = this.__target == null ? "" : Debug.info(this.__target);
@@ -527,16 +549,12 @@ class TargetCore extends NotifyingCore {
     constructor(title, ...elements) {
         if (((typeof title === 'string') || title === null) && ((elements != null && elements instanceof Array && (elements.length == 0 || elements[0] == null || (elements[0] != null && (elements[0]["__interfaces"] != null && elements[0]["__interfaces"].indexOf("fjs.core.STarget") >= 0 || elements[0].constructor != null && elements[0].constructor["__interfaces"] != null && elements[0].constructor["__interfaces"].indexOf("fjs.core.STarget") >= 0)))) || elements === null)) {
             let __args = Array.prototype.slice.call(arguments);
-            super();
-            this.__title = null;
+            super(title);
             this.__elements = null;
+            this.elementsSet = false;
             this.live = true;
-            this.__title = null;
             this.__elements = null;
             (() => {
-                this.__title = title;
-                if (elements != null)
-                    this.setElements(elements);
                 if (title == null || ((o1, o2) => { if (o1 && o1.equals) {
                     return o1.equals(o2);
                 }
@@ -544,26 +562,24 @@ class TargetCore extends NotifyingCore {
                     return o1 === o2;
                 } })(title, ""))
                     throw Object.defineProperty(new Error("Null or empty title in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.IllegalArgumentException', 'java.lang.Exception'] });
+                if (elements.length > 0)
+                    this.setElements(elements);
+                TargetCore.targets++;
                 if (Debug.trace)
                     Debug.traceEvent("Created " + Debug.info(this));
-                TargetCore.targets++;
             })();
         }
         else if (((typeof title === 'string') || title === null) && elements === undefined) {
             let __args = Array.prototype.slice.call(arguments);
             {
                 let __args = Array.prototype.slice.call(arguments);
-                let elements = null;
-                super();
-                this.__title = null;
+                let elements = [];
+                super(title);
                 this.__elements = null;
+                this.elementsSet = false;
                 this.live = true;
-                this.__title = null;
                 this.__elements = null;
                 (() => {
-                    this.__title = title;
-                    if (elements != null)
-                        this.setElements(elements);
                     if (title == null || ((o1, o2) => { if (o1 && o1.equals) {
                         return o1.equals(o2);
                     }
@@ -571,9 +587,11 @@ class TargetCore extends NotifyingCore {
                         return o1 === o2;
                     } })(title, ""))
                         throw Object.defineProperty(new Error("Null or empty title in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.IllegalArgumentException', 'java.lang.Exception'] });
+                    if (elements.length > 0)
+                        this.setElements(elements);
+                    TargetCore.targets++;
                     if (Debug.trace)
                         Debug.traceEvent("Created " + Debug.info(this));
-                    TargetCore.targets++;
                 })();
             }
         }
@@ -588,15 +606,13 @@ class TargetCore extends NotifyingCore {
      * members) will be returned as the <code>elements</code> property.
      */
     setElements(elements) {
-        if (this.__elements != null)
+        if (this.elementsSet)
             throw Object.defineProperty(new Error("Immutable elements in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
         this.__elements = elements;
-        if ((this.__elements = elements) == null)
-            throw Object.defineProperty(new Error("Null elements in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.IllegalArgumentException', 'java.lang.Exception'] });
-        else
-            for (let i = 0; i < elements.length; i++)
-                if (elements[i] == null)
-                    throw Object.defineProperty(new Error("Null element " + i + " in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.IllegalArgumentException', 'java.lang.Exception'] });
+        this.elementsSet = true;
+        for (let i = 0; i < elements.length; i++)
+            if (elements[i] == null)
+                throw Object.defineProperty(new Error("Null element " + i + " in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.IllegalArgumentException', 'java.lang.Exception'] });
         
     }
     /**
@@ -610,10 +626,10 @@ class TargetCore extends NotifyingCore {
      * @return {Array}
      */
     elements() {
-        if (this.__elements == null)
-            this.setElements(this.lazyElements());
-        if (this.__elements == null)
-            throw Object.defineProperty(new Error("No elements in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
+        if (!this.elementsSet) {
+            let lazy = this.lazyElements();
+            this.setElements(lazy);
+        }
         for (let i = 0; i < this.__elements.length; i++)
             if (!(this.__elements[i].type() === NotifyingType.Frame))
                 this.__elements[i].setNotifiable(this);
@@ -662,9 +678,6 @@ class TargetCore extends NotifyingCore {
     setLive(live) {
         this.live = live;
     }
-    title() {
-        return this.__title;
-    }
     toString() {
         return Debug.info(this);
     }
@@ -701,6 +714,48 @@ class TargetCore extends NotifyingCore {
 TargetCore.targets = 0;
 TargetCore["__class"] = "fjs.core.TargetCore";
 TargetCore["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.core.Notifying", "fjs.core.Notifiable", "fjs.util.Titled"];
+
+/**
+ * Core constructor.
+ * <p>Note that this passes no child target elements to the superclass;
+ * elements can only be set by subclassing and
+ * <ul>
+ * <li>in named subclasses where the elements are known at
+ * construction, calling {@link #setElements(STarget[])}
+ * from the constructor
+ * <li>in other cases (in practice the large majority), overriding
+ * {@link #lazyElements()} from {@link TargetCore}
+ * </ul>
+ * <p>This limitation ensures that the effective type of
+ * a {@link SFrameTarget} with child elements can be distinguished
+ * by reference to the compiled type. Care must therefore be
+ * taken in client code not vary the effective type of the
+ * elements created by a subclass.
+ * @param {string} title passed to the superclass
+ * @param {*} toFrame must not be <code>null</code>
+ * @class
+ * @extends TargetCore
+ */
+class SFrameTarget extends TargetCore {
+    constructor(title, toFrame) {
+        super(title);
+        this.framed = null;
+        if (toFrame == null)
+            throw Object.defineProperty(new Error("Null framed in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.IllegalArgumentException', 'java.lang.Exception'] });
+        this.framed = toFrame;
+        if (false && (this.framed != null && (this.framed["__interfaces"] != null && this.framed["__interfaces"].indexOf("fjs.SelectingSurface.TextContent") >= 0 || this.framed.constructor != null && this.framed.constructor["__interfaces"] != null && this.framed.constructor["__interfaces"].indexOf("fjs.SelectingSurface.TextContent") >= 0)))
+            this.trace$java_lang_String$java_lang_Object(".SFrameTarget: ?framed=", this.framed.text);
+    }
+    notifiesTargeter() {
+        return true;
+    }
+    title() {
+        return this.framed == null || !(this.framed != null && (this.framed["__interfaces"] != null && this.framed["__interfaces"].indexOf("fjs.util.Titled") >= 0 || this.framed.constructor != null && this.framed.constructor["__interfaces"] != null && this.framed.constructor["__interfaces"].indexOf("fjs.util.Titled") >= 0)) ? super.title() : this.framed.title();
+    }
+}
+SFrameTarget.frames = 0;
+SFrameTarget["__class"] = "fjs.core.SFrameTarget";
+SFrameTarget["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.core.Notifying", "fjs.core.Notifiable", "fjs.util.Titled"];
 
 /* Generated from Java with JSweet 2.0.0-rc1 - http://www.jsweet.org */
 /**
@@ -791,7 +846,7 @@ class SIndexing extends TargetCore {
         let first = this.__indices == null;
         for (let i = 0; indices.length > 0 && i < indices.length; i++)
             if (indices[i] < 0)
-                throw Object.defineProperty(new Error("Bad index in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.IllegalArgumentException', 'java.lang.Exception'] });
+                throw Object.defineProperty(new Error("Bad index=" + indices[i] + " in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.IllegalArgumentException', 'java.lang.Exception'] });
         
         this.__indices = indices;
         if (this.__indexings != null) {
@@ -905,6 +960,445 @@ SIndexing["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.cor
 })(SIndexing || (SIndexing = {}));
 SIndexing.NO_INDEXABLES_$LI$();
 
+/* Generated from Java with JSweet 2.0.0-rc1 - http://www.jsweet.org */
+/**
+ * Construct a policy that constrains valid values within the immutable range
+ * <code>min</code> to <code>max</code>.
+ * @param {number} min
+ * @param {number} max
+ * @class
+ * @extends Tracer
+ */
+class NumberPolicy extends Tracer {
+    constructor(min, max) {
+        super();
+        this.__min = 0;
+        this.__max = 0;
+        if (min > max)
+            throw Object.defineProperty(new Error("Bad values " + min + ">=" + max), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.IllegalArgumentException', 'java.lang.Exception'] });
+        this.__min = min;
+        this.__max = max;
+    }
+    static MIN_VALUE_$LI$() { if (NumberPolicy.MIN_VALUE == null)
+        NumberPolicy.MIN_VALUE = Number.MAX_VALUE * -1; return NumberPolicy.MIN_VALUE; }
+    ;
+    static MAX_VALUE_$LI$() { if (NumberPolicy.MAX_VALUE == null)
+        NumberPolicy.MAX_VALUE = Number.MAX_VALUE; return NumberPolicy.MAX_VALUE; }
+    ;
+    /**
+     * The highest possible value under the policy.
+     * <p>Set immutably during construction but only accessed via
+     * this method, enabling subclasses to define it dynamically by overriding.
+     * @return {number}
+     */
+    max() {
+        return this.__max;
+    }
+    /**
+     * The lowest possible value under the policy.
+     * <p>Set immutably during construction but only accessed via
+     * this method, enabling subclasses to define it dynamically by overriding.
+     * @return {number}
+     */
+    min() {
+        return this.__min;
+    }
+    /**
+     * Returns a valid increment to <code>existing</code> in the direction given
+     * by <code>positive</code>, or zero if the incremented value is outside the range.
+     * <p>Calculation of the increment takes into account
+     * <code>unit</code>, <code>unitJump</code>, and <code>reverseIncrements</code> and
+     * its sum with <code>existing</code> is validated using <code>valueValue</code>.
+     * @param {number} existing
+     * @param {boolean} positive
+     * @return {number}
+     */
+    validIncrement(existing, positive) {
+        let increment = this.unit() * this.unitJump() * (positive ? 1 : -1) * (this.reverseIncrements() ? -1 : 1);
+        let proposed = existing + increment;
+        let validated = this.validValue(existing, proposed);
+        if (this.debug())
+            this.trace$java_lang_String$java_lang_Object("NumericPolicy:", this.__min + "<=" + this.__max + ", existing=" + existing + ", nudged=" + proposed + ", validated=" + validated);
+        return validated !== this.cycledValue(proposed) ? 0 : validated - existing;
+    }
+    /**
+     * Returns the nearest valid value to <code>proposed</code>.
+     * <p>Though not used in the basic implementation, specifying <code>existing</code>
+     * as a parameter allows for non-linear validation in subclasses.
+     * @param {number} existing
+     * @param {number} proposed
+     * @return {number}
+     */
+    validValue(existing, proposed) {
+        let min = this.min();
+        let max = this.max();
+        let cycled = this.cycledValue(proposed);
+        let adjusted = cycled < min ? min : cycled > max ? max : cycled;
+        let jump = this.unit() * this.unitJump();
+        let rounded = (d => { if (d === Number.NaN) {
+            return d;
+        }
+        else if (Number.POSITIVE_INFINITY === d || Number.NEGATIVE_INFINITY === d) {
+            return d;
+        }
+        else if (d == 0) {
+            return d;
+        }
+        else {
+            return Math.round(d);
+        } })(adjusted / jump) * jump;
+        if (this.debug()) {
+            this.trace$java_lang_String$java_lang_Object("NumberPolicy: ", min + "<=" + max + ", existing=" + existing + ", proposed=" + Util.sf(proposed) + ", adjusted=" + Util.sf(adjusted) + ", jump=" + jump + ", rounded=" + Util.sf(rounded));
+        }
+        return rounded < min ? min : rounded > max ? max : rounded;
+    }
+    debug() {
+        return false;
+    }
+    /**
+     * The smallest possible increment under the policy.
+     * <p>The default implementation deduces this value from {@link #format() }.
+     * @return {number}
+     */
+    unit() {
+        let format = this.format();
+        if (format > NumberPolicy.FORMAT_DECIMALS_4)
+            throw Object.defineProperty(new Error(format + " decimals not implemented in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
+        let unit = format < NumberPolicy.FORMAT_DECIMALS_1 ? 1 : format === NumberPolicy.FORMAT_DECIMALS_1 ? 0.1 : format === NumberPolicy.FORMAT_DECIMALS_2 ? 0.01 : format === NumberPolicy.FORMAT_DECIMALS_3 ? 0.001 : 1.0E-4;
+        return unit;
+    }
+    /**
+     * If <code>true</code>, values outside the range will be normalised to within
+     * it.
+     * <p>Default is <code>false</code>.
+     * @return {boolean}
+     */
+    canCycle() {
+        return false;
+    }
+    /**
+     * Hint on formatting the number.
+     * <p>These are defined by the class FORMAT_x constants, which are mutually exclusive.
+     * <p>For FORMAT_PLACES_x constants
+     * the format should normally be consistent with <code>unit</code>.
+     * @return {number}
+     */
+    format() {
+        return NumberPolicy.FORMAT_DECIMALS_0;
+    }
+    /**
+     * The column width for text boxes in which values are to be displayed.
+     * <p>Follows AWT convention.
+     * @return {number}
+     */
+    columns() {
+        return NumberPolicy.COLUMNS_DEFAULT;
+    }
+    toString() {
+        return " format=" + this.format() + "  unit=" + Util.sf(this.unit()) + " " + Util.sf(this.min()) + "<=" + Util.sf(this.max());
+    }
+    cycledValue(proposed) {
+        if (!this.canCycle())
+            return proposed;
+        let min = this.min();
+        let max = this.max();
+        let range = max - min;
+        return proposed < min ? max - ((max - proposed) % range) : proposed > max ? min + ((proposed - min) % range) : proposed;
+    }
+    /**
+     * Reverses the normal increment direction.
+     * <p>Used by <code>validIncrement</code>, default is <code>false</code>.
+     * @return {boolean}
+     */
+    reverseIncrements() {
+        return false;
+    }
+    /**
+     * Returns the multiple of <code>unit</code> defining the current minimum
+     * valid value change.
+     * @return {number}
+     */
+    unitJump() {
+        return NumberPolicy.UNIT_JUMP_DEFAULT;
+    }
+}
+NumberPolicy.COLUMNS_DEFAULT = 3;
+NumberPolicy.UNIT_JUMP_DEFAULT = 1;
+NumberPolicy.__debug = false;
+NumberPolicy.FORMAT_DECIMALS_0 = 0;
+NumberPolicy.FORMAT_DECIMALS_1 = 1;
+NumberPolicy.FORMAT_DECIMALS_2 = 2;
+NumberPolicy.FORMAT_DECIMALS_3 = 3;
+NumberPolicy.FORMAT_DECIMALS_4 = 4;
+NumberPolicy.FORMAT_HEX = -1;
+NumberPolicy["__class"] = "fjs.util.NumberPolicy";
+NumberPolicy["__interfaces"] = ["fjs.util.Identified"];
+(function (NumberPolicy) {
+    /**
+     * Construct a tick-based policy that can optionally display the current value
+     * within a local adjustment range.
+     * <p>The policy is constructed from <code>min</code> to <code>max</code> as for its
+     * superclass. If <code>range</code> is other than <code>NaN</code>, values
+     * will be displayed within this adjustment range, which will centre on
+     * the current value unless constrained by <code>min</code> to <code>max</code>.
+     * @param {number} min
+     * @param {number} max
+     * @param {number} range
+     * @class
+     * @extends NumberPolicy
+     */
+    class Ticked extends NumberPolicy {
+        constructor(min, max, range) {
+            if (((typeof min === 'number') || min === null) && ((typeof max === 'number') || max === null) && ((typeof range === 'number') || range === null)) {
+                let __args = Array.prototype.slice.call(arguments);
+                super(min, max);
+                this.__range = 0;
+                this.__range = 0;
+                (() => {
+                    this.__range = range;
+                })();
+            }
+            else if (((typeof min === 'number') || min === null) && ((typeof max === 'number') || max === null) && range === undefined) {
+                let __args = Array.prototype.slice.call(arguments);
+                {
+                    let __args = Array.prototype.slice.call(arguments);
+                    let range = NaN;
+                    super(min, max);
+                    this.__range = 0;
+                    this.__range = 0;
+                    (() => {
+                        this.__range = range;
+                    })();
+                }
+            }
+            else if (((typeof min === 'number') || min === null) && max === undefined && range === undefined) {
+                let __args = Array.prototype.slice.call(arguments);
+                let range = __args[0];
+                {
+                    let __args = Array.prototype.slice.call(arguments);
+                    let min = NumberPolicy.MIN_VALUE_$LI$();
+                    let max = NumberPolicy.MAX_VALUE_$LI$();
+                    super(min, max);
+                    this.__range = 0;
+                    this.__range = 0;
+                    (() => {
+                        this.__range = range;
+                    })();
+                }
+            }
+            else if (min === undefined && max === undefined && range === undefined) {
+                let __args = Array.prototype.slice.call(arguments);
+                {
+                    let __args = Array.prototype.slice.call(arguments);
+                    let min = NaN;
+                    let max = NaN;
+                    let range = NaN;
+                    super(min, max);
+                    this.__range = 0;
+                    this.__range = 0;
+                    (() => {
+                        this.__range = range;
+                    })();
+                }
+            }
+            else
+                throw new Error('invalid overload');
+        }
+        validValue(existing, proposed) {
+            let local = this;
+            return local === this ? super.validValue(existing, proposed) : local.validValue(existing, proposed);
+        }
+        /**
+         * The number of ticks between each label.
+         * @return {number}
+         */
+        labelSpacing() {
+            return Ticked.LABEL_TICKS_DEFAULT;
+        }
+        /**
+         * Returns the policy to be used for local adjustment.
+         * <p>The default is to return the {@link Ticked} itself; this can be
+         * overridden to return a policy for local adjustment where the {@link Ticked}
+         * is full-range but local adjustment is also required.
+         * @return {NumberPolicy.Ticked}
+         */
+        localTicks() {
+            return this;
+        }
+        /**
+         * The range of possible values.
+         * <p>Set immutably during construction but only accessed via
+         * this method, enabling subclasses to define it dynamically by overriding.
+         * @return {number}
+         */
+        range() {
+            return this.__range !== this.__range ? this.max() - this.min() : this.__range;
+        }
+        /**
+         * Defines the snap-to-ticks contentStyle.
+         * <p>The value returned should be one of
+         * <ul><li>SNAP_NONE</li>
+         * <li>SNAP_TICKS</li>
+         * <li>SNAP_LABELS</li>
+         * </ul>
+         * @return {number}
+         */
+        snapType() {
+            return Ticked.SNAP_TICKS;
+        }
+        /**
+         * The spacing between each tick, in the value returned by {@link #unit()}.
+         * @return {number}
+         */
+        tickSpacing() {
+            return 1;
+        }
+        /**
+         * Returns the multiple of <code>unit</code> defining the current minimum
+         * valid value change, based on the current snap policy.
+         * <p>The value returned is determined by the values of <code>snapType</code>
+         * and <code>tickSpacing</code>.
+         * @return {number}
+         */
+        unitJump() {
+            let snap = this.snapType();
+            let tick = this.tickSpacing();
+            return snap === Ticked.SNAP_LABELS ? tick * this.labelSpacing() : snap === Ticked.SNAP_TICKS ? tick : 1;
+        }
+        toString() {
+            let local = this.localTicks();
+            return super.toString() + (local === this ? "" : local);
+        }
+    }
+    Ticked.SNAP_NONE = 0;
+    Ticked.SNAP_TICKS = 1;
+    Ticked.SNAP_LABELS = 2;
+    Ticked.TICKS_DEFAULT = 1;
+    Ticked.LABEL_TICKS_DEFAULT = 10;
+    NumberPolicy.Ticked = Ticked;
+    Ticked["__class"] = "fjs.util.NumberPolicy.Ticked";
+    Ticked["__interfaces"] = ["fjs.util.Identified"];
+})(NumberPolicy || (NumberPolicy = {}));
+NumberPolicy.MAX_VALUE_$LI$();
+NumberPolicy.MIN_VALUE_$LI$();
+
+/* Generated from Java with JSweet 2.0.0-rc1 - http://www.jsweet.org */
+/**
+ * Unique constructor.
+ * @param {string} title passed to superclass
+ * @param {number} value the initial value
+ * @param {SNumeric.Coupler} coupler must supply application-specific mechanism and policy
+ * @class
+ * @extends TargetCore
+ */
+class SNumeric extends TargetCore {
+    constructor(title, value, coupler) {
+        super(title);
+        /*private*/ this.__value = NaN;
+        this.coupler = null;
+        this.__policy = null;
+        this.coupler = coupler;
+        this.__policy = coupler.policy(this);
+        if (this.__policy == null)
+            throw Object.defineProperty(new Error("No policy in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
+        this.setValue(value);
+    }
+    /**
+     * Returns the last valid value set.
+     * <p>The value returned will that set using <code>setValue</code> or
+     * during construction; if {@link #doRangeChecks} is set to <code>true</code>
+     * it will be checked against the number policy minimum and maximum values.
+     * @return {number}
+     */
+    value() {
+        if (this.__value !== this.__value)
+            throw Object.defineProperty(new Error("Not a number in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
+        else if (SNumeric.doRangeChecks) {
+            let min = this.__policy.min();
+            let max = this.__policy.max();
+            if (this.__value < min || this.__value > max)
+                throw Object.defineProperty(new Error("Value " + this.__value + " should be >=" + min + " and <=" + max + " in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
+        }
+        return this.__value;
+    }
+    /**
+     * Sets the nearest valid value to <code>value</code>.
+     * <p>Validity will be as defined by <code>validValue</code> in
+     * the {@link NumberPolicy} returned as <code>policy</code>.
+     * Subsequently calls <code>valueSet</code> in the {@link SNumeric.Coupler} with which the
+     * {@link SNumeric} was constructed.
+     * @param {number} value
+     */
+    setValue(value) {
+        let first = this.__value !== this.__value;
+        this.__value = this.policy().validValue(this.__value, value);
+        if (!first)
+            this.coupler.valueSet(this);
+    }
+    /**
+     * Returns the current number policy.
+     * <p>The policy is that returned by the {@link fjs.core.SNumeric.Coupler}
+     * with which the {@link SNumeric} was constructed.
+     * @return {NumberPolicy}
+     */
+    policy() {
+        return this.__policy;
+    }
+    toString() {
+        let p = this.policy();
+        return super.toString() + " value=" + Util.sf(this.__value) + " policy=" + p;
+    }
+    /**
+     *
+     * @return {*}
+     */
+    state() {
+        return this.value();
+    }
+    /**
+     *
+     * @param {*} update
+     */
+    updateState(update) {
+        this.setValue(update);
+    }
+}
+SNumeric.doRangeChecks = false;
+SNumeric["__class"] = "fjs.core.SNumeric";
+SNumeric["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.core.Notifying", "fjs.core.Notifiable", "fjs.util.Titled"];
+(function (SNumeric) {
+    /**
+     * Connects a {@link SNumeric} to the application.
+     * <p>A {@link Coupler} supplies policy and/or client-specific
+     * mechanism to a {@link SNumeric}.
+     * @class
+     */
+    class Coupler {
+        constructor() {
+        }
+        /**
+         * Returns the policy to be used by a {@link fjs.core.SNumeric}
+         * constructed with this {@link Coupler}.
+         * @param {SNumeric} n
+         * @return {NumberPolicy}
+         */
+        policy(n) {
+            return new NumberPolicy(0, 0);
+        }
+        /**
+         * Defines client-specific mechanism for a {@link fjs.core.SNumeric}.
+         * <p>This method is called whenever <code>setValue</code> is called on <code>n</code>.
+         * @param {SNumeric} n
+         */
+        valueSet(n) {
+            throw Object.defineProperty(new Error("Not implemented in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
+        }
+    }
+    SNumeric.Coupler = Coupler;
+    Coupler["__class"] = "fjs.core.SNumeric.Coupler";
+    Coupler["__interfaces"] = ["fjs.core.TargetCoupler", "java.io.Serializable"];
+})(SNumeric || (SNumeric = {}));
+
 var STarget;
 (function (STarget) {
     function newTargets(src) {
@@ -938,6 +1432,7 @@ class STextual extends TargetCore {
         super(title);
         this.coupler = null;
         this.__text = null;
+        this.textSet = false;
         if ((this.coupler = coupler) == null)
             throw Object.defineProperty(new Error("Null coupler in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.IllegalArgumentException', 'java.lang.Exception'] });
     }
@@ -951,10 +1446,11 @@ class STextual extends TargetCore {
     setText(text) {
         if (text == null || !this.coupler.isValidText(this, text))
             throw Object.defineProperty(new Error("Null or invalid text in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.IllegalArgumentException', 'java.lang.Exception'] });
-        let firstSet = this.__text == null;
         this.__text = text;
-        if (!firstSet)
+        if (this.textSet)
             this.coupler.textSet(this);
+        this.textSet = true;
+        
     }
     /**
      * The text value represented.
@@ -963,12 +1459,11 @@ class STextual extends TargetCore {
     text() {
         if (this.__text != null)
             return this.__text;
-        else
-            this.__text = this.coupler.getText(this);
-        if (this.__text == null || !this.coupler.isValidText(this, this.__text))
+        let text = this.coupler.getText(this);
+        if (text == null || !this.coupler.isValidText(this, text))
             throw Object.defineProperty(new Error("Null or invalid text in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
         else
-            return this.__text;
+            return text;
     }
     /**
      *
@@ -1118,6 +1613,331 @@ SToggling["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.cor
     Coupler["__interfaces"] = ["fjs.core.TargetCoupler", "java.io.Serializable"];
 })(SToggling || (SToggling = {}));
 
+/* Generated from Java with JSweet 2.0.0-rc1 - http://www.jsweet.org */
+/**
+ * Unique constructor.
+ * @param {string} title passed to superclass
+ * @param {*} content passed to superclass
+ * @class
+ * @extends SFrameTarget
+ */
+class SelectingFrame extends SFrameTarget {
+    constructor(title, content) {
+        super(title, content);
+        this.__selection = null;
+    }
+    /**
+     *
+     * @return {*}
+     */
+    state() {
+        return this.__selection.single();
+    }
+    /**
+     * Define a selection within the content <code>framed</code>.
+     * @param {*} definition in the default implementation is cast to a {@link SSelection}
+     * and passed to {@link #setSelection(SSelection)}
+     * @return {*} (via {@link #setSelection(SSelection)}) the new return of {@link #selection()}
+     */
+    defineSelection(definition) {
+        return this.setSelection(definition);
+    }
+    /**
+     * The current selection within the content <code>framed</code>.
+     * @return {*} the {@link SSelection} last set with {@link #setSelection(SSelection)}
+     */
+    selection() {
+        if (this.__selection == null)
+            throw Object.defineProperty(new Error("Null selection in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
+        return this.__selection;
+    }
+    /**
+     * Sets the selection to be returned by {@link #selection()}.
+     * <p>This method is defined protected as it should only be called by subclasses;
+     * external callers should use the more general {@link #defineSelection(Object)}.
+     * @param {*} selection must have a {@link SSelection#content()} equal to
+     * {@link #framed}.
+     * @return {*} the new return of {@link #selection()}
+     */
+    setSelection(selection) {
+        if (selection.content() !== this.framed)
+            throw Object.defineProperty(new Error("Bad selection content:\n" + selection.content() + "\nshould be " + this.framed + "\nin " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.IllegalArgumentException', 'java.lang.Exception'] });
+        else
+            this.__selection = selection;
+        return selection;
+    }
+    /**
+     * Return a {@link SFrameTarget} framing the currently selected content.
+     * <p>Content framed should be that returned in the <code>selection</code>
+     * methods of {@link #selection()}.
+     * <p>Default frames a single selection, titled from the selected content or
+     * else using {@link #title()}.
+     * @return {SFrameTarget}
+     */
+    selectionFrame() {
+        let selected = this.selection().single();
+        let title = (selected != null && (selected["__interfaces"] != null && selected["__interfaces"].indexOf("fjs.util.Titled") >= 0 || selected.constructor != null && selected.constructor["__interfaces"] != null && selected.constructor["__interfaces"].indexOf("fjs.util.Titled") >= 0)) ? selected.title() : this.title();
+        return new SelectingFrame.SelectingFrame$0(this, title, selected);
+    }
+}
+SelectingFrame["__class"] = "fjs.core.select.SelectingFrame";
+SelectingFrame["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.core.Notifying", "fjs.core.Notifiable", "fjs.util.Titled"];
+(function (SelectingFrame) {
+    class SelectingFrame$0 extends SFrameTarget {
+        constructor(__parent, __arg0, __arg1) {
+            super(__arg0, __arg1);
+            this.__parent = __parent;
+        }
+    }
+    SelectingFrame.SelectingFrame$0 = SelectingFrame$0;
+    SelectingFrame$0["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.core.Notifying", "fjs.core.Notifiable", "fjs.util.Titled"];
+})(SelectingFrame || (SelectingFrame = {}));
+
+/**
+ * Unique constructor.
+ * @param {IndexingFrame} indexed will be the first target of this instance
+ * @class
+ * @extends TargeterCore
+ */
+class IndexingFrameTargeter extends TargeterCore {
+    constructor(indexed) {
+        super(indexed.constructor);
+        this.__indexing = null;
+        this.selection = null;
+    }
+    /**
+     * Retargeted to the {@link SIndexing} wrapped by the current target.
+     * @return {*}
+     */
+    indexing() {
+        if (this.__indexing == null)
+            throw Object.defineProperty(new Error("No indexingLink in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
+        else
+            return this.__indexing;
+    }
+    /**
+     * Overrides superclass method.
+     * @param {*} target
+     */
+    retarget(target) {
+        let frame = target;
+        let ix = frame.indexing();
+        let selectionFrame = frame.selectionFrame();
+        super.retarget(frame);
+        if (this.__indexing == null) {
+            let list = ([]);
+            for (let index141 = 0; index141 < this.__elements.length; index141++) {
+                let e = this.__elements[index141];
+                /* add */ (list.push(e) > 0);
+            }
+            this.__indexing = ix.newTargeter();
+            /* add */ (list.push(this.__indexing) > 0);
+            this.selection = selectionFrame.newTargeter();
+            /* add */ (list.push(this.selection) > 0);
+            this.__indexing.setNotifiable(this);
+            this.selection.setNotifiable(this);
+            this.__elements = ((a1, a2) => { if (a1.length >= a2.length) {
+                a1.length = 0;
+                a1.push.apply(a1, a2);
+                return a1;
+            }
+            else {
+                return a2.slice(0);
+            } })([], list);
+            
+        }
+        this.__indexing.retarget(ix);
+        this.selection.retarget(selectionFrame);
+    }
+    /**
+     * Overrides superclass method.
+     */
+    retargetFacets() {
+        super.retargetFacets();
+        this.indexing().retargetFacets();
+    }
+}
+IndexingFrameTargeter["__class"] = "fjs.core.select.IndexingFrameTargeter";
+IndexingFrameTargeter["__interfaces"] = ["fjs.util.Identified", "fjs.core.Notifying", "fjs.core.SRetargetable", "fjs.core.Notifiable", "fjs.util.Titled", "fjs.core.Facetable", "fjs.core.STargeter"];
+
+/**
+ * Public constructor.
+ * @param {string} title passed to core
+ * @param {*} content  passed to core
+ * @param {SIndexing} children passed to {@link #setIndexing(SIndexing)}
+ * @class
+ * @extends SelectingFrame
+ */
+class IndexingFrame extends SelectingFrame {
+    constructor(title, content, children) {
+        if (((typeof title === 'string') || title === null) && ((content != null) || content === null) && ((children != null && children instanceof SIndexing) || children === null)) {
+            let __args = Array.prototype.slice.call(arguments);
+            {
+                let __args = Array.prototype.slice.call(arguments);
+                super(title, content);
+                this.__indexing = null;
+                this.__indexing = null;
+            }
+            (() => {
+                children.setIndex(0);
+                this.setIndexing(children);
+            })();
+        }
+        else if (((typeof title === 'string') || title === null) && ((content != null) || content === null) && children === undefined) {
+            let __args = Array.prototype.slice.call(arguments);
+            super(title, content);
+            this.__indexing = null;
+            this.__indexing = null;
+        }
+        else
+            throw new Error('invalid overload');
+    }
+    /**
+     * Re-implementation that creates a suitable {@link SSelection}.
+     * <p>Calls {@link SIndexing#setIndexed(Object)} in {@link #indexing()}
+     * with <code>definition</code>, then {@link #setSelection(SSelection)}
+     * with a new {@link SSelection} returning as {@link SSelection#single()}
+     * the new {@link SIndexing#indexed()} (which will be <code>definition</code>).
+     * @param {*} definition
+     * @return {*}
+     */
+    defineSelection(definition) {
+        if (!((o1, o2) => { if (o1 && o1.equals) {
+            return o1.equals(o2);
+        }
+        else {
+            return o1 === o2;
+        } })(this.__indexing.indexed(), definition))
+            this.__indexing.setIndexed(definition);
+        return this.setSelection(new IndexingFrame.IndexingFrame$0(this));
+    }
+    /**
+     * Re-implementation.
+     * <p>Returns the {@link SFrameTarget} created in
+     * {@link #newIndexedFrame(Object)}.
+     * @return {SFrameTarget}
+     */
+    selectionFrame() {
+        return this.newIndexedFrame(this.selection().single());
+    }
+    /**
+     *
+     * Sets an {@link SIndexing} that can index into content of {@link #framed}.
+     * <p>Also calls {@link #defineSelection(Object)} with the current
+     * {@link SIndexing#indexed()}.
+     * @param {SIndexing} indexing must have {@link SIndexing#indexables()}
+     * matching the current state of {@link #framed}.
+     */
+    setIndexing(indexing) {
+        if (indexing == null)
+            throw Object.defineProperty(new Error("Null children in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.IllegalArgumentException', 'java.lang.Exception'] });
+        (this.__indexing = indexing).setNotifiable(this);
+        this.defineSelection(indexing.indexed());
+    }
+    /**
+     * The indexing last set with {@link #setIndexing(SIndexing)}.
+     * @return {SIndexing}
+     */
+    indexing() {
+        if (this.__indexing == null)
+            throw Object.defineProperty(new Error("No indexing in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
+        return this.__indexing;
+    }
+    /**
+     * Overrides superclass method.
+     * <p>Must return an {@link IndexingFrameTargeter}.
+     * @return {*}
+     */
+    newTargeter() {
+        return new IndexingFrameTargeter(this);
+    }
+}
+IndexingFrame["__class"] = "fjs.core.select.IndexingFrame";
+IndexingFrame["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.core.Notifying", "fjs.core.Notifiable", "fjs.util.Titled"];
+(function (IndexingFrame) {
+    class IndexingFrame$0 {
+        constructor(__parent) {
+            this.__parent = __parent;
+        }
+        multiple() {
+            throw Object.defineProperty(new Error("Not implemented in " + this), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
+        }
+        single() {
+            return this.__parent.__indexing.indexed();
+        }
+        content() {
+            return this.__parent.framed;
+        }
+    }
+    IndexingFrame.IndexingFrame$0 = IndexingFrame$0;
+    IndexingFrame$0["__interfaces"] = ["fjs.core.select.SSelection", "java.io.Serializable"];
+})(IndexingFrame || (IndexingFrame = {}));
+
+/* Generated from Java with JSweet 2.0.0-rc1 - http://www.jsweet.org */
+class Times {
+    static minute_$LI$() { if (Times.minute == null)
+        Times.minute = 1000 * 60; return Times.minute; }
+    ;
+    static hour_$LI$() { if (Times.hour == null)
+        Times.hour = Times.minute_$LI$() * 60; return Times.hour; }
+    ;
+    /*private*/ static newMillis() {
+        return Date.now();
+    }
+    static setResetWait(wait) {
+        if (Times.debug)
+            Util.printOut$java_lang_String$java_lang_Object("Times.setResetWait: wait=", wait);
+        Times.start = Times.newMillis();
+        Times.times = true;
+        Times.resetWait = wait;
+    }
+    /**
+     * The time since the last auto-reset.
+     * <p>Interval for reset set by {@link #resetWait}.
+     * @return {number}
+     */
+    static elapsed() {
+        let now = Times.newMillis();
+        if (now - Times.then > Times.resetWait) {
+            Times.start = now;
+            Times.restarted = true;
+            if (Times.debug)
+                Util.printOut$java_lang_String("Times: reset resetWait=" + Times.resetWait);
+        }
+        else
+            Times.restarted = false;
+        return (Times.then = now) - Times.start;
+    }
+    /**
+     * Print {@link #elapsed()} followed by the message.
+     * @param {string} msg
+     */
+    static printElapsed(msg) {
+        if (!Times.times) {
+            if (!Debug.trace) {
+                Times.start = Times.then = Times.newMillis();
+                if (Times.debug)
+                    Util.printOut$java_lang_String$java_lang_Object("Times.printElapsed: times=", Times.times);
+            }
+            return;
+        }
+        let elapsed = Times.elapsed();
+        let elapsedText = true && elapsed > 5 * 1000 ? (Util.fxs(elapsed / 1000.0)) : ("" + elapsed);
+        let toPrint = (Times.restarted ? "\n" : "") + elapsedText + (msg != null ? ":\t" + msg : "");
+        Util.printOut$java_lang_String(toPrint);
+    }
+}
+Times.times = false;
+Times.nanoTime = true;
+Times.resetWait = 1000;
+Times.then = 0;
+Times.start = 0;
+Times.restarted = false;
+Times.debug = false;
+Times["__class"] = "fjs.util.Times";
+Times.hour_$LI$();
+Times.minute_$LI$();
+
 class Facets extends Tracer {
     constructor(top, trace) {
         super(top);
@@ -1132,19 +1952,16 @@ class Facets extends Tracer {
      * @param {string} msg
      */
     traceOutput(msg) {
-        if (this.__trace)
+        if (this.__trace || (Debug.trace && ((str, searchString, position = 0) => str.substr(position, searchString.length) === searchString)(msg, ">>")))
             super.traceOutput(msg);
     }
-    updatedTarget(target, c) {
-        let title = target.title();
-        this.trace$java_lang_String$java_lang_Object(" > Updated target ", target);
-        if (c.targetStateUpdated != null) {
-            let state = target.state();
-            (target => (typeof target === 'function') ? target(title, state) : target.accept(title, state))(c.targetStateUpdated);
-        }
+    newNumericTarget(title, c) {
+        let numeric = new SNumeric(title, c.passValue, new Facets.Facets$1(this, c));
+        this.trace$java_lang_String$java_lang_Object(" > Created numeric ", numeric);
+        return numeric;
     }
     newTextualTarget(title, c) {
-        let textual = new STextual(title, new Facets.Facets$1(this, c));
+        let textual = new STextual(title, new Facets.Facets$2(this, c));
         let passText = c.passText;
         if (passText != null)
             textual.setText(passText);
@@ -1155,12 +1972,12 @@ class Facets extends Tracer {
         let passSet = c.passSet;
         if (passSet == null)
             throw Object.defineProperty(new Error("Null passSet in " + this), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
-        let toggling = new SToggling(title, passSet, new Facets.Facets$2(this, c));
+        let toggling = new SToggling(title, passSet, new Facets.Facets$3(this, c));
         this.trace$java_lang_String$java_lang_Object(" > Created toggling ", toggling);
         return toggling;
     }
     newIndexingTarget(title, c) {
-        let indexing = new SIndexing(title, c.passIndexables, new Facets.Facets$3(this, c));
+        let indexing = new SIndexing(title, c.passIndexables, new Facets.Facets$4(this, c));
         let passIndex = c.passIndex;
         if (passIndex == null)
             throw Object.defineProperty(new Error("Null passIndex in " + this), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
@@ -1169,13 +1986,35 @@ class Facets extends Tracer {
         this.trace$java_lang_String$java_lang_Object(" > Created indexing ", indexing);
         return indexing;
     }
+    getIndexingValues(title) {
+        let titleTarget = this.titleTarget(title);
+        if (titleTarget == null)
+            throw Object.defineProperty(new Error("Null target in " + this), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
+        return Object.defineProperty({
+            indexed: ((titleTarget) => {
+                return () => titleTarget.indexed();
+            })(titleTarget)
+        }, '__interfaces', { configurable: true, value: ["fjs.globals.Facets.IndexingValues"] });
+    }
+    updatedTarget(target, c) {
+        let title = target.title();
+        this.trace$java_lang_String$java_lang_Object(" > Updated target ", target);
+        if (c.targetStateUpdated != null) {
+            let state = target.state();
+            (target => (typeof target === 'function') ? target(title, state) : target.accept(title, state))(c.targetStateUpdated);
+        }
+    }
     newTargetsGroup(title, ...members) {
         let group = new (__Function$1.prototype.bind.apply(TargetCore, [null, title].concat(STarget.newTargets(members))));
         this.trace$java_lang_String$java_lang_Object(" > Created target group " + Debug.info(group) + " ", members);
         return group;
     }
+    buildSelectingFrame(frame) {
+        frame.frame = new Facets.LocalSelectingFrame(frame);
+        this.trace$java_lang_String$java_lang_Object(" > Created frame ", frame.frame);
+    }
     buildTargeterTree(targetTree) {
-        this.trace$java_lang_String$java_lang_Object(" > Creating targeters for ", targetTree);
+        this.trace$java_lang_String$java_lang_Object(" > Initial retargeting on ", targetTree);
         this.targeterTree = targetTree.newTargeter();
         this.targeterTree.setNotifiable(this.notifiable);
         this.targeterTree.retarget(targetTree);
@@ -1184,12 +2023,11 @@ class Facets extends Tracer {
     addTitleTargeters(t) {
         let title = t.title();
         let then = (this.titleTargeters[title] = t);
-        {
-            let array135 = t.elements();
-            for (let index134 = 0; index134 < array135.length; index134++) {
-                let e = array135[index134];
-                this.addTitleTargeters(e);
-            }
+        let elements = t.elements();
+        this.trace$java_lang_String("> Added targeter: title=" + title + ": elements=" + elements.length);
+        for (let index142 = 0; index142 < elements.length; index142++) {
+            let e = elements[index142];
+            this.addTitleTargeters(e);
         }
     }
     attachFacet(title, facetUpdated) {
@@ -1205,13 +2043,19 @@ class Facets extends Tracer {
         let targeter = ((m, k) => m[k] ? m[k] : null)(this.titleTargeters, title);
         if (targeter == null)
             throw Object.defineProperty(new Error("Null targeter for " + title), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.IllegalArgumentException', 'java.lang.Exception'] });
-        let facet = new Facets.Facets$4(this, facetUpdated);
+        let facet = new Facets.Facets$5(this, facetUpdated);
         this.trace$java_lang_String$java_lang_Object(" > Attaching facet " + facet + " to", targeter);
         targeter.attachFacet(facet);
+    }
+    titleTarget(title) {
+        let targeter = ((m, k) => m[k] ? m[k] : null)(this.titleTargeters, title);
+        return targeter == null ? null : targeter.target();
     }
     updateTargetState(title, update) {
         this.trace$java_lang_String$java_lang_Object(" > Updating target state for title=" + title + " update=", update);
         let target = this.titleTarget(title);
+        if (target == null)
+            throw Object.defineProperty(new Error("Null target for " + title), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
         target.updateState(update);
         target.notifyParent();
     }
@@ -1237,10 +2081,6 @@ class Facets extends Tracer {
         else
             return target.isLive();
     }
-    titleTarget(title) {
-        let targeter = ((m, k) => m[k] ? m[k] : null)(this.titleTargeters, title);
-        return targeter == null ? null : targeter.target();
-    }
 }
 Facets["__class"] = "fjs.globals.Facets";
 Facets["__interfaces"] = ["fjs.util.Identified"];
@@ -1252,6 +2092,70 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
     }
     Facets.TargetCoupler = TargetCoupler;
     TargetCoupler["__class"] = "fjs.globals.Facets.TargetCoupler";
+    class LocalSelectingFrame extends IndexingFrame {
+        constructor(frame) {
+            super(frame.title, frame.content, LocalSelectingFrame.newSelectingIndexing(frame));
+            this.frame = null;
+            this.frame = frame;
+            let indexing = this.indexing();
+            frame.setIndex = ((indexing) => {
+                return (index) => indexing.setIndex(index);
+            })(indexing);
+            frame.selectedContent = ((indexing) => {
+                return () => indexing.indexed();
+            })(indexing);
+        }
+        static newSelectingIndexing(frame) {
+            let indexing = new SIndexing(frame.indexingTitle, frame.content, new LocalSelectingFrame.LocalSelectingFrame$0(frame));
+            return indexing;
+        }
+        /**
+         *
+         * @param {*} indexed
+         * @return {SFrameTarget}
+         */
+        newIndexedFrame(indexed) {
+            let editElements = (this.frame.newEditElements);
+            return new LocalSelectingFrame.LocalSelectingFrame$1(this, this.frame.title + ":selected", indexed, editElements, indexed);
+        }
+    }
+    Facets.LocalSelectingFrame = LocalSelectingFrame;
+    LocalSelectingFrame["__class"] = "fjs.globals.Facets.LocalSelectingFrame";
+    LocalSelectingFrame["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.core.Notifying", "fjs.core.Notifiable", "fjs.util.Titled"];
+    (function (LocalSelectingFrame) {
+        class LocalSelectingFrame$0 extends SIndexing.Coupler {
+            constructor(frame) {
+                super();
+                this.frame = frame;
+            }
+            /**
+             *
+             * @param {SIndexing} i
+             */
+            indexSet(i) {
+                this.frame.frame.defineSelection(i.indexed());
+            }
+        }
+        LocalSelectingFrame.LocalSelectingFrame$0 = LocalSelectingFrame$0;
+        LocalSelectingFrame$0["__interfaces"] = ["fjs.core.TargetCoupler", "java.io.Serializable"];
+        class LocalSelectingFrame$1 extends SFrameTarget {
+            constructor(__parent, __arg0, __arg1, editElements, indexed) {
+                super(__arg0, __arg1);
+                this.editElements = editElements;
+                this.indexed = indexed;
+                this.__parent = __parent;
+            }
+            /**
+             *
+             * @return {Array}
+             */
+            lazyElements() {
+                return STarget.newTargets((target => (typeof target === 'function') ? target(this.indexed) : target.apply(this.indexed))(this.editElements));
+            }
+        }
+        LocalSelectingFrame.LocalSelectingFrame$1 = LocalSelectingFrame$1;
+        LocalSelectingFrame$1["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.core.Notifying", "fjs.core.Notifiable", "fjs.util.Titled"];
+    })(LocalSelectingFrame = Facets.LocalSelectingFrame || (Facets.LocalSelectingFrame = {}));
     class Facets$0 {
         constructor(__parent) {
             this.__parent = __parent;
@@ -1261,12 +2165,20 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
          * @param {*} notice
          */
         notify(notice) {
-            this.__parent.trace(" > Surface for " + Debug.info(this.__parent.targeterTree) + " notified by " + notice);
+            let msg = "> Surface for " + Debug.info(this.__parent.targeterTree) + " notified by " + notice;
+            if (Times.times)
+                Times.printElapsed(msg);
+            else
+                this.__parent.trace(msg);
             let targets = this.__parent.targeterTree.target();
             this.__parent.targeterTree.retarget(targets);
-            this.__parent.trace(" > Targeters retargeted on ", targets);
+            this.__parent.trace("> Targeters retargeted on ", targets);
             this.__parent.targeterTree.retargetFacets();
-            this.__parent.trace(" > Facets retargeted in ", this.__parent.targeterTree);
+            msg = "> Facets retargeted in " + Debug.info(this.__parent.targeterTree);
+            if (Times.times)
+                Times.printElapsed(msg);
+            else
+                this.__parent.trace(msg);
         }
         /**
          *
@@ -1278,7 +2190,33 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
     }
     Facets.Facets$0 = Facets$0;
     Facets$0["__interfaces"] = ["fjs.core.Notifiable", "fjs.util.Titled"];
-    class Facets$1 extends STextual.Coupler {
+    class Facets$1 extends SNumeric.Coupler {
+        constructor(__parent, c) {
+            super();
+            this.c = c;
+            this.__parent = __parent;
+        }
+        /**
+         *
+         * @param {SNumeric} n
+         */
+        valueSet(n) {
+            this.__parent.updatedTarget(n, this.c);
+        }
+        /**
+         *
+         * @param {SNumeric} n
+         * @return {NumberPolicy}
+         */
+        policy(n) {
+            let min = this.c.min != null ? this.c.min : Number.MIN_VALUE;
+            let max = this.c.max != null ? this.c.max : Number.MAX_VALUE;
+            return new NumberPolicy(min, this.c.max);
+        }
+    }
+    Facets.Facets$1 = Facets$1;
+    Facets$1["__interfaces"] = ["fjs.core.TargetCoupler", "java.io.Serializable"];
+    class Facets$2 extends STextual.Coupler {
         constructor(__parent, c) {
             super();
             this.c = c;
@@ -1323,9 +2261,9 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
                 return (target => (typeof target === 'function') ? target(t.title()) : target.apply(t.title()))(getText);
         }
     }
-    Facets.Facets$1 = Facets$1;
-    Facets$1["__interfaces"] = ["fjs.util.Identified", "fjs.core.TargetCoupler", "java.io.Serializable"];
-    class Facets$2 extends SToggling.Coupler {
+    Facets.Facets$2 = Facets$2;
+    Facets$2["__interfaces"] = ["fjs.util.Identified", "fjs.core.TargetCoupler", "java.io.Serializable"];
+    class Facets$3 extends SToggling.Coupler {
         constructor(__parent, c) {
             super();
             this.c = c;
@@ -1339,9 +2277,9 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
             this.__parent.updatedTarget(target, this.c);
         }
     }
-    Facets.Facets$2 = Facets$2;
-    Facets$2["__interfaces"] = ["fjs.core.TargetCoupler", "java.io.Serializable"];
-    class Facets$3 extends SIndexing.Coupler {
+    Facets.Facets$3 = Facets$3;
+    Facets$3["__interfaces"] = ["fjs.core.TargetCoupler", "java.io.Serializable"];
+    class Facets$4 extends SIndexing.Coupler {
         constructor(__parent, c) {
             super();
             this.c = c;
@@ -1355,9 +2293,9 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
             this.__parent.updatedTarget(target, this.c);
         }
     }
-    Facets.Facets$3 = Facets$3;
-    Facets$3["__interfaces"] = ["fjs.core.TargetCoupler", "java.io.Serializable"];
-    class Facets$4 {
+    Facets.Facets$4 = Facets$4;
+    Facets$4["__interfaces"] = ["fjs.core.TargetCoupler", "java.io.Serializable"];
+    class Facets$5 {
         constructor(__parent, facetUpdated) {
             this.facetUpdated = facetUpdated;
             this.__parent = __parent;
@@ -1370,13 +2308,14 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
          */
         retarget(target) {
             let state = target.state();
-            if (!((o1, o2) => { if (o1 && o1.equals) {
+            let title = target.title();
+            if (true || !((o1, o2) => { if (o1 && o1.equals) {
                 return o1.equals(o2);
             }
             else {
                 return o1 === o2;
             } })(state, this.stateThen)) {
-                this.__parent.trace(" > Updating UI with state=", state);
+                this.__parent.trace(" > Updating UI for \'" + title + "\' with state=", state);
                 (target => (typeof target === 'function') ? target(this.stateThen = state) : target.accept(this.stateThen = state))(this.facetUpdated);
             }
         }
@@ -1388,8 +2327,8 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
             return "#" + this.__parent.id;
         }
     }
-    Facets.Facets$4 = Facets$4;
-    Facets$4["__interfaces"] = ["fjs.core.SRetargetable", "fjs.core.SFacet"];
+    Facets.Facets$5 = Facets$5;
+    Facets$5["__interfaces"] = ["fjs.core.SRetargetable", "fjs.core.SFacet"];
 })(Facets || (Facets = {}));
 var __Function$1 = Function;
 

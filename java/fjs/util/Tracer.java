@@ -1,4 +1,4 @@
-package Facets.util;
+package fjs.util;
 import java.util.Collection;
 /**
 Utility superclass that can issue trace messages.
@@ -35,7 +35,7 @@ public abstract class Tracer implements Identified{
 		top=null;
 	}
 	final public void trace(String msg,Object o){
-		traceOutput(""+msg+traceObjectText(o));		
+		traceOutput(msg+Debug.info(o));		
 	}
 	/**
 	Outputs complete trace messages to console or elsewhere. 
@@ -56,7 +56,7 @@ public abstract class Tracer implements Identified{
 			traceOutput(msg);		
 			t.printStackTrace();
 		}
-		else traceOutput(msg+traceObjectText(t));		
+		else traceOutput(msg+Debug.info(t));		
 	}
 	final public void trace(String msg,Collection c){
 		traceOutput(msg+traceArrayText(c.toArray()));		
@@ -69,9 +69,6 @@ public abstract class Tracer implements Identified{
 	}
 	final public void traceDebug(String msg,Object[]array){
 		traceOutput(msg+(false?Debug.info(array):Debug.arrayInfo(array)));		
-	}
-	private String traceObjectText(Object o){
-		return Debug.info(o);
 	}
 	private String traceArrayText(Object[]array){
 		return Util.arrayPrintString(array);

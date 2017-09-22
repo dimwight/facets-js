@@ -1,18 +1,16 @@
-package Facets.core;
-import facets.core.superficial.Notifying.Impact;
+package fjs.core;
 import java.util.ArrayList;
 import java.util.List;
-import Facets.util.Debug;
-import Facets.util.Util;
+import fjs.util.Debug;
 /**
 Implements {@link STargeter}. 
 <p>{@link TargeterCore} is a public implementation of {@link STargeter} 
   to provide for extension in other packages; instances are generally 
-  created by an implementation of {@link Facets.core.TargetCore#newTargeter()}.
+  created by an implementation of {@link fjs.core.TargetCore#newTargeter()}. 
 */
 public class TargeterCore extends NotifyingCore implements STargeter{
 	public static List<STargeter>targeters=new ArrayList();
-	private transient STargeter[]elements;
+	protected transient STargeter[]elements;
 	private transient ArrayList<SFacet>facets=new ArrayList();
 	private transient STarget target;  
   private final Class targetType;
@@ -21,6 +19,7 @@ public class TargeterCore extends NotifyingCore implements STargeter{
 	@param targetType set as {@link #targetType}.
 	   */
 	public TargeterCore(Class targetType){
+		super("Untargeted");
 		this.targetType=targetType;;
 	  targeters.add(this);
 	  if(Debug.trace)Debug.traceEvent("Created " +//"targeter " +targeters+" "+
@@ -34,11 +33,14 @@ public class TargeterCore extends NotifyingCore implements STargeter{
 		STarget[]targets=target.elements();
 		if(targets==null)throw new IllegalStateException("No targets in "+Debug.info(this));
 		if(elements==null){
-	    elements=new STargeter[targets.length];
-			for(int i=0;i<elements.length;i++){
-				elements[i]=((TargetCore)targets[i]).newTargeter();
-				elements[i].setNotifiable(this);
+    	ArrayList<STargeter>list=new ArrayList<STargeter>();
+			for(STarget t:targets){
+				STargeter targeter=((TargetCore)t).newTargeter();
+				targeter.setNotifiable(this);
+				list.add(targeter);
 			}
+	  	elements=list.toArray(new STargeter[]{});
+	  	if(false)trace(".TargeterCore: elements=",elements.length);
 	  }
 		if(targets.length==elements.length)
 			for(int i=0;i<elements.length;i++)elements[i].retarget(targets[i]);			
@@ -70,7 +72,7 @@ public class TargeterCore extends NotifyingCore implements STargeter{
 	  return target;
 	}
 	final public String title(){
-		return target==null?"Untargeted":target.title();
+		return target==null?super.title():target.title();
 	}
 	final public String toString(){
 		String targetInfo=target==null?"":Debug.info(target);

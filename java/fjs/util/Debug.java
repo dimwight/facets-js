@@ -1,4 +1,4 @@
-package Facets.util;
+package fjs.util;
 /**
 Utilities for use during development. 
  */
@@ -13,16 +13,18 @@ public final class Debug{
 			 */
 	public static String info(Object o){
 		if(o==null)return "null";
-		if(o instanceof Integer)return String.valueOf(o);
+		else if(o instanceof Boolean)return ((Boolean)o).toString();
+		else if(o instanceof Number)return String.valueOf(o);
 		else if(o instanceof String){
 			String text=(String)o;
 			int length=text.length();
 			return text.substring(0,Math.min(length,60))
 					+(true?"":(": "+("length="+length)));
 		}
-		return (o.getClass().getSimpleName())+
-				(o instanceof Identified?(" #"+((Identified)o).identity()):"")+
-			(o instanceof Titled?(" "+((Titled)o).title()):"");
+		String name=o.getClass().getSimpleName(),id="",title=false?"o instanceof Titled":"";
+		if(o instanceof Identified)id=" #"+((Identified)o).identity();
+		if(o instanceof Titled)title=" '"+((Titled)o).title()+"'";
+		return name+id+title;
 	}
 	/**
 	Returns an array of <code>Debug.info</code>s. 

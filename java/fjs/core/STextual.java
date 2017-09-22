@@ -1,11 +1,11 @@
-package Facets.core;
-import Facets.util.Debug;
-import Facets.util.Tracer;
+package fjs.core;
+import fjs.util.Debug;
+import fjs.util.Tracer;
 /**
 {@link STarget} representing a textual value. 
 <p> {@link STextual} represents a text value to be 
   exposed to in the surface; application-specific 
-  mechanism can be defined in a {@link Facets.core.STextual.Coupler}.
+  mechanism can be defined in a {@link fjs.core.STextual.Coupler}. 
  */
 final public class STextual extends TargetCore{
 	/**Connects a {@link STextual} to the application. 
@@ -37,6 +37,7 @@ final public class STextual extends TargetCore{
 	}
 	public final Coupler coupler;
 	private String text;
+	private boolean textSet;
 	/**
 	Core constructor. 
 	@param title passed to superclass
@@ -58,16 +59,18 @@ final public class STextual extends TargetCore{
 	public void setText(String text){
 		if(text==null||!coupler.isValidText(this,text))
 				throw new IllegalArgumentException("Null or invalid text in "+Debug.info(this));
-		boolean firstSet=this.text==null;
 		this.text=text;
-		if(!firstSet)coupler.textSet(this);
+		if(false)trace(".setText: textSet=",textSet);
+		if(textSet)coupler.textSet(this);
+		textSet=true;
+		if(false)trace(".setText: textSet=",textSet);
 	}
 	/**
 	The text value represented. 
 	 */
 	public String text(){
 		if(text!=null)return text;
-		else text=coupler.getText(this);
+		String text=coupler.getText(this);
 		if(text==null||!coupler.isValidText(this,text))
 			throw new IllegalStateException("Null or invalid text in "+Debug.info(this));
 		else return text;

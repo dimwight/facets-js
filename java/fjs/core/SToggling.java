@@ -1,13 +1,24 @@
-package Facets.core;
+package fjs.core;
 
 /**
 {@link STarget} representing a Boolean value. 
 <p>{@link SToggling} represents a Boolean value to 
   be exposed to user view and control in the surface; application-specific 
-  mechanism can be defined in a {@link Facets.core.TogglingCoupler}.
+  mechanism can be defined in a {@link fjs.core.SToggling.Coupler}. 
  */
 final public class SToggling extends TargetCore{
-	public final TogglingCoupler coupler;
+	/**
+	Connects a {@link SToggling} to the application. 
+	<p>A {@link Coupler} supplies application-specific mechanism 
+	for a {@link SToggling}.
+	 */
+	public static class Coupler implements TargetCoupler{
+		/**
+		Called by the toggling whenever its state is set. 
+	 */
+		public void stateSet(SToggling t){}
+	}
+	public final Coupler coupler;
 	private boolean state;
 	/**
 	Unique constructor. 
@@ -15,7 +26,7 @@ final public class SToggling extends TargetCore{
 	@param state initial state of the toggling
 	@param coupler can supply application-specific mechanism
 	 */
-	public SToggling(String title,boolean state,TogglingCoupler coupler){
+	public SToggling(String title,boolean state,Coupler coupler){
 		super(title);
 		this.state=state;
 		this.coupler=coupler;
@@ -30,11 +41,19 @@ final public class SToggling extends TargetCore{
 	}
 	/**
 	Sets the Boolean state. 
-	<p> Subsequently calls {@link Facets.core.TogglingCoupler#stateSet(SToggling)}.
+	<p> Subsequently calls {@link fjs.core.SToggling.Coupler#stateSet(SToggling)}.
 	*/
 	public void set(boolean state){
 		this.state=state;
 		coupler.stateSet(this);
+	}
+	@Override
+	public void updateState(Object update){
+		set((boolean)update);
+	}
+	@Override
+	public Object state(){
+		return isSet();
 	}
 	public String toString(){
 		return super.toString()+(false?"":" "+state);

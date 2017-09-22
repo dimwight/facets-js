@@ -1,4 +1,4 @@
-package Facets.util;
+package fjs.util;
 /**
 Specifies a unique identity. 
  */

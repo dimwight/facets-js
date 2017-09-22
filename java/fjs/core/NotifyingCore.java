@@ -1,6 +1,6 @@
-package Facets.core;
-import Facets.util.Debug;
-import Facets.util.Tracer;
+package fjs.core;
+import fjs.util.Debug;
+import fjs.util.Tracer;
 /**
 Core implementation of key interfaces. 
 <p>{@link NotifyingCore} is the base class of both the {@link STarget} and
@@ -9,6 +9,14 @@ Core implementation of key interfaces.
 use the concrete subclass hierarchies. 
  */
 abstract class NotifyingCore extends Tracer implements Notifying{
+	private final String title;
+	public NotifyingCore(String title){
+		super();
+		this.title=title;
+	}
+	public String title(){
+		return title;
+	}
 	transient Notifiable notifiable;
 	private static int identities;
 	private final int identity=identities++;
@@ -19,7 +27,7 @@ abstract class NotifyingCore extends Tracer implements Notifying{
   }
 	@Override
 	public void notify(Object notice){
-		if(Debug.trace)Debug.traceEvent("Notified in "+this+" with "+notice);
+		if(Debug.trace)Debug.traceEvent("Notified in "+this+" with "+notice+": notifiable="+notifiable);
 		if(notifiable==null)return;
 		if(!blockNotification())notifiable.notify(notice);
 		else if(Debug.trace)Debug.traceEvent("Notification blocked in "+this);

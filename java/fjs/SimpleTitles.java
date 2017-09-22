@@ -1,0 +1,12 @@
+package fjs;
+public interface SimpleTitles{
+	String TITLE_NUMERIC_FIELD="Number",TITLE_NUMERIC_LABEL="Value",
+			TITLE_TEXTUAL_FIRST="First",TITLE_TEXTUAL_SECOND="Second",
+			TITLE_TOGGLING="Click to toggle live",TITLE_TOGGLED="Toggle state",
+			TITLE_INDEXING=TITLE_TEXTUAL_FIRST+" or "+TITLE_TEXTUAL_SECOND,
+			TITLE_INDEX="Index",TITLE_INDEXED="Indexed",
+			INDEXABLES[]={TITLE_TEXTUAL_FIRST,TITLE_TEXTUAL_SECOND};
+	boolean TOGGLE_START=false;
+	int INDEX_START=0;
+	Double NUMERIC_START=123d;
+}

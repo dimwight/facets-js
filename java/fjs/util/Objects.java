@@ -1,4 +1,4 @@
-package Facets.util;
+package fjs.util;
 import java.util.ArrayList;
 /**
 Utility methods for arrays. 

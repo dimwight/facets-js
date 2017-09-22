@@ -1,14 +1,14 @@
-package Facets.core;
+package fjs.core;
 import java.util.Arrays;
 import java.util.HashSet;
-import Facets.util.Debug;
-import Facets.util.Titled;
+import fjs.util.Debug;
+import fjs.util.Titled;
 /**
 {@link STarget} representing an index into a list of items. 
 <p>{@link SIndexing} represents a list of items to be exposed 
   in the surface, together with an index 
   into that list; application-specific mechanism and policy can be defined in 
-	a {@link Facets.core.SIndexing.Coupler}.
+	a {@link fjs.core.SIndexing.Coupler}. 
  */
 final public class SIndexing extends TargetCore{
 	/**Allows an indexing to be functionally empty. */
@@ -40,7 +40,7 @@ final public class SIndexing extends TargetCore{
 		<code>indexables</code>:
 		<ul>
 		<li>if they are {@link String}s, returns them</li> 
-		<li>if they are {@link Facets.util.Titled}s, returns their <code>title</code>  properties</li>
+		<li>if they are {@link fjs.util.Titled}s, returns their <code>title</code>  properties</li> 
 		<li>otherwise, returns their <code>toString</code> properties</li> 
 		<li>if they the {@link SIndexing#NO_INDEXABLES} constant, returns an 
 		empty {@link String}[].
@@ -115,6 +115,10 @@ final public class SIndexing extends TargetCore{
 	public void setIndex(int index){
 		setIndices(new int[]{index});
 	}
+	public void setIndexed(Object definition){
+		for(int at=0;at<indexables.length;at++)
+			if(indexables[at].equals(definition))setIndex(at);
+	}
 	/**
 	Sets indices into the <code>indexables</code>. 
 	@param indices may be empty but may not be <code>null</code>
@@ -125,7 +129,7 @@ final public class SIndexing extends TargetCore{
 	  boolean first=this.indices==null;
 	  for(int i=0;indices.length>0&&i<indices.length;i++)
 	  	if(indices[i]<0)throw new IllegalArgumentException(
-	  			"Bad index in "+Debug.info(this));
+	  			"Bad index="+indices[i]+ " in "+Debug.info(this));
 	  this.indices=indices;
 	  if(indexings!=null){
 	    Object[]indexables=indexables(),old=indexings;

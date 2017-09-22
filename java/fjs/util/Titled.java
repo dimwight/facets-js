@@ -1,4 +1,4 @@
-package Facets.util;
+package fjs.util;
 /**
 	Has a single-line, human-readable identifying text. 
 	<p>The text may be shared with other objects to indicate

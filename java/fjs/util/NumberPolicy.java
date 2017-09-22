@@ -1,4 +1,4 @@
-package Facets.util;
+package fjs.util;
 /**
  Validation and display of numbers.
  <p>{@link NumberPolicy} supplies the policy Debug.information required when 

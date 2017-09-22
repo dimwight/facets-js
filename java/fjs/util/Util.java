@@ -1,4 +1,4 @@
-package Facets.util;
+package fjs.util;
 public final class Util{
 	private static int DIGITS_SF=3,DECIMALS_FX=2;
 	public static void printOut(String s){

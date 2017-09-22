@@ -1,5 +1,5 @@
-package Facets.core;
-import Facets.util.Debug;
+package fjs.core;
+import fjs.util.Debug;
 /**
  Implements {@link STarget}. 
  <p>{@link TargetCore} is the core implementation of {@link STarget}, 
@@ -8,14 +8,14 @@ import Facets.util.Debug;
  */
 public class TargetCore extends NotifyingCore implements STarget{
 	public static int targets;
-	private final String title;
 	private STarget[]elements;
+	private boolean elementsSet=false;
 	private boolean live=true;
 	/**
 	 Convenience constructor that sets no child elements. 
 	 */
 	public TargetCore(String title){
-		this(title,(STarget[])null);
+		this(title,new STarget[]{});
 	}
 	/**
 	 Core constructor. 
@@ -26,12 +26,13 @@ public class TargetCore extends NotifyingCore implements STarget{
 	 passed to {@link #setElements(STarget[])}
 	 */
 	public TargetCore(String title,STarget...elements){
-		this.title=title;
-		if(elements!=null)setElements(elements);
+		super(title);
 		if(title==null||title.equals(""))
 			throw new IllegalArgumentException("Null or empty title in "+Debug.info(this));
-		if(Debug.trace)Debug.traceEvent("Created "+Debug.info(this));
+		if(false)trace(".TargetCore: elements=",elements.length);
+		if(elements.length>0)setElements(elements);
 		targets++;
+		if(Debug.trace)Debug.traceEvent("Created "+Debug.info(this));
 	}
 	/**
 	 Sets the {@link STarget} children of the {@link TargetCore}. 
@@ -41,13 +42,11 @@ public class TargetCore extends NotifyingCore implements STarget{
 	 members) will be returned as the <code>elements</code> property. 
 	 */
 	final protected void setElements(STarget[]elements){
-		if(this.elements!=null)throw new RuntimeException("Immutable elements in "
+		if(elementsSet)throw new RuntimeException("Immutable elements in "
 				+Debug.info(this));
 		this.elements=elements;
-		if((this.elements=elements)==null)
-			throw new IllegalArgumentException("Null elements in "+Debug.info(this));
-		else for(int i=0;i<elements.length;i++)
-			if(elements[i]==null)
+		elementsSet=true;
+		for(int i=0;i<elements.length;i++)if(elements[i]==null)
 				throw new IllegalArgumentException("Null element "+i+" in "+Debug.info(this));
 	}
 	/**
@@ -56,15 +55,20 @@ public class TargetCore extends NotifyingCore implements STarget{
 	 <code>lazyElements</code>. 
 	 <p>Each call to this method also sets the {@link TargetCore} 
 	 as notification monitor of any element that is not a {@link 
-	 Facets.core.SFrameTarget}.
+	 fjs.core.SFrameTarget}. 
 	  
 	 */
 	final public STarget[]elements(){
-		if(elements==null)setElements(lazyElements());
-		if(elements==null)throw new IllegalStateException("No elements in "+Debug.info(this));
-		for(int i=0;i<elements.length;i++)
-			if(!(elements[i].type()==NotifyingType.Frame))elements[i].setNotifiable(this);
-		return elements;
+		if(false)trace(".elements: elementsSet=",elementsSet);
+		if(!elementsSet){
+			STarget[]lazy=lazyElements();
+			if(false)trace(".TargetCore: lazy=",lazy.length);
+			setElements(lazy);
+		}
+		for(int i=0;i<this.elements.length;i++)
+			if(!(this.elements[i].type()==NotifyingType.Frame))
+				this.elements[i].setNotifiable(this);
+		return this.elements;
 	}
 	/**
 	 Lazily creates <code>element</code>s for this target.  
@@ -106,9 +110,6 @@ public class TargetCore extends NotifyingCore implements STarget{
 	public void setLive(boolean live){
 		this.live=live;
 	}
-	public String title(){
-		return title;
-	}
 	public String toString(){
 		return Debug.info(this);
 	}
@@ -117,7 +118,7 @@ public class TargetCore extends NotifyingCore implements STarget{
 	<p><b>NOTE</b> This method must NOT be overridden in application code. 
 	 */
 	protected boolean notifiesTargeter(){
-		return true&&elements!=null;
+		return true&&this.elements!=null;
 	}
 	@Override
 	public NotifyingType type(){

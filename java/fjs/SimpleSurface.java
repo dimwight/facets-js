@@ -1,99 +1,124 @@
-package Facets;
-import Facets.globals.Facets;
-import Facets.globals.Globals;
-import Facets.util.Titled;
-import Facets.util.Tracer;
-public abstract class SimpleSurface extends Tracer implements Titled{
-	public enum FacetTest{Textual,Indexing}
-	protected final FacetTest test;
-	public static final int INDEX_START=1;
-	public static final String TITLE_FIRST="First",TITLE_SECOND="Second",
-		TITLE_INDEXING=TITLE_FIRST+" or "+TITLE_SECOND,
-		TITLE_INDEXED="Indexed",TITLE_INDEX="Index",
-		INDEXABLES[]={TITLE_FIRST,TITLE_SECOND};
-	protected final Facets app=Globals.newInstance(true);
-	private final String title;
-	protected SimpleSurface(String title,FacetTest test){
-		super(title);
-		this.title=title;
-		this.test=test;
-	}
-	protected void traceOutput(String msg) {
-		if(true&&app.trace)super.traceOutput(msg);
+package fjs;
+import fjs.globals.Facets;
+import fjs.globals.Facets.NumericCoupler;
+import fjs.globals.Facets.TextualCoupler;
+import fjs.globals.Facets.TogglingCoupler;
+import fjs.util.Times;
+import fjs.globals.Globals;
+public class SimpleSurface extends SurfaceCore implements SimpleTitles{
+	public SimpleSurface(String title,TargetTest test){
+		super(title,Globals.newInstance(true),test);
+		Times.times=true;
 	}
 	@Override
-	public String title(){
-		return title;
+	final protected void traceOutput(String msg){
+		if(true&&facets.trace)super.traceOutput(msg);
 	}
-	public void buildSurface(){
-		Object targets=newTargetTree();
-		trace(" > Generating targeters...");
-		app.buildTargeterTree(targets);
-		trace(" > Building layout...");
-		buildLayout();
-		trace(" > Surface built!");
+	final protected Object newTextual(String title){
+		TextualCoupler coupler=newTextualCouplerCore(title);
+		String passText=coupler.passText;
+		trace(" > Generating textual target state=",
+				passText!=null?passText:coupler.getText.apply(title));
+		return facets.newTextualTarget(title,coupler);
 	}
+	final protected Object newNumeric(String title){
+		NumericCoupler coupler=new NumericCoupler(){{
+			passValue=NUMERIC_START;
+			min=5d;
+			max=25d;
+		}};
+		trace(" > Generating numeric target state=",coupler.passValue);
+		return facets.newNumericTarget(title,coupler);
+	}
+	final protected Object newToggling(String title,boolean state){
+		trace(" > Generating toggling target state=",state);
+		TogglingCoupler coupler=new TogglingCoupler(){{
+			passSet=state;
+			targetStateUpdated=(title,state)->{
+				trace(" > Toggling state updated: title="+title+" state=",state);
+				facets.setTargetLive(TITLE_TOGGLED,(boolean)state);			
+				facets.updateTargetState(TITLE_TOGGLED,"State is "+state);
+			};
+		}};
+		return facets.newTogglingTarget(title,coupler);
+	}
+	final protected Object newIndexing(String title,String[]indexables,int indexStart){
+		trace(" > Generating indexing target state=",indexStart);
+		Facets.IndexingCoupler coupler=new Facets.IndexingCoupler(){{
+			passIndexables=indexables;
+			passIndex=indexStart;
+			targetStateUpdated=(title,state)->{
+				trace(" > Indexing state updated: title="+title+" state=",state);
+				facets.updateTargetState(TITLE_INDEXED,facets.getIndexingValues(title).indexed.get());
+				facets.updateTargetState(TITLE_INDEX,"Index is "+state);
+			};
+		}};
+
+		return facets.newIndexingTarget(title,coupler);
+	}
+	final protected TextualCoupler newTextualCouplerCore(String title){
+		String textTextual=title+" text in "+this.title();
+		return title.equals(TITLE_NUMERIC_LABEL)?new TextualCoupler(){{
+			getText=title->{
+				Object state=facets.getTargetState(TITLE_NUMERIC_FIELD);
+				return ("Number is "+(state!=null?Math.rint((double)state):" not yet set")
+						).replaceAll("\\.\\d+","");
+			};
+		}}
+		:title.equals(TITLE_TOGGLED)?new TextualCoupler(){{
+			getText=title->"State is "+facets.getTargetState(TITLE_TOGGLING);
+		}}
+		:title.equals(TITLE_INDEXED)?new TextualCoupler(){{
+			passText=INDEXABLES[INDEX_START];
+		}}
+		:title.equals(TITLE_TEXTUAL_FIRST)?new TextualCoupler(){{
+			getText=title->textTextual;
+			targetStateUpdated=(title,state)->{
+				trace(" > Textual state updated: title="+title+" state=",state);
+				facets.updateTargetState(TITLE_TEXTUAL_SECOND,
+						TITLE_TEXTUAL_FIRST+" has changed to: "+state);					
+			};
+		}}
+		:new TextualCoupler(){{
+			passText=textTextual;
+		}};
+	}
+	@Override
 	protected Object newTargetTree(){
 		trace(" > Generating targets");
-		return test==FacetTest.Textual?app.newTargetsGroup("Textuals",
-				newTextual(TITLE_FIRST),newTextual(TITLE_SECOND))
-			:app.newTargetsGroup("Indexing+Textual",
-					newIndexing(TITLE_INDEXING),newTextual(TITLE_INDEX),newTextual(TITLE_INDEXED));
+		String treeTitle=test.toString();
+		return test==TargetTest.Textual?facets.newTargetsGroup(treeTitle,
+				newTextual(TITLE_TEXTUAL_FIRST),newTextual(TITLE_TEXTUAL_SECOND))
+			:test==TargetTest.TogglingLive?facets.newTargetsGroup(treeTitle,
+				newToggling(TITLE_TOGGLING,TOGGLE_START),newTextual(TITLE_TOGGLED))
+			:test==TargetTest.Indexing?facets.newTargetsGroup(treeTitle,
+					newIndexing(TITLE_INDEXING,INDEXABLES,INDEX_START),
+					newTextual(TITLE_INDEX),newTextual(TITLE_INDEXED))
+			:facets.newTargetsGroup(treeTitle,
+					newNumeric(TITLE_NUMERIC_FIELD),newTextual(TITLE_NUMERIC_LABEL));
 	}
-	private Object newIndexing(String title){
-		String text=title+" text in "+SimpleSurface.this.title;
-		trace(" > Generating indexing target text=",text);
-		return app.newIndexingTarget(title,new Facets.IndexingCoupler(){{
-			passIndexables=INDEXABLES;
-			passIndex=INDEX_START;
-			targetStateUpdated=(title,state)->targetStateUpdated(title,state);
-		}});
+	@Override
+	protected void buildLayout(){
+		if(test==TargetTest.Textual)generateFacets(TITLE_TEXTUAL_FIRST);
+		else if(test==TargetTest.TogglingLive)generateFacets(TITLE_TOGGLING,TITLE_TOGGLED);
+		else if(test==TargetTest.Numeric)generateFacets(TITLE_NUMERIC_FIELD,TITLE_NUMERIC_LABEL);
+		else generateFacets(TITLE_INDEXING,TITLE_INDEX,TITLE_INDEXED);
 	}
-	private Object newTextual(String title){
-		String text=title+" text in "+SimpleSurface.this.title;
-		trace(" > Generating textual target text=",text);
-		return app.newTextualTarget(title,new Facets.TextualCoupler(){{
-			passText=title.equals(TITLE_INDEXING)?INDEXABLES[INDEX_START]
-					:true?null:text;
-			getText=title->!title.equals(TITLE_INDEX)?text
-					:String.valueOf(app.getTargetState(TITLE_INDEXING));
-			targetStateUpdated=(title,state)->targetStateUpdated(title,state);
-		}});
-	}
-	protected abstract void buildLayout();
-	protected void targetStateUpdated(String title,Object state){
-		trace(" > Target state updated: title="+title+" state=",state);
-		if(title.equals(TITLE_FIRST))
-			app.updateTargetState(TITLE_SECOND,TITLE_FIRST+" has changed to: "+state);
-		else if(title.equals(TITLE_INDEXING)){
-			app.updateTargetState(TITLE_INDEXED,INDEXABLES[(int)state]);
-			app.updateTargetState(TITLE_INDEX,String.valueOf(state));
-		}
-	}
-	private static final class LocalSurface extends SimpleSurface{
-		private LocalSurface(String title){
-			super(title,FacetTest.Indexing);
-		}
-		@Override
-		protected void buildLayout(){
-			if(test==FacetTest.Textual)generateFacet(TITLE_FIRST);
-			else generateFacet(TITLE_INDEXING,TITLE_INDEXED);
-		}
-		private void generateFacet(String...titles){
-			for(String title:titles){
-				trace(" > Generating facet for",title);
-				app.attachFacet(title,value -> trace(" > Facet updated: value=",value));
-			}
-		}
-		@Override
-		public void buildSurface(){
-			super.buildSurface();
-			Object update=test==FacetTest.Indexing?(INDEX_START+1)%2:"Some updated text";
-			trace(" > Simulating input: update=",update);
-			app.updateTargetState(test==FacetTest.Indexing?TITLE_INDEXING:TITLE_FIRST,update);
-		}
+	@Override
+	public void buildSurface(){
+		super.buildSurface();
+		if(false||!test.isSimple())return;
+		Object update=test==TargetTest.TogglingLive?!TOGGLE_START
+				:test==TargetTest.Indexing?(INDEX_START+1)%2
+				:test==TargetTest.Numeric?NUMERIC_START*2
+				:"Some updated text";
+		trace(" > Simulating input: update=",update);
+		facets.updateTargetState(test==TargetTest.Indexing?TITLE_INDEXING:
+			test==TargetTest.TogglingLive?TITLE_TOGGLING
+					:test==TargetTest.Numeric?TITLE_NUMERIC_FIELD
+					:TITLE_TEXTUAL_FIRST,update);
 	}
 	public static void main(String[]args){
-		new LocalSurface("SimpleSurface").buildSurface();
+		new SimpleSurface("SimpleSurface",TargetTest.Numeric).buildSurface();
 	}
 }

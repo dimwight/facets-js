@@ -1,6 +1,7 @@
-package Facets.core;
-import Facets.util.Debug;
-import Facets.util.Titled;
+package fjs.core;
+import fjs.SelectingSurface.TextContent;
+import fjs.util.Debug;
+import fjs.util.Titled;
 /**
 Extends {@link TargetCore} by framing 
   application content to be exposed directly to facets. 
@@ -23,15 +24,18 @@ public class SFrameTarget extends TargetCore{
   <p>This limitation ensures that the effective type of 
     a {@link SFrameTarget} with child elements can be distinguished 
     by reference to the compiled type. Care must therefore be 
-    taken in applications not vary the effective type of the 
+    taken in client code not vary the effective type of the 
     elements created by a subclass. 
   @param title passed to the superclass 
   @param toFrame must not be <code>null</code>
 	 */
 	public SFrameTarget(String title,Object toFrame){
 	  super(title);
-		if((framed=toFrame)==null)throw new IllegalArgumentException(
+		if(toFrame==null)throw new IllegalArgumentException(
 				"Null framed in "+Debug.info(this));
+		framed=toFrame;
+		if(false&&framed instanceof TextContent)
+			trace(".SFrameTarget: ?framed=",((TextContent)framed).text);
 	}
   protected final boolean notifiesTargeter(){
 		return true;
