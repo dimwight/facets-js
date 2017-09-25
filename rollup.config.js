@@ -16,7 +16,7 @@ const app = Object.assign({}, base, {
   moduleName: 'unused',
 });
 const simple = Object.assign({}, app, {
-  entry: 'in/fjs/SimpleSurface.js',
+  entry: 'in/fjs/' +(true?'SimpleSurface.js':'SelectingSurface.js'),
 });
 const main = Object.assign({}, app, {
   entry: 'src/main.js',

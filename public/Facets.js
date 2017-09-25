@@ -110,8 +110,8 @@ class Objects {
             return o1 === o2;
         } })(spacer, "\n");
         let at = 0;
-        for (let index143 = 0; index143 < items.length; index143++) {
-            let item = items[index143];
+        for (let index218 = 0; index218 < items.length; index218++) {
+            let item = items[index218];
             /* add */ (list.push((item == null ? "null" : trim ? item.toString().trim() : item) + (++at === items.length ? "" : spacer)) > 0);
         }
         return ('[' + list.join(', ') + ']');
@@ -451,8 +451,8 @@ class TargeterCore extends NotifyingCore {
             throw Object.defineProperty(new Error("No targets in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
         if (this.__elements == null) {
             let list = ([]);
-            for (let index140 = 0; index140 < targets.length; index140++) {
-                let t = targets[index140];
+            for (let index215 = 0; index215 < targets.length; index215++) {
+                let t = targets[index215];
                 {
                     let targeter = t.newTargeter();
                     targeter.setNotifiable(this);
@@ -818,6 +818,9 @@ class SIndexing extends TargetCore {
         else
             return indexables;
     }
+    facetIndexables() {
+        return this.coupler.getFacetIndexables(this);
+    }
     /**
      * Sets a single index into the <code>indexables</code>.
      * @param {number} index
@@ -924,34 +927,6 @@ SIndexing["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.cor
          */
         getIndexables() {
             throw Object.defineProperty(new Error("Not implemented in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
-        }
-        /**
-         * Returns strings to represent the indexables.
-         * <p>These will appear in facet lists, or as labels for menu items or
-         * radio buttons.
-         * <p>The default returns titles based on the type of the {@link SIndexing}'s
-         * <code>indexables</code>:
-         * <ul>
-         * <li>if they are {@link String}s, returns them</li>
-         * <li>if they are {@link fjs.util.Titled}s, returns their <code>title</code>  properties</li>
-         * <li>otherwise, returns their <code>toString</code> properties</li>
-         * <li>if they the {@link SIndexing#NO_INDEXABLES} constant, returns an
-         * empty {@link String}[].
-         * </ul>
-         * @param {SIndexing} i
-         * @return {Array}
-         */
-        newIndexableTitles(i) {
-            let indexables = i.indexables();
-            if (indexables === SIndexing.NO_INDEXABLES_$LI$())
-                return [];
-            else if (indexables != null && indexables instanceof Array && (indexables.length == 0 || indexables[0] == null || typeof indexables[0] === 'string'))
-                return indexables;
-            let titles = new Array(indexables.length);
-            let titled = (indexables != null && indexables instanceof Array && (indexables.length == 0 || indexables[0] == null || (indexables[0] != null && (indexables[0]["__interfaces"] != null && indexables[0]["__interfaces"].indexOf("fjs.util.Titled") >= 0 || indexables[0].constructor != null && indexables[0].constructor["__interfaces"] != null && indexables[0].constructor["__interfaces"].indexOf("fjs.util.Titled") >= 0))));
-            for (let t = 0; t < titles.length; t++)
-                titles[t] = titled ? indexables[t].title() : indexables[t].toString();
-            return titles;
         }
     }
     SIndexing.Coupler = Coupler;
@@ -1511,21 +1486,12 @@ STextual["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.core
          * @return {boolean}
          */
         isValidText(t, text) {
-            return true || !((o1, o2) => { if (o1 && o1.equals) {
+            return !((o1, o2) => { if (o1 && o1.equals) {
                 return o1.equals(o2);
             }
             else {
                 return o1 === o2;
             } })(text.trim(), "");
-        }
-        /**
-         * Can the {@link STextual} accept interim updates?
-         * <p>Default returns <code>false</code>.
-         * @param {STextual} t
-         * @return {boolean}
-         */
-        updateInterim(t) {
-            return false;
         }
         getText(t) {
             throw Object.defineProperty(new Error("Not implemented in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
@@ -1613,89 +1579,9 @@ SToggling["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.cor
     Coupler["__interfaces"] = ["fjs.core.TargetCoupler", "java.io.Serializable"];
 })(SToggling || (SToggling = {}));
 
-/* Generated from Java with JSweet 2.0.0-rc1 - http://www.jsweet.org */
 /**
  * Unique constructor.
- * @param {string} title passed to superclass
- * @param {*} content passed to superclass
- * @class
- * @extends SFrameTarget
- */
-class SelectingFrame extends SFrameTarget {
-    constructor(title, content) {
-        super(title, content);
-        this.__selection = null;
-    }
-    /**
-     *
-     * @return {*}
-     */
-    state() {
-        return this.__selection.single();
-    }
-    /**
-     * Define a selection within the content <code>framed</code>.
-     * @param {*} definition in the default implementation is cast to a {@link SSelection}
-     * and passed to {@link #setSelection(SSelection)}
-     * @return {*} (via {@link #setSelection(SSelection)}) the new return of {@link #selection()}
-     */
-    defineSelection(definition) {
-        return this.setSelection(definition);
-    }
-    /**
-     * The current selection within the content <code>framed</code>.
-     * @return {*} the {@link SSelection} last set with {@link #setSelection(SSelection)}
-     */
-    selection() {
-        if (this.__selection == null)
-            throw Object.defineProperty(new Error("Null selection in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
-        return this.__selection;
-    }
-    /**
-     * Sets the selection to be returned by {@link #selection()}.
-     * <p>This method is defined protected as it should only be called by subclasses;
-     * external callers should use the more general {@link #defineSelection(Object)}.
-     * @param {*} selection must have a {@link SSelection#content()} equal to
-     * {@link #framed}.
-     * @return {*} the new return of {@link #selection()}
-     */
-    setSelection(selection) {
-        if (selection.content() !== this.framed)
-            throw Object.defineProperty(new Error("Bad selection content:\n" + selection.content() + "\nshould be " + this.framed + "\nin " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.IllegalArgumentException', 'java.lang.Exception'] });
-        else
-            this.__selection = selection;
-        return selection;
-    }
-    /**
-     * Return a {@link SFrameTarget} framing the currently selected content.
-     * <p>Content framed should be that returned in the <code>selection</code>
-     * methods of {@link #selection()}.
-     * <p>Default frames a single selection, titled from the selected content or
-     * else using {@link #title()}.
-     * @return {SFrameTarget}
-     */
-    selectionFrame() {
-        let selected = this.selection().single();
-        let title = (selected != null && (selected["__interfaces"] != null && selected["__interfaces"].indexOf("fjs.util.Titled") >= 0 || selected.constructor != null && selected.constructor["__interfaces"] != null && selected.constructor["__interfaces"].indexOf("fjs.util.Titled") >= 0)) ? selected.title() : this.title();
-        return new SelectingFrame.SelectingFrame$0(this, title, selected);
-    }
-}
-SelectingFrame["__class"] = "fjs.core.select.SelectingFrame";
-SelectingFrame["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.core.Notifying", "fjs.core.Notifiable", "fjs.util.Titled"];
-(function (SelectingFrame) {
-    class SelectingFrame$0 extends SFrameTarget {
-        constructor(__parent, __arg0, __arg1) {
-            super(__arg0, __arg1);
-            this.__parent = __parent;
-        }
-    }
-    SelectingFrame.SelectingFrame$0 = SelectingFrame$0;
-    SelectingFrame$0["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.core.Notifying", "fjs.core.Notifiable", "fjs.util.Titled"];
-})(SelectingFrame || (SelectingFrame = {}));
-
-/**
- * Unique constructor.
- * @param {IndexingFrame} indexed will be the first target of this instance
+ * @param {IndexingTarget} indexed will be the first target of this instance
  * @class
  * @extends TargeterCore
  */
@@ -1703,7 +1589,7 @@ class IndexingFrameTargeter extends TargeterCore {
     constructor(indexed) {
         super(indexed.constructor);
         this.__indexing = null;
-        this.selection = null;
+        this.indexed = null;
     }
     /**
      * Retargeted to the {@link SIndexing} wrapped by the current target.
@@ -1722,20 +1608,20 @@ class IndexingFrameTargeter extends TargeterCore {
     retarget(target) {
         let frame = target;
         let ix = frame.indexing();
-        let selectionFrame = frame.selectionFrame();
+        let indexedFrame = frame.indexedFrame();
         super.retarget(frame);
         if (this.__indexing == null) {
             let list = ([]);
-            for (let index141 = 0; index141 < this.__elements.length; index141++) {
-                let e = this.__elements[index141];
+            for (let index216 = 0; index216 < this.__elements.length; index216++) {
+                let e = this.__elements[index216];
                 /* add */ (list.push(e) > 0);
             }
             this.__indexing = ix.newTargeter();
             /* add */ (list.push(this.__indexing) > 0);
-            this.selection = selectionFrame.newTargeter();
-            /* add */ (list.push(this.selection) > 0);
+            this.indexed = indexedFrame.newTargeter();
+            /* add */ (list.push(this.indexed) > 0);
             this.__indexing.setNotifiable(this);
-            this.selection.setNotifiable(this);
+            this.indexed.setNotifiable(this);
             this.__elements = ((a1, a2) => { if (a1.length >= a2.length) {
                 a1.length = 0;
                 a1.push.apply(a1, a2);
@@ -1744,10 +1630,9 @@ class IndexingFrameTargeter extends TargeterCore {
             else {
                 return a2.slice(0);
             } })([], list);
-            
         }
         this.__indexing.retarget(ix);
-        this.selection.retarget(selectionFrame);
+        this.indexed.retarget(indexedFrame);
     }
     /**
      * Overrides superclass method.
@@ -1761,78 +1646,33 @@ IndexingFrameTargeter["__class"] = "fjs.core.select.IndexingFrameTargeter";
 IndexingFrameTargeter["__interfaces"] = ["fjs.util.Identified", "fjs.core.Notifying", "fjs.core.SRetargetable", "fjs.core.Notifiable", "fjs.util.Titled", "fjs.core.Facetable", "fjs.core.STargeter"];
 
 /**
- * Public constructor.
- * @param {string} title passed to core
- * @param {*} content  passed to core
- * @param {SIndexing} children passed to {@link #setIndexing(SIndexing)}
+ * {@link SelectingFrame} that selects with an {@link SIndexing}.
+ * <p>{@link IndexingTarget} specialises its superclass for
+ * content that can be selected by index.
+ * @extends TargetCore
  * @class
- * @extends SelectingFrame
  */
-class IndexingFrame extends SelectingFrame {
-    constructor(title, content, children) {
-        if (((typeof title === 'string') || title === null) && ((content != null) || content === null) && ((children != null && children instanceof SIndexing) || children === null)) {
-            let __args = Array.prototype.slice.call(arguments);
-            {
-                let __args = Array.prototype.slice.call(arguments);
-                super(title, content);
-                this.__indexing = null;
-                this.__indexing = null;
-            }
-            (() => {
-                children.setIndex(0);
-                this.setIndexing(children);
-            })();
-        }
-        else if (((typeof title === 'string') || title === null) && ((content != null) || content === null) && children === undefined) {
-            let __args = Array.prototype.slice.call(arguments);
-            super(title, content);
-            this.__indexing = null;
-            this.__indexing = null;
-        }
-        else
-            throw new Error('invalid overload');
+class IndexingTarget extends TargetCore {
+    constructor(title) {
+        super(title);
+        this.__indexing = null;
     }
     /**
-     * Re-implementation that creates a suitable {@link SSelection}.
-     * <p>Calls {@link SIndexing#setIndexed(Object)} in {@link #indexing()}
-     * with <code>definition</code>, then {@link #setSelection(SSelection)}
-     * with a new {@link SSelection} returning as {@link SSelection#single()}
-     * the new {@link SIndexing#indexed()} (which will be <code>definition</code>).
-     * @param {*} definition
-     * @return {*}
-     */
-    defineSelection(definition) {
-        if (!((o1, o2) => { if (o1 && o1.equals) {
-            return o1.equals(o2);
-        }
-        else {
-            return o1 === o2;
-        } })(this.__indexing.indexed(), definition))
-            this.__indexing.setIndexed(definition);
-        return this.setSelection(new IndexingFrame.IndexingFrame$0(this));
-    }
-    /**
-     * Re-implementation.
-     * <p>Returns the {@link SFrameTarget} created in
-     * {@link #newIndexedFrame(Object)}.
+     * <p>Returns the {@link SFrameTarget} created in {@link #newIndexedFrame(Object)}.
      * @return {SFrameTarget}
      */
-    selectionFrame() {
-        return this.newIndexedFrame(this.selection().single());
+    indexedFrame() {
+        return this.newIndexedFrame(this.__indexing.indexed());
     }
     /**
      *
-     * Sets an {@link SIndexing} that can index into content of {@link #framed}.
-     * <p>Also calls {@link #defineSelection(Object)} with the current
-     * {@link SIndexing#indexed()}.
-     * @param {SIndexing} indexing must have {@link SIndexing#indexables()}
-     * matching the current state of {@link #framed}.
+     * Sets an {@link SIndexing} containing content to be exposed.
+     * @param {SIndexing} indexing
      */
     setIndexing(indexing) {
         if (indexing == null)
             throw Object.defineProperty(new Error("Null children in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.IllegalArgumentException', 'java.lang.Exception'] });
         (this.__indexing = indexing).setNotifiable(this);
-        this.defineSelection(indexing.indexed());
     }
     /**
      * The indexing last set with {@link #setIndexing(SIndexing)}.
@@ -1845,33 +1685,22 @@ class IndexingFrame extends SelectingFrame {
     }
     /**
      * Overrides superclass method.
-     * <p>Must return an {@link IndexingFrameTargeter}.
+     * <p>Returns an {@link IndexingFrameTargeter}.
      * @return {*}
      */
     newTargeter() {
         return new IndexingFrameTargeter(this);
     }
-}
-IndexingFrame["__class"] = "fjs.core.select.IndexingFrame";
-IndexingFrame["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.core.Notifying", "fjs.core.Notifiable", "fjs.util.Titled"];
-(function (IndexingFrame) {
-    class IndexingFrame$0 {
-        constructor(__parent) {
-            this.__parent = __parent;
-        }
-        multiple() {
-            throw Object.defineProperty(new Error("Not implemented in " + this), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
-        }
-        single() {
-            return this.__parent.__indexing.indexed();
-        }
-        content() {
-            return this.__parent.framed;
-        }
+    /**
+     * Re-implementation returning <code>true</code>.
+     * @return {boolean}
+     */
+    notifiesTargeter() {
+        return true;
     }
-    IndexingFrame.IndexingFrame$0 = IndexingFrame$0;
-    IndexingFrame$0["__interfaces"] = ["fjs.core.select.SSelection", "java.io.Serializable"];
-})(IndexingFrame || (IndexingFrame = {}));
+}
+IndexingTarget["__class"] = "fjs.core.select.IndexingTarget";
+IndexingTarget["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.core.Notifying", "fjs.core.Notifiable", "fjs.util.Titled"];
 
 /* Generated from Java with JSweet 2.0.0-rc1 - http://www.jsweet.org */
 class Times {
@@ -1976,6 +1805,19 @@ class Facets extends Tracer {
         this.trace$java_lang_String$java_lang_Object(" > Created toggling ", toggling);
         return toggling;
     }
+    newTargetGroup(title, ...members) {
+        let group = new (__Function$1.prototype.bind.apply(TargetCore, [null, title].concat(STarget.newTargets(members))));
+        this.trace$java_lang_String$java_lang_Object(" > Created target group " + Debug.info(group) + " ", members);
+        return group;
+    }
+    updatedTarget(target, c) {
+        let title = target.title();
+        this.trace$java_lang_String$java_lang_Object(" > Updated target ", target);
+        if (c.targetStateUpdated != null) {
+            let state = target.state();
+            (target => (typeof target === 'function') ? target(title, state) : target.accept(title, state))(c.targetStateUpdated);
+        }
+    }
     newIndexingTarget(title, c) {
         let indexing = new SIndexing(title, c.passIndexables, new Facets.Facets$4(this, c));
         let passIndex = c.passIndex;
@@ -1986,32 +1828,21 @@ class Facets extends Tracer {
         this.trace$java_lang_String$java_lang_Object(" > Created indexing ", indexing);
         return indexing;
     }
-    getIndexingValues(title) {
+    getIndexingState(title) {
         let titleTarget = this.titleTarget(title);
         if (titleTarget == null)
             throw Object.defineProperty(new Error("Null target in " + this), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
+        let indexing = titleTarget;
         return Object.defineProperty({
-            indexed: ((titleTarget) => {
-                return () => titleTarget.indexed();
-            })(titleTarget)
-        }, '__interfaces', { configurable: true, value: ["fjs.globals.Facets.IndexingValues"] });
+            indexables: indexing.facetIndexables(),
+            indexed: ((indexing) => {
+                return () => indexing.indexed();
+            })(indexing)
+        }, '__interfaces', { configurable: true, value: ["fjs.globals.Facets.IndexingState"] });
     }
-    updatedTarget(target, c) {
-        let title = target.title();
-        this.trace$java_lang_String$java_lang_Object(" > Updated target ", target);
-        if (c.targetStateUpdated != null) {
-            let state = target.state();
-            (target => (typeof target === 'function') ? target(title, state) : target.accept(title, state))(c.targetStateUpdated);
-        }
-    }
-    newTargetsGroup(title, ...members) {
-        let group = new (__Function$1.prototype.bind.apply(TargetCore, [null, title].concat(STarget.newTargets(members))));
-        this.trace$java_lang_String$java_lang_Object(" > Created target group " + Debug.info(group) + " ", members);
-        return group;
-    }
-    buildSelectingFrame(frame) {
-        frame.frame = new Facets.LocalSelectingFrame(frame);
-        this.trace$java_lang_String$java_lang_Object(" > Created frame ", frame.frame);
+    buildIndexingFrame(proxy) {
+        proxy.frame = new Facets.LocalIndexingFrame(proxy);
+        this.trace$java_lang_String$java_lang_Object(" > Built frame ", proxy.frame);
     }
     buildTargeterTree(targetTree) {
         this.trace$java_lang_String$java_lang_Object(" > Initial retargeting on ", targetTree);
@@ -2025,8 +1856,8 @@ class Facets extends Tracer {
         let then = (this.titleTargeters[title] = t);
         let elements = t.elements();
         this.trace$java_lang_String("> Added targeter: title=" + title + ": elements=" + elements.length);
-        for (let index142 = 0; index142 < elements.length; index142++) {
-            let e = elements[index142];
+        for (let index217 = 0; index217 < elements.length; index217++) {
+            let e = elements[index217];
             this.addTitleTargeters(e);
         }
     }
@@ -2092,22 +1923,17 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
     }
     Facets.TargetCoupler = TargetCoupler;
     TargetCoupler["__class"] = "fjs.globals.Facets.TargetCoupler";
-    class LocalSelectingFrame extends IndexingFrame {
+    class LocalIndexingFrame extends IndexingTarget {
         constructor(frame) {
-            super(frame.title, frame.content, LocalSelectingFrame.newSelectingIndexing(frame));
+            super(frame.title);
             this.frame = null;
             this.frame = frame;
-            let indexing = this.indexing();
-            frame.setIndex = ((indexing) => {
-                return (index) => indexing.setIndex(index);
-            })(indexing);
-            frame.selectedContent = ((indexing) => {
+            let indexing = new SIndexing(frame.indexingTitle, frame.content, new LocalIndexingFrame.LocalIndexingFrame$0(this, frame));
+            indexing.setIndex(0);
+            this.setIndexing(indexing);
+            frame.getIndexedContent = ((indexing) => {
                 return () => indexing.indexed();
             })(indexing);
-        }
-        static newSelectingIndexing(frame) {
-            let indexing = new SIndexing(frame.indexingTitle, frame.content, new LocalSelectingFrame.LocalSelectingFrame$0(frame));
-            return indexing;
         }
         /**
          *
@@ -2116,29 +1942,31 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
          */
         newIndexedFrame(indexed) {
             let editElements = (this.frame.newEditElements);
-            return new LocalSelectingFrame.LocalSelectingFrame$1(this, this.frame.title + ":selected", indexed, editElements, indexed);
+            return new LocalIndexingFrame.LocalIndexingFrame$1(this, this.frame.title + ":indexed", indexed, editElements, indexed);
         }
     }
-    Facets.LocalSelectingFrame = LocalSelectingFrame;
-    LocalSelectingFrame["__class"] = "fjs.globals.Facets.LocalSelectingFrame";
-    LocalSelectingFrame["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.core.Notifying", "fjs.core.Notifiable", "fjs.util.Titled"];
-    (function (LocalSelectingFrame) {
-        class LocalSelectingFrame$0 extends SIndexing.Coupler {
-            constructor(frame) {
+    Facets.LocalIndexingFrame = LocalIndexingFrame;
+    LocalIndexingFrame["__class"] = "fjs.globals.Facets.LocalIndexingFrame";
+    LocalIndexingFrame["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.core.Notifying", "fjs.core.Notifiable", "fjs.util.Titled"];
+    (function (LocalIndexingFrame) {
+        class LocalIndexingFrame$0 extends SIndexing.Coupler {
+            constructor(__parent, frame) {
                 super();
                 this.frame = frame;
+                this.__parent = __parent;
             }
             /**
              *
              * @param {SIndexing} i
+             * @return {Array}
              */
-            indexSet(i) {
-                this.frame.frame.defineSelection(i.indexed());
+            getFacetIndexables(i) {
+                return (target => (typeof target === 'function') ? target(i.indexables()) : target.apply(i.indexables()))(this.frame.newFacetIndexables);
             }
         }
-        LocalSelectingFrame.LocalSelectingFrame$0 = LocalSelectingFrame$0;
-        LocalSelectingFrame$0["__interfaces"] = ["fjs.core.TargetCoupler", "java.io.Serializable"];
-        class LocalSelectingFrame$1 extends SFrameTarget {
+        LocalIndexingFrame.LocalIndexingFrame$0 = LocalIndexingFrame$0;
+        LocalIndexingFrame$0["__interfaces"] = ["fjs.core.TargetCoupler", "java.io.Serializable"];
+        class LocalIndexingFrame$1 extends SFrameTarget {
             constructor(__parent, __arg0, __arg1, editElements, indexed) {
                 super(__arg0, __arg1);
                 this.editElements = editElements;
@@ -2153,9 +1981,9 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
                 return STarget.newTargets((target => (typeof target === 'function') ? target(this.indexed) : target.apply(this.indexed))(this.editElements));
             }
         }
-        LocalSelectingFrame.LocalSelectingFrame$1 = LocalSelectingFrame$1;
-        LocalSelectingFrame$1["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.core.Notifying", "fjs.core.Notifiable", "fjs.util.Titled"];
-    })(LocalSelectingFrame = Facets.LocalSelectingFrame || (Facets.LocalSelectingFrame = {}));
+        LocalIndexingFrame.LocalIndexingFrame$1 = LocalIndexingFrame$1;
+        LocalIndexingFrame$1["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.core.Notifying", "fjs.core.Notifiable", "fjs.util.Titled"];
+    })(LocalIndexingFrame = Facets.LocalIndexingFrame || (Facets.LocalIndexingFrame = {}));
     class Facets$0 {
         constructor(__parent) {
             this.__parent = __parent;
@@ -2232,25 +2060,6 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
         /**
          *
          * @param {STextual} t
-         * @param {string} text
-         * @return {boolean}
-         */
-        isValidText(t, text) {
-            let isValidText = (this.c.isValidText);
-            return isValidText == null ? true : (target => (typeof target === 'function') ? target(t.title(), text) : target.test(t.title(), text))(isValidText);
-        }
-        /**
-         *
-         * @param {STextual} t
-         * @return {boolean}
-         */
-        updateInterim(t) {
-            let updateInterim = (this.c.updateInterim);
-            return updateInterim == null ? false : (target => (typeof target === 'function') ? target(t.title()) : target.test(t.title()))(updateInterim);
-        }
-        /**
-         *
-         * @param {STextual} t
          * @return {string}
          */
         getText(t) {
@@ -2259,6 +2068,16 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
                 throw Object.defineProperty(new Error("Null getText in " + this), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
             else
                 return (target => (typeof target === 'function') ? target(t.title()) : target.apply(t.title()))(getText);
+        }
+        /**
+         *
+         * @param {STextual} t
+         * @param {string} text
+         * @return {boolean}
+         */
+        isValidText(t, text) {
+            let isValidText = (this.c.isValidText);
+            return isValidText == null ? true : (target => (typeof target === 'function') ? target(t.title(), text) : target.test(t.title(), text))(isValidText);
         }
     }
     Facets.Facets$2 = Facets$2;
@@ -2292,6 +2111,14 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
         indexSet(target) {
             this.__parent.updatedTarget(target, this.c);
         }
+        /**
+         *
+         * @param {SIndexing} i
+         * @return {Array}
+         */
+        getFacetIndexables(i) {
+            return (target => (typeof target === 'function') ? target(i.title()) : target.apply(i.title()))(this.c.getFacetIndexables);
+        }
     }
     Facets.Facets$4 = Facets$4;
     Facets$4["__interfaces"] = ["fjs.core.TargetCoupler", "java.io.Serializable"];
@@ -2309,6 +2136,7 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
         retarget(target) {
             let state = target.state();
             let title = target.title();
+            this.__parent.trace(".attachFacet #" + this.__parent.id + ".retarget: state=" + state + " stateThen=" + this.stateThen);
             if (true || !((o1, o2) => { if (o1 && o1.equals) {
                 return o1.equals(o2);
             }
