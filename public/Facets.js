@@ -110,8 +110,8 @@ class Objects {
             return o1 === o2;
         } })(spacer, "\n");
         let at = 0;
-        for (let index218 = 0; index218 < items.length; index218++) {
-            let item = items[index218];
+        for (let index130 = 0; index130 < items.length; index130++) {
+            let item = items[index130];
             /* add */ (list.push((item == null ? "null" : trim ? item.toString().trim() : item) + (++at === items.length ? "" : spacer)) > 0);
         }
         return ('[' + list.join(', ') + ']');
@@ -451,8 +451,8 @@ class TargeterCore extends NotifyingCore {
             throw Object.defineProperty(new Error("No targets in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
         if (this.__elements == null) {
             let list = ([]);
-            for (let index215 = 0; index215 < targets.length; index215++) {
-                let t = targets[index215];
+            for (let index127 = 0; index127 < targets.length; index127++) {
+                let t = targets[index127];
                 {
                     let targeter = t.newTargeter();
                     targeter.setNotifiable(this);
@@ -761,45 +761,24 @@ SFrameTarget["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.
 /**
  * Unique constructor.
  * @param {string} title passed to superclass
- * @param {Array} indexables the objects to be indexed; may not be empty but
- * may be <code>null</code> in which case they are
- * read dynamically from the coupler
  * @param {SIndexing.Coupler} coupler supplies application-specific mechanism and policy
  * @class
  * @extends TargetCore
  */
 class SIndexing extends TargetCore {
-    constructor(title, indexables, coupler) {
+    constructor(title, coupler) {
         super(title);
-        /*private*/ this.__indices = null;
         this.coupler = null;
-        this.__indexables = null;
-        this.__indexings = null;
+        this.__index = null;
+        this.indexings = null;
         this.coupler = coupler;
-        if (indexables != null && indexables.length === 0)
-            throw Object.defineProperty(new Error("Null or empty indexables in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.IllegalArgumentException', 'java.lang.Exception'] });
-        this.__indexables = indexables;
     }
-    static NO_INDEXABLES_$LI$() { if (SIndexing.NO_INDEXABLES == null)
-        SIndexing.NO_INDEXABLES = ["Not indexable"]; return SIndexing.NO_INDEXABLES; }
-    ;
     /**
      * The first index into the <code>indexables</code>.
      * @return {number}
      */
     index() {
-        if (this.__indices == null || this.__indices.length === 0)
-            throw Object.defineProperty(new Error("Null or empty indices in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
-        return this.__indices[0];
-    }
-    /**
-     * The indices last set into the <code>indexables</code>.
-     * @return {Array}
-     */
-    indices() {
-        if (this.__indices == null)
-            throw Object.defineProperty(new Error("Null indices in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
-        return this.__indices;
+        return this.__index;
     }
     /**
      * The items exposed to indexing.
@@ -808,13 +787,9 @@ class SIndexing extends TargetCore {
      * @return {Array}
      */
     indexables() {
-        let indexables = this.__indexables != null ? this.__indexables : this.coupler.getIndexables();
-        if (indexables == null)
-            throw Object.defineProperty(new Error("Null indexables in " + this), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
-        if (indexables.length === 0)
-            return SIndexing.NO_INDEXABLES_$LI$();
-        if (indexables.slice(0).slice(0).length !== indexables.length)
-            throw Object.defineProperty(new Error("Duplicate indexables in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
+        let indexables = this.coupler.getIndexables(this);
+        if (indexables == null || indexables.length === 0)
+            throw Object.defineProperty(new Error("Null or empty indexables in " + this), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
         else
             return indexables;
     }
@@ -826,42 +801,8 @@ class SIndexing extends TargetCore {
      * @param {number} index
      */
     setIndex(index) {
-        this.setIndices([index]);
-    }
-    setIndexed(definition) {
-        for (let at = 0; at < this.__indexables.length; at++)
-            if (((o1, o2) => { if (o1 && o1.equals) {
-                return o1.equals(o2);
-            }
-            else {
-                return o1 === o2;
-            } })(this.__indexables[at], definition))
-                this.setIndex(at);
-        
-    }
-    /**
-     * Sets indices into the <code>indexables</code>.
-     * @param {Array} indices may be empty but may not be <code>null</code>
-     */
-    setIndices(indices) {
-        if (indices == null)
-            throw Object.defineProperty(new Error("Null indices in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.IllegalArgumentException', 'java.lang.Exception'] });
-        let first = this.__indices == null;
-        for (let i = 0; indices.length > 0 && i < indices.length; i++)
-            if (indices[i] < 0)
-                throw Object.defineProperty(new Error("Bad index=" + indices[i] + " in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.IllegalArgumentException', 'java.lang.Exception'] });
-        
-        this.__indices = indices;
-        if (this.__indexings != null) {
-            let indexables = this.indexables();
-            let old = this.__indexings;
-            this.__indexings = new Array(old.length);
-            this.__indexings[0] = indexables[indices[0]];
-            for (let i = 0, indexion = 1; i < old.length; i++)
-                if (old[i] !== this.__indexings[0])
-                    this.__indexings[indexion++] = old[i];
-            
-        }
+        let first = this.__index == null;
+        this.__index = index;
         if (!first)
             this.coupler.indexSet(this);
     }
@@ -870,18 +811,10 @@ class SIndexing extends TargetCore {
      * @return {*}
      */
     indexed() {
-        if (this.__indices == null)
+        if (this.__index == null)
             throw Object.defineProperty(new Error("No index in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
-        return this.__indices.length === 0 ? SIndexing.NOT_INDEXED : this.indexables()[this.index()];
-    }
-    /**
-     * The <code>indexables</code> ordered by most recently indexed.
-     * @return {Array}
-     */
-    indexings() {
-        if (this.__indexings == null)
-            throw Object.defineProperty(new Error("Null indexings in " + this), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
-        return this.__indexings;
+        else
+            return this.indexables()[this.__index];
     }
     /**
      *
@@ -897,11 +830,7 @@ class SIndexing extends TargetCore {
     updateState(update) {
         this.setIndex(update);
     }
-    toString() {
-        return super.toString() + " " + this.indices().length;
-    }
 }
-SIndexing.NOT_INDEXED = "Not indexed";
 SIndexing["__class"] = "fjs.core.SIndexing";
 SIndexing["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.core.Notifying", "fjs.core.Notifiable", "fjs.util.Titled"];
 (function (SIndexing) {
@@ -920,20 +849,11 @@ SIndexing["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.cor
          */
         indexSet(i) {
         }
-        /**
-         * Can return dynamic indexables.
-         * <p>Called by {@link SIndexing#indexables()} if none set during construction.
-         * @return {Array} a non-empty array
-         */
-        getIndexables() {
-            throw Object.defineProperty(new Error("Not implemented in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
-        }
     }
     SIndexing.Coupler = Coupler;
     Coupler["__class"] = "fjs.core.SIndexing.Coupler";
     Coupler["__interfaces"] = ["fjs.core.TargetCoupler", "java.io.Serializable"];
 })(SIndexing || (SIndexing = {}));
-SIndexing.NO_INDEXABLES_$LI$();
 
 /* Generated from Java with JSweet 2.0.0-rc1 - http://www.jsweet.org */
 /**
@@ -1579,9 +1499,65 @@ SToggling["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.cor
     Coupler["__interfaces"] = ["fjs.core.TargetCoupler", "java.io.Serializable"];
 })(SToggling || (SToggling = {}));
 
+/* Generated from Java with JSweet 2.0.0-rc1 - http://www.jsweet.org */
 /**
  * Unique constructor.
- * @param {IndexingTarget} indexed will be the first target of this instance
+ * @param {string} title passed to superclass
+ * @param {STrigger.Coupler} coupler supplies application-specific mechanism
+ * @class
+ * @extends TargetCore
+ */
+class STrigger extends TargetCore {
+    constructor(title, coupler) {
+        super(title);
+        this.coupler = null;
+        if (coupler == null)
+            throw Object.defineProperty(new Error("Null coupler in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.IllegalArgumentException', 'java.lang.Exception'] });
+        this.coupler = coupler;
+    }
+    /**
+     * Initiates the application process represented.
+     * <p>Calls {@link Coupler#fired(STrigger)}.
+     */
+    fire() {
+        this.coupler.fired(this);
+    }
+    /**
+     *
+     * @return {*}
+     */
+    state() {
+        return "Stateless!";
+    }
+    /**
+     *
+     * @param {*} update
+     */
+    updateState(update) {
+        this.fire();
+    }
+}
+STrigger["__class"] = "fjs.core.STrigger";
+STrigger["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.core.Notifying", "fjs.core.Notifiable", "fjs.util.Titled"];
+(function (STrigger) {
+    /**
+     * Connects a {@link STrigger} to the application.
+     * <p>A {@link Coupler} supplies application-specific mechanism and policy
+     * for a {@link STrigger}.
+     * @class
+     */
+    class Coupler {
+        constructor() {
+        }
+    }
+    STrigger.Coupler = Coupler;
+    Coupler["__class"] = "fjs.core.STrigger.Coupler";
+    Coupler["__interfaces"] = ["fjs.core.TargetCoupler", "java.io.Serializable"];
+})(STrigger || (STrigger = {}));
+
+/**
+ * Unique constructor.
+ * @param {IndexingFrame} indexed will be the first target of this instance
  * @class
  * @extends TargeterCore
  */
@@ -1612,8 +1588,8 @@ class IndexingFrameTargeter extends TargeterCore {
         super.retarget(frame);
         if (this.__indexing == null) {
             let list = ([]);
-            for (let index216 = 0; index216 < this.__elements.length; index216++) {
-                let e = this.__elements[index216];
+            for (let index128 = 0; index128 < this.__elements.length; index128++) {
+                let e = this.__elements[index128];
                 /* add */ (list.push(e) > 0);
             }
             this.__indexing = ix.newTargeter();
@@ -1646,16 +1622,18 @@ IndexingFrameTargeter["__class"] = "fjs.core.select.IndexingFrameTargeter";
 IndexingFrameTargeter["__interfaces"] = ["fjs.util.Identified", "fjs.core.Notifying", "fjs.core.SRetargetable", "fjs.core.Notifiable", "fjs.util.Titled", "fjs.core.Facetable", "fjs.core.STargeter"];
 
 /**
- * {@link SelectingFrame} that selects with an {@link SIndexing}.
- * <p>{@link IndexingTarget} specialises its superclass for
- * content that can be selected by index.
+ * {@link TargetCore} that enables editing of the contents of an {@link SIndexing}.
  * @extends TargetCore
  * @class
  */
-class IndexingTarget extends TargetCore {
-    constructor(title) {
+class IndexingFrame extends TargetCore {
+    constructor(title, indexing) {
         super(title);
         this.__indexing = null;
+        if (indexing == null)
+            throw Object.defineProperty(new Error("Null indexing in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.IllegalArgumentException', 'java.lang.Exception'] });
+        this.__indexing = indexing;
+        indexing.setNotifiable(this);
     }
     /**
      * <p>Returns the {@link SFrameTarget} created in {@link #newIndexedFrame(Object)}.
@@ -1665,22 +1643,10 @@ class IndexingTarget extends TargetCore {
         return this.newIndexedFrame(this.__indexing.indexed());
     }
     /**
-     *
-     * Sets an {@link SIndexing} containing content to be exposed.
-     * @param {SIndexing} indexing
-     */
-    setIndexing(indexing) {
-        if (indexing == null)
-            throw Object.defineProperty(new Error("Null children in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.IllegalArgumentException', 'java.lang.Exception'] });
-        (this.__indexing = indexing).setNotifiable(this);
-    }
-    /**
-     * The indexing last set with {@link #setIndexing(SIndexing)}.
+     * The indexing passed to the constructor.
      * @return {SIndexing}
      */
     indexing() {
-        if (this.__indexing == null)
-            throw Object.defineProperty(new Error("No indexing in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
         return this.__indexing;
     }
     /**
@@ -1699,8 +1665,8 @@ class IndexingTarget extends TargetCore {
         return true;
     }
 }
-IndexingTarget["__class"] = "fjs.core.select.IndexingTarget";
-IndexingTarget["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.core.Notifying", "fjs.core.Notifiable", "fjs.util.Titled"];
+IndexingFrame["__class"] = "fjs.core.select.IndexingFrame";
+IndexingFrame["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.core.Notifying", "fjs.core.Notifiable", "fjs.util.Titled"];
 
 /* Generated from Java with JSweet 2.0.0-rc1 - http://www.jsweet.org */
 class Times {
@@ -1805,6 +1771,9 @@ class Facets extends Tracer {
         this.trace$java_lang_String$java_lang_Object(" > Created toggling ", toggling);
         return toggling;
     }
+    newTriggerTarget(title, c) {
+        return new STrigger(title, new Facets.Facets$4(this, c));
+    }
     newTargetGroup(title, ...members) {
         let group = new (__Function$1.prototype.bind.apply(TargetCore, [null, title].concat(STarget.newTargets(members))));
         this.trace$java_lang_String$java_lang_Object(" > Created target group " + Debug.info(group) + " ", members);
@@ -1818,8 +1787,18 @@ class Facets extends Tracer {
             (target => (typeof target === 'function') ? target(title, state) : target.accept(title, state))(c.targetStateUpdated);
         }
     }
+    getIndexingState(title) {
+        let titleTarget = this.titleTarget(title);
+        if (titleTarget == null)
+            throw Object.defineProperty(new Error("Null target in " + this), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
+        let indexing = titleTarget;
+        return Object.defineProperty({
+            facetIndexables: indexing.facetIndexables(),
+            indexed: indexing.indexed()
+        }, '__interfaces', { configurable: true, value: ["fjs.globals.Facets.IndexingState"] });
+    }
     newIndexingTarget(title, c) {
-        let indexing = new SIndexing(title, c.passIndexables, new Facets.Facets$4(this, c));
+        let indexing = new SIndexing(title, new Facets.Facets$5(this, c));
         let passIndex = c.passIndex;
         if (passIndex == null)
             throw Object.defineProperty(new Error("Null passIndex in " + this), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
@@ -1828,21 +1807,14 @@ class Facets extends Tracer {
         this.trace$java_lang_String$java_lang_Object(" > Created indexing ", indexing);
         return indexing;
     }
-    getIndexingState(title) {
-        let titleTarget = this.titleTarget(title);
-        if (titleTarget == null)
-            throw Object.defineProperty(new Error("Null target in " + this), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
-        let indexing = titleTarget;
-        return Object.defineProperty({
-            indexables: indexing.facetIndexables(),
-            indexed: ((indexing) => {
-                return () => indexing.indexed();
-            })(indexing)
-        }, '__interfaces', { configurable: true, value: ["fjs.globals.Facets.IndexingState"] });
-    }
-    buildIndexingFrame(proxy) {
-        proxy.frame = new Facets.LocalIndexingFrame(proxy);
-        this.trace$java_lang_String$java_lang_Object(" > Built frame ", proxy.frame);
+    buildIndexingFrame(p) {
+        let indexing = new SIndexing(p.indexingTitle, new Facets.Facets$6(this, p));
+        indexing.setIndex(0);
+        p.getIndexedContent = ((indexing) => {
+            return () => indexing.indexed();
+        })(indexing);
+        p.frame = new Facets.Facets$7(this, p.title, indexing, p);
+        this.trace$java_lang_String$java_lang_Object(" > Built frame ", p.frame);
     }
     buildTargeterTree(targetTree) {
         this.trace$java_lang_String$java_lang_Object(" > Initial retargeting on ", targetTree);
@@ -1856,8 +1828,8 @@ class Facets extends Tracer {
         let then = (this.titleTargeters[title] = t);
         let elements = t.elements();
         this.trace$java_lang_String("> Added targeter: title=" + title + ": elements=" + elements.length);
-        for (let index217 = 0; index217 < elements.length; index217++) {
-            let e = elements[index217];
+        for (let index129 = 0; index129 < elements.length; index129++) {
+            let e = elements[index129];
             this.addTitleTargeters(e);
         }
     }
@@ -1874,7 +1846,7 @@ class Facets extends Tracer {
         let targeter = ((m, k) => m[k] ? m[k] : null)(this.titleTargeters, title);
         if (targeter == null)
             throw Object.defineProperty(new Error("Null targeter for " + title), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.IllegalArgumentException', 'java.lang.Exception'] });
-        let facet = new Facets.Facets$5(this, facetUpdated);
+        let facet = new Facets.Facets$8(this, facetUpdated);
         this.trace$java_lang_String$java_lang_Object(" > Attaching facet " + facet + " to", targeter);
         targeter.attachFacet(facet);
     }
@@ -1923,67 +1895,6 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
     }
     Facets.TargetCoupler = TargetCoupler;
     TargetCoupler["__class"] = "fjs.globals.Facets.TargetCoupler";
-    class LocalIndexingFrame extends IndexingTarget {
-        constructor(frame) {
-            super(frame.title);
-            this.frame = null;
-            this.frame = frame;
-            let indexing = new SIndexing(frame.indexingTitle, frame.content, new LocalIndexingFrame.LocalIndexingFrame$0(this, frame));
-            indexing.setIndex(0);
-            this.setIndexing(indexing);
-            frame.getIndexedContent = ((indexing) => {
-                return () => indexing.indexed();
-            })(indexing);
-        }
-        /**
-         *
-         * @param {*} indexed
-         * @return {SFrameTarget}
-         */
-        newIndexedFrame(indexed) {
-            let editElements = (this.frame.newEditElements);
-            return new LocalIndexingFrame.LocalIndexingFrame$1(this, this.frame.title + ":indexed", indexed, editElements, indexed);
-        }
-    }
-    Facets.LocalIndexingFrame = LocalIndexingFrame;
-    LocalIndexingFrame["__class"] = "fjs.globals.Facets.LocalIndexingFrame";
-    LocalIndexingFrame["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.core.Notifying", "fjs.core.Notifiable", "fjs.util.Titled"];
-    (function (LocalIndexingFrame) {
-        class LocalIndexingFrame$0 extends SIndexing.Coupler {
-            constructor(__parent, frame) {
-                super();
-                this.frame = frame;
-                this.__parent = __parent;
-            }
-            /**
-             *
-             * @param {SIndexing} i
-             * @return {Array}
-             */
-            getFacetIndexables(i) {
-                return (target => (typeof target === 'function') ? target(i.indexables()) : target.apply(i.indexables()))(this.frame.newFacetIndexables);
-            }
-        }
-        LocalIndexingFrame.LocalIndexingFrame$0 = LocalIndexingFrame$0;
-        LocalIndexingFrame$0["__interfaces"] = ["fjs.core.TargetCoupler", "java.io.Serializable"];
-        class LocalIndexingFrame$1 extends SFrameTarget {
-            constructor(__parent, __arg0, __arg1, editElements, indexed) {
-                super(__arg0, __arg1);
-                this.editElements = editElements;
-                this.indexed = indexed;
-                this.__parent = __parent;
-            }
-            /**
-             *
-             * @return {Array}
-             */
-            lazyElements() {
-                return STarget.newTargets((target => (typeof target === 'function') ? target(this.indexed) : target.apply(this.indexed))(this.editElements));
-            }
-        }
-        LocalIndexingFrame.LocalIndexingFrame$1 = LocalIndexingFrame$1;
-        LocalIndexingFrame$1["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.core.Notifying", "fjs.core.Notifiable", "fjs.util.Titled"];
-    })(LocalIndexingFrame = Facets.LocalIndexingFrame || (Facets.LocalIndexingFrame = {}));
     class Facets$0 {
         constructor(__parent) {
             this.__parent = __parent;
@@ -2098,11 +2009,35 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
     }
     Facets.Facets$3 = Facets$3;
     Facets$3["__interfaces"] = ["fjs.core.TargetCoupler", "java.io.Serializable"];
-    class Facets$4 extends SIndexing.Coupler {
+    class Facets$4 extends STrigger.Coupler {
         constructor(__parent, c) {
             super();
             this.c = c;
             this.__parent = __parent;
+        }
+        /**
+         *
+         * @param {STrigger} t
+         */
+        fired(t) {
+            this.__parent.updatedTarget(t, this.c);
+        }
+    }
+    Facets.Facets$4 = Facets$4;
+    Facets$4["__interfaces"] = ["fjs.core.TargetCoupler", "java.io.Serializable"];
+    class Facets$5 extends SIndexing.Coupler {
+        constructor(__parent, c) {
+            super();
+            this.c = c;
+            this.__parent = __parent;
+        }
+        /**
+         *
+         * @param {SIndexing} i
+         * @return {Array}
+         */
+        getIndexables(i) {
+            return (target => (typeof target === 'function') ? target(i.title()) : target.apply(i.title()))(this.c.getIndexables);
         }
         /**
          *
@@ -2120,14 +2055,79 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
             return (target => (typeof target === 'function') ? target(i.title()) : target.apply(i.title()))(this.c.getFacetIndexables);
         }
     }
-    Facets.Facets$4 = Facets$4;
-    Facets$4["__interfaces"] = ["fjs.core.TargetCoupler", "java.io.Serializable"];
-    class Facets$5 {
+    Facets.Facets$5 = Facets$5;
+    Facets$5["__interfaces"] = ["fjs.core.TargetCoupler", "java.io.Serializable"];
+    class Facets$6 extends SIndexing.Coupler {
+        constructor(__parent, p) {
+            super();
+            this.p = p;
+            this.__parent = __parent;
+        }
+        /**
+         *
+         * @param {SIndexing} i
+         * @return {Array}
+         */
+        getIndexables(i) {
+            return (target => (typeof target === 'function') ? target() : target.get())(this.p.getContent);
+        }
+        /**
+         *
+         * @param {SIndexing} i
+         * @return {Array}
+         */
+        getFacetIndexables(i) {
+            return (target => (typeof target === 'function') ? target(i.indexables()) : target.apply(i.indexables()))(this.p.newFacetIndexables);
+        }
+    }
+    Facets.Facets$6 = Facets$6;
+    Facets$6["__interfaces"] = ["fjs.core.TargetCoupler", "java.io.Serializable"];
+    class Facets$7 extends IndexingFrame {
+        constructor(__parent, __arg0, __arg1, p) {
+            super(__arg0, __arg1);
+            this.p = p;
+            this.__parent = __parent;
+        }
+        lazyElements() {
+            let supplier = (this.p.newFrameElements);
+            return supplier == null ? [] : STarget.newTargets((target => (typeof target === 'function') ? target() : target.get())(supplier));
+        }
+        /**
+         *
+         * @param {*} indexed
+         * @return {SFrameTarget}
+         */
+        newIndexedFrame(indexed) {
+            let editElements = (this.p.newIndexedElements);
+            return new Facets$7.Facets$7$0(this, this.p.title + ":indexed", indexed, editElements, indexed);
+        }
+    }
+    Facets.Facets$7 = Facets$7;
+    Facets$7["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.core.Notifying", "fjs.core.Notifiable", "fjs.util.Titled"];
+    (function (Facets$7) {
+        class Facets$7$0 extends SFrameTarget {
+            constructor(__parent, __arg0, __arg1, editElements, indexed) {
+                super(__arg0, __arg1);
+                this.editElements = editElements;
+                this.indexed = indexed;
+                this.__parent = __parent;
+            }
+            /**
+             *
+             * @return {Array}
+             */
+            lazyElements() {
+                return STarget.newTargets((target => (typeof target === 'function') ? target(this.indexed) : target.apply(this.indexed))(this.editElements));
+            }
+        }
+        Facets$7.Facets$7$0 = Facets$7$0;
+        Facets$7$0["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.core.Notifying", "fjs.core.Notifiable", "fjs.util.Titled"];
+    })(Facets$7 = Facets.Facets$7 || (Facets.Facets$7 = {}));
+    class Facets$8 {
         constructor(__parent, facetUpdated) {
             this.facetUpdated = facetUpdated;
             this.__parent = __parent;
             this.id = Tracer.ids++;
-            this.stateThen = null;
         }
         /**
          *
@@ -2136,16 +2136,8 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
         retarget(target) {
             let state = target.state();
             let title = target.title();
-            this.__parent.trace(".attachFacet #" + this.__parent.id + ".retarget: state=" + state + " stateThen=" + this.stateThen);
-            if (true || !((o1, o2) => { if (o1 && o1.equals) {
-                return o1.equals(o2);
-            }
-            else {
-                return o1 === o2;
-            } })(state, this.stateThen)) {
-                this.__parent.trace(" > Updating UI for \'" + title + "\' with state=", state);
-                (target => (typeof target === 'function') ? target(this.stateThen = state) : target.accept(this.stateThen = state))(this.facetUpdated);
-            }
+            this.__parent.trace(" > Updating UI for \'" + title + "\' with state=", state);
+            (target => (typeof target === 'function') ? target(state) : target.accept(state))(this.facetUpdated);
         }
         /**
          *
@@ -2155,8 +2147,8 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
             return "#" + this.__parent.id;
         }
     }
-    Facets.Facets$5 = Facets$5;
-    Facets$5["__interfaces"] = ["fjs.core.SRetargetable", "fjs.core.SFacet"];
+    Facets.Facets$8 = Facets$8;
+    Facets$8["__interfaces"] = ["fjs.core.SRetargetable", "fjs.core.SFacet"];
 })(Facets || (Facets = {}));
 var __Function$1 = Function;
 
