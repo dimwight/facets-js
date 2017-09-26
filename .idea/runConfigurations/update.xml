@@ -1,0 +1,5 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="update" type="NodeJSConfigurationType" factoryName="Node.js" path-to-node="project" path-to-js-file="update.js" working-dir="$PROJECT_DIR$/tool">
+    <method />
+  </configuration>
+</component>
