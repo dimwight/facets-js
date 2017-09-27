@@ -1,22 +1,21 @@
 import * as fs from 'fs-extra';
 
-const workpath='C:/Users/Me/ts/',
-  fromPath=workpath+'facets-js/',
-  toPath=workpath+'react-rollup/',
+const basePath='C:/Users/Me/ts/',
+  fromRoot=basePath+'facets-js/',
+  toRoot=basePath+'react-rollup/',
   lib='public/Facets.js',
-  dts='node_modules/@types/facets-js/'+'index.d.ts',
-  fromLib=fromPath+lib,toLib=toPath+lib,
-  fromDts=fromPath+dts,toDts=toPath+dts,
-  fromStore=fromPath+'index.d.ts',toStore=toPath+'index.d.ts';
+  dTs='index.d.ts',
+  modules='node_modules/@types/facets-js/',
+  fromLib=fromRoot+lib,toLib=toRoot+lib,
+  fromModules=fromRoot+modules+dTs,toModules=toRoot+modules+dTs,
+  fromTop=fromRoot+dTs,toTop=toRoot+dTs;
 
-[[fromLib,toLib],
-  [fromDts,toDts],
-  [fromStore,toStore]
-].forEach((pair)=>{
-  fs.copySync(pair[0],pair[1]);
-  pair.forEach((path)=>{
-    const stats=fs.statSync(path);
-    const date=new Date(stats.mtime);
-    console.log(path,'\t\t', date, '\t',stats.size)
-  })
-})
+const doCopy=function(src,dest){
+  fs.copySync(src,dest);
+  const stats=fs.statSync(dest);
+  console.log(`${dest}=${stats.size}`)
+};
+doCopy(fromLib,toLib);
+const copyTop=true;
+(copyTop?[fromModules,toModules,toTop]:[fromTop,toModules,toTop]).forEach(
+  (dest)=>doCopy(copyTop?fromTop:fromModules,dest));
