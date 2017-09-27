@@ -16,6 +16,9 @@ const doCopy=function(src,dest){
   console.log(`${dest}=${stats.size}`)
 };
 doCopy(fromLib,toLib);
-const copyTop=true;
-(copyTop?[fromModules,toModules,toTop]:[fromTop,toModules,toTop]).forEach(
-  (dest)=>doCopy(copyTop?fromTop:fromModules,dest));
+const master=toModules;
+(master===fromTop?[fromModules,toModules,toTop]
+:master===toModules?[fromModules,fromTop,toTop]
+:[]
+).forEach(
+  (dest)=>doCopy(master,dest));
