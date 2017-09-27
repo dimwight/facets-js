@@ -75,27 +75,27 @@ interface IndexingCoupler extends TargetCoupler{
   passIndex:number;
   /**
    * Get the contents to be indexed
-   * @param {string} title idt
+   * @param {string} title identifies the Target
    * @returns {any[]}
    */
   getIndexables: (title: string) => any[];
   /**
    * Get the strings to represent the contents in the UI
-   * @param {string} title idt
+   * @param {string} title identifies the Target
    * @returns {string[]}
    */
-  getFacetIndexables: (title: string) => string[];
+  getUiSelectables: (title: string) => string[];
 }
 /**
  * Current values exposed by the indexing
  */
 interface IndexingState {
   /**
-   * As last created by IndexingCoupler.getFacetIndexables
+   * As last created by IndexingCoupler.getUiSelectables
    */
-  facetIndexables: string[];
+  uiSelectables: string[];
   /**
-   * The result of the current index into the content array.
+   * The result of the current index into the indexables.
    */
   indexed: any;
 }
@@ -103,7 +103,7 @@ interface IndexingState {
  * Enables definition and communication with a Target that wraps
  * content selected with an indexing.
  */
-interface IndexingFramePolicy {
+interface SelectingFramePolicy {
   /**
    * Will be the title of the wrapping Target.
    */
@@ -113,10 +113,9 @@ interface IndexingFramePolicy {
    */
   indexingTitle: string;
   /**
-   * Supply content to be selected.
-   * @returns {any[]}
+   * Ccontent array to be selected.
    */
-  getContent: () => any[];
+  selectables: Array<any>;
   /**
    * Supply strings to expose the content in the UI.
    * @param {any[]} content supplied by getContent
@@ -128,12 +127,12 @@ interface IndexingFramePolicy {
    * @param indexed selected with the indexing
    * @returns {Target[]}
    */
-  newIndexedElements: (indexed: any) => Target[];
+  newEditTargets: (indexed: any) => Target[];
   /**
    * Optionally supply Targets exposing the content array.
    * @returns {Target[]}
    */
-  newFrameElements?: () => Target[];
+  newFrameTargets?: () => Target[];
   /**
    * The wrapping Target
    */
@@ -167,12 +166,12 @@ interface Facets{
    * @param {Facets.Target} members of the group
    * @returns group of {Facets.Target}s
    */
-  newIndexingTarget(title:string,coupler:IndexingCoupler):Target;
   newNumericTarget(title: string, coupler: NumericCoupler): Target;
   newTriggerTarget(title: string, coupler: TargetCoupler): Target;
   newTargetGroup(title:string,...members:Target[]):Target;
+  newIndexingTarget(title:string,coupler:IndexingCoupler):Target;
   getIndexingState(title: string): IndexingState;
-  buildIndexingFrame(policy: IndexingFramePolicy): void;
+  buildSelectingFrame(policy: SelectingFramePolicy): void;
   /**
    * Constructs a tree of targeters using the initial target tree.
    * @param {Facets.Target} targets the root of the target tree
