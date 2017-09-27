@@ -153,28 +153,27 @@ export function newInstance(trace:boolean):Facets;
 */
 interface Facets{
   /**
-   *
    * @param {string} title identifies the target or its targeter
-   * @param {Facets.TextualCoupler} coupler connects the target to client code
-   * @returns textual {Facets.Target}
+   * @param {TextualCoupler} coupler connects the target to client code
+   * @returns a textual Target
    */
   newTextualTarget(title:string,coupler:TextualCoupler):Target;
   newTogglingTarget(title: string, c: TogglingCoupler): Target;
+  newNumericTarget(title: string, coupler: NumericCoupler): Target;
+  newTriggerTarget(title: string, coupler: TargetCoupler): Target;
   /**
    *
    * @param {string} title for the target
-   * @param {Facets.Target} members of the group
-   * @returns group of {Facets.Target}s
+   * @param {Target} members of the group
+   * @returns group of Targets
    */
-  newNumericTarget(title: string, coupler: NumericCoupler): Target;
-  newTriggerTarget(title: string, coupler: TargetCoupler): Target;
   newTargetGroup(title:string,...members:Target[]):Target;
   newIndexingTarget(title:string,coupler:IndexingCoupler):Target;
   getIndexingState(title: string): IndexingState;
   buildSelectingFrame(policy: SelectingFramePolicy): void;
   /**
    * Constructs a tree of targeters using the initial target tree.
-   * @param {Facets.Target} targets the root of the target tree
+   * @param  targetTree root of the target tree
    */
   buildTargeterTree(targetTree:Target):void;
   /**
