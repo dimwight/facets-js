@@ -15,7 +15,6 @@
     "rollup-watch": "^4.0.0"
   },
   "scripts": {
-    "clean": "node tool/clean.js",
     "build": "rollup -c",
     "watch": "rollup -c -w"
   }
