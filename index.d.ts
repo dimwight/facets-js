@@ -1,20 +1,20 @@
 export {Facets};
 
 /**
-* For passing simple state in and out of a {Facets}.
+* For passing simple target state in and out of a {Facets}.
 */
 export type SimpleState=string|boolean|number
 /**
 Marker interface for Facets implementation of Superficial target.
 */
 export interface Target{}
-interface TargetCoupler {
-/**
- * Called on update of the target constructed with the coupler.
- * @param {string} title identifies the target
- * @param state the updated state
- */
-targetStateUpdated?: (title: string, state: SimpleState) => void;
+export interface TargetCoupler {
+  /**
+   * Called on update of the target constructed with the coupler.
+   * @param {string} title identifies the target
+   * @param state the updated state
+   */
+  targetStateUpdated?: (title: string, update: SimpleState) => void;
 }
 /**
 Connects a textual target with client code.
@@ -57,11 +57,11 @@ interface NumericCoupler extends TargetCoupler {
    */
   passValue: number;
   /**
-   Sets minimum state of the numeric.
+   Minimum state of the numeric.
    */
   min: number;
   /**
-   Sets maximum state of the numeric.
+   Maximum state of the numeric.
    */
   max: number;
 }
@@ -105,23 +105,24 @@ interface IndexingState {
  */
 interface SelectingFramePolicy {
   /**
-   * Will be the title of the wrapping Target.
+   * Title for the wrapping Target.
    */
   title: string;
   /**
-   * Will be the title of the wrapped indexing.
+   * Title for the wrapped indexing.
    */
   indexingTitle: string;
   /**
-   * Ccontent array to be selected.
+   * Array of items to be selected.
    */
-  selectables: Array<any>;
+  content: any[];
   /**
    * Supply strings to expose the content in the UI.
-   * @param {any[]} content supplied by getContent
+   * Analogue of IndexingCoupler method. 
+   * @param {any[]} content defined by .content
    * @returns {string[]}
    */
-  newFacetIndexables: (content: any[]) => string[];
+  getUiSelectables: () => string[];
   /**
    * Create Targets exposing the selected content
    * @param indexed selected with the indexing
@@ -153,27 +154,28 @@ export function newInstance(trace:boolean):Facets;
 */
 interface Facets{
   /**
+   *
    * @param {string} title identifies the target or its targeter
-   * @param {TextualCoupler} coupler connects the target to client code
-   * @returns a textual Target
+   * @param {Facets.TextualCoupler} coupler connects the target to client code
+   * @returns textual {Facets.Target}
    */
   newTextualTarget(title:string,coupler:TextualCoupler):Target;
   newTogglingTarget(title: string, c: TogglingCoupler): Target;
   newNumericTarget(title: string, coupler: NumericCoupler): Target;
   newTriggerTarget(title: string, coupler: TargetCoupler): Target;
   /**
-   *
-   * @param {string} title for the target
-   * @param {Target} members of the group
-   * @returns group of Targets
-   */
+  * Constructs a Target containing others
+  * @param {string} title for the target
+  * @param {Facets.Target} members of the group
+  * @returns group of {Facets.Target}s
+  */
   newTargetGroup(title:string,...members:Target[]):Target;
   newIndexingTarget(title:string,coupler:IndexingCoupler):Target;
   getIndexingState(title: string): IndexingState;
   buildSelectingFrame(policy: SelectingFramePolicy): void;
   /**
    * Constructs a tree of targeters using the initial target tree.
-   * @param  targetTree root of the target tree
+   * @param {Facets.Target} targets the root of the target tree
    */
   buildTargeterTree(targetTree:Target):void;
   /**
