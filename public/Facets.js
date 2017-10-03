@@ -110,8 +110,8 @@ class Objects {
             return o1 === o2;
         } })(spacer, "\n");
         let at = 0;
-        for (let index125 = 0; index125 < items.length; index125++) {
-            let item = items[index125];
+        for (let index130 = 0; index130 < items.length; index130++) {
+            let item = items[index130];
             /* add */ (list.push((item == null ? "null" : trim ? item.toString().trim() : item) + (++at === items.length ? "" : spacer)) > 0);
         }
         return ('[' + list.join(', ') + ']');
@@ -451,8 +451,8 @@ class TargeterCore extends NotifyingCore {
             throw Object.defineProperty(new Error("No targets in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
         if (this.__elements == null) {
             let list = ([]);
-            for (let index122 = 0; index122 < targets.length; index122++) {
-                let t = targets[index122];
+            for (let index127 = 0; index127 < targets.length; index127++) {
+                let t = targets[index127];
                 {
                     let targeter = t.newTargeter();
                     targeter.setNotifiable(this);
@@ -715,6 +715,7 @@ TargetCore.targets = 0;
 TargetCore["__class"] = "fjs.core.TargetCore";
 TargetCore["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.core.Notifying", "fjs.core.Notifiable", "fjs.util.Titled"];
 
+/* Generated from Java with JSweet 2.0.0-rc1 - http://www.jsweet.org */
 /**
  * Core constructor.
  * <p>Note that this passes no child target elements to the superclass;
@@ -743,8 +744,6 @@ class SFrameTarget extends TargetCore {
         if (toFrame == null)
             throw Object.defineProperty(new Error("Null framed in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.IllegalArgumentException', 'java.lang.Exception'] });
         this.framed = toFrame;
-        if (false && (this.framed != null && (this.framed["__interfaces"] != null && this.framed["__interfaces"].indexOf("fjs.SelectingSurface.TextContent") >= 0 || this.framed.constructor != null && this.framed.constructor["__interfaces"] != null && this.framed.constructor["__interfaces"].indexOf("fjs.SelectingSurface.TextContent") >= 0)))
-            this.trace$java_lang_String$java_lang_Object(".SFrameTarget: ?framed=", this.framed.text);
     }
     notifiesTargeter() {
         return true;
@@ -1588,8 +1587,8 @@ class IndexingFrameTargeter extends TargeterCore {
         super.retarget(frame);
         if (this.__indexing == null) {
             let list = ([]);
-            for (let index123 = 0; index123 < this.__elements.length; index123++) {
-                let e = this.__elements[index123];
+            for (let index128 = 0; index128 < this.__elements.length; index128++) {
+                let e = this.__elements[index128];
                 /* add */ (list.push(e) > 0);
             }
             this.__indexing = ix.newTargeter();
@@ -1738,16 +1737,16 @@ class Facets extends Tracer {
         super(top);
         /*private*/ this.titleTargeters = ({});
         /*private*/ this.notifiable = new Facets.Facets$0(this);
-        this.__trace = false;
+        this.doTrace = false;
         this.targeterTree = null;
-        this.__trace = trace;
+        this.doTrace = trace;
     }
     /**
      *
      * @param {string} msg
      */
     traceOutput(msg) {
-        if (this.__trace || (Debug.trace && ((str, searchString, position = 0) => str.substr(position, searchString.length) === searchString)(msg, ">>")))
+        if (this.doTrace || (Debug.trace && ((str, searchString, position = 0) => str.substr(position, searchString.length) === searchString)(msg, ">>")))
             super.traceOutput(msg);
     }
     newTextualTarget(title, c) {
@@ -1828,8 +1827,8 @@ class Facets extends Tracer {
         let then = (this.titleTargeters[title] = t);
         let elements = t.elements();
         this.trace$java_lang_String("> Added targeter: title=" + title + ": elements=" + elements.length);
-        for (let index124 = 0; index124 < elements.length; index124++) {
-            let e = elements[index124];
+        for (let index129 = 0; index129 < elements.length; index129++) {
+            let e = elements[index129];
             this.addTitleTargeters(e);
         }
     }

@@ -153,6 +153,7 @@ export function newInstance(trace:boolean):Facets;
 * A Superficial application core.
 */
 interface Facets{
+  doTrace: boolean;
   /**
    *
    * @param {string} title identifies the target or its targeter
