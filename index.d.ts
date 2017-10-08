@@ -42,7 +42,7 @@ export interface TextualCoupler extends TargetCoupler{
 /**
  Connects a toggling (boolean) target with client code.
  */
-interface TogglingCoupler extends TargetCoupler {
+export interface TogglingCoupler extends TargetCoupler {
   /**
    Sets initial state of the toggling.
    */
@@ -51,7 +51,7 @@ interface TogglingCoupler extends TargetCoupler {
 /**
  Connects a numeric target with client code.
  */
-interface NumericCoupler extends TargetCoupler {
+export interface NumericCoupler extends TargetCoupler {
   /**
    Sets initial state of the numeric.
    */
@@ -68,7 +68,7 @@ interface NumericCoupler extends TargetCoupler {
 /**
  Connects an indexing (list-type) target with client code.
  */
-interface IndexingCoupler extends TargetCoupler{
+export interface IndexingCoupler extends TargetCoupler{
   /**
    Sets initial state of the indexing (the index into its contents).
    */
@@ -103,7 +103,7 @@ interface IndexingState {
  * Enables definition and communication with a Target that wraps
  * content selected with an indexing.
  */
-interface SelectingFramePolicy {
+export interface SelectingFramePolicy {
   /**
    * Title for the wrapping Target.
    */
@@ -152,7 +152,7 @@ export function newInstance(trace:boolean):Facets;
 /**
 * A Superficial application core.
 */
-interface Facets{
+export interface Facets{
   doTrace: boolean;
   /**
    *
@@ -173,7 +173,7 @@ interface Facets{
   newTargetGroup(title:string,...members:Target[]):Target;
   newIndexingTarget(title:string,coupler:IndexingCoupler):Target;
   getIndexingState(title: string): IndexingState;
-  buildSelectingFrame(policy: SelectingFramePolicy): void;
+  buildSelectingFrame(policy: SelectingFramePolicy): Target;
   /**
    * Constructs a tree of targeters using the initial target tree.
    * @param {Facets.Target} targets the root of the target tree
