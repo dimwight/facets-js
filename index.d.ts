@@ -1,4 +1,4 @@
-export {Facets};
+// export {Facets};
 
 /**
 * For passing simple target state in and out of a {Facets}.

@@ -15,7 +15,7 @@ const doCopy=function(src,dest){
   const stats=fs.statSync(dest);
   console.log(`${dest}=${stats.size}`)
 };
-doCopy(fromLib,toLib);
+if(false)doCopy(fromLib,toLib);
 const master=toModules;
 (master===fromTop?[fromModules,toModules,toTop]
 :master===toModules?[fromModules,fromTop,toTop]
