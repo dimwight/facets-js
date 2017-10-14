@@ -39,6 +39,6 @@ const appWeb= Object.assign({}, main, {
   globals: {'facets-js': lib.moduleName,}
 });
 
-const bundle = appWeb; //simple|libNode|appNode|libWeb|appWeb
+const bundle = libWeb; //simple|libNode|appNode|libWeb|appWeb
 console.log('Bundling: entry='+bundle.entry+' dest='+bundle.dest + ' format='+bundle.format);
 export default bundle;

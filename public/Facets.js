@@ -110,8 +110,8 @@ class Objects {
             return o1 === o2;
         } })(spacer, "\n");
         let at = 0;
-        for (let index130 = 0; index130 < items.length; index130++) {
-            let item = items[index130];
+        for (let index140 = 0; index140 < items.length; index140++) {
+            let item = items[index140];
             /* add */ (list.push((item == null ? "null" : trim ? item.toString().trim() : item) + (++at === items.length ? "" : spacer)) > 0);
         }
         return ('[' + list.join(', ') + ']');
@@ -451,8 +451,8 @@ class TargeterCore extends NotifyingCore {
             throw Object.defineProperty(new Error("No targets in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
         if (this.__elements == null) {
             let list = ([]);
-            for (let index127 = 0; index127 < targets.length; index127++) {
-                let t = targets[index127];
+            for (let index137 = 0; index137 < targets.length; index137++) {
+                let t = targets[index137];
                 {
                     let targeter = t.newTargeter();
                     targeter.setNotifiable(this);
@@ -1587,8 +1587,8 @@ class IndexingFrameTargeter extends TargeterCore {
         super.retarget(frame);
         if (this.__indexing == null) {
             let list = ([]);
-            for (let index128 = 0; index128 < this.__elements.length; index128++) {
-                let e = this.__elements[index128];
+            for (let index138 = 0; index138 < this.__elements.length; index138++) {
+                let e = this.__elements[index138];
                 /* add */ (list.push(e) > 0);
             }
             this.__indexing = ix.newTargeter();
@@ -1739,7 +1739,17 @@ class Facets extends Tracer {
         /*private*/ this.notifiable = new Facets.Facets$0(this);
         this.doTrace = false;
         this.targeterTree = null;
+        this.retargeted = null;
         this.doTrace = trace;
+    }
+    attachOnRetargeted(retargeted) {
+        this.retargeted = (retargeted);
+    }
+    onRetargeted() {
+        if (this.retargeted != null) {
+            this.trace$java_lang_String("> onRetargeted...");
+            (target => (typeof target === 'function') ? target(null) : target.accept(null))(this.retargeted);
+        }
     }
     /**
      *
@@ -1814,6 +1824,7 @@ class Facets extends Tracer {
         })(indexing);
         p.frame = new Facets.Facets$7(this, p.title, indexing, p);
         this.trace$java_lang_String$java_lang_Object(" > Built frame ", p.frame);
+        return p.frame;
     }
     buildTargeterTree(targetTree) {
         this.trace$java_lang_String$java_lang_Object(" > Initial retargeting on ", targetTree);
@@ -1821,14 +1832,15 @@ class Facets extends Tracer {
         this.targeterTree.setNotifiable(this.notifiable);
         this.targeterTree.retarget(targetTree);
         this.addTitleTargeters(this.targeterTree);
+        this.onRetargeted();
     }
     addTitleTargeters(t) {
         let title = t.title();
         let then = (this.titleTargeters[title] = t);
         let elements = t.elements();
         this.trace$java_lang_String("> Added targeter: title=" + title + ": elements=" + elements.length);
-        for (let index129 = 0; index129 < elements.length; index129++) {
-            let e = elements[index129];
+        for (let index139 = 0; index139 < elements.length; index139++) {
+            let e = elements[index139];
             this.addTitleTargeters(e);
         }
     }
@@ -1904,6 +1916,7 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
             let targets = this.__parent.targeterTree.target();
             this.__parent.targeterTree.retarget(targets);
             this.__parent.trace("> Targeters retargeted on ", targets);
+            this.__parent.onRetargeted();
             this.__parent.targeterTree.retargetFacets();
             msg = "> Facets retargeted in " + Debug.info(this.__parent.targeterTree);
             if (Times.times)

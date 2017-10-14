@@ -199,4 +199,5 @@ export interface Facets{
   getTargetState(title:string):SimpleState;
   setTargetLive(title: string, live: boolean): void;
   isTargetLive(title: string): boolean;
+  attachOnRetargeted(retargeted: ()=>void): void;
 }
