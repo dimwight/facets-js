@@ -110,8 +110,8 @@ class Objects {
             return o1 === o2;
         } })(spacer, "\n");
         let at = 0;
-        for (let index140 = 0; index140 < items.length; index140++) {
-            let item = items[index140];
+        for (let index130 = 0; index130 < items.length; index130++) {
+            let item = items[index130];
             /* add */ (list.push((item == null ? "null" : trim ? item.toString().trim() : item) + (++at === items.length ? "" : spacer)) > 0);
         }
         return ('[' + list.join(', ') + ']');
@@ -451,8 +451,8 @@ class TargeterCore extends NotifyingCore {
             throw Object.defineProperty(new Error("No targets in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
         if (this.__elements == null) {
             let list = ([]);
-            for (let index137 = 0; index137 < targets.length; index137++) {
-                let t = targets[index137];
+            for (let index127 = 0; index127 < targets.length; index127++) {
+                let t = targets[index127];
                 {
                     let targeter = t.newTargeter();
                     targeter.setNotifiable(this);
@@ -1587,8 +1587,8 @@ class IndexingFrameTargeter extends TargeterCore {
         super.retarget(frame);
         if (this.__indexing == null) {
             let list = ([]);
-            for (let index138 = 0; index138 < this.__elements.length; index138++) {
-                let e = this.__elements[index138];
+            for (let index128 = 0; index128 < this.__elements.length; index128++) {
+                let e = this.__elements[index128];
                 /* add */ (list.push(e) > 0);
             }
             this.__indexing = ix.newTargeter();
@@ -1747,7 +1747,7 @@ class Facets extends Tracer {
     }
     onRetargeted() {
         if (this.retargeted != null) {
-            this.trace$java_lang_String("> onRetargeted...");
+            this.trace$java_lang_String("> Calling onRetargeted...");
             (target => (typeof target === 'function') ? target(null) : target.accept(null))(this.retargeted);
         }
     }
@@ -1770,7 +1770,7 @@ class Facets extends Tracer {
     newTogglingTarget(title, c) {
         let passSet = c.passSet;
         if (passSet == null)
-            throw Object.defineProperty(new Error("Null passSet in " + this), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
+            throw Object.defineProperty(new Error("Null passSet for " + title), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
         let toggling = new SToggling(title, passSet, new Facets.Facets$2(this, c));
         this.trace$java_lang_String$java_lang_Object(" > Created toggling ", toggling);
         return toggling;
@@ -1800,7 +1800,7 @@ class Facets extends Tracer {
         let indexing = new SIndexing(title, new Facets.Facets$5(this, c));
         let passIndex = c.passIndex;
         if (passIndex == null)
-            throw Object.defineProperty(new Error("Null passIndex in " + this), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
+            throw Object.defineProperty(new Error("Null passIndex for " + title), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
         else
             indexing.setIndex(passIndex);
         this.trace$java_lang_String$java_lang_Object(" > Created indexing ", indexing);
@@ -1809,7 +1809,7 @@ class Facets extends Tracer {
     getIndexingState(title) {
         let titleTarget = this.titleTarget(title);
         if (titleTarget == null)
-            throw Object.defineProperty(new Error("Null target in " + this), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
+            throw Object.defineProperty(new Error("Null target for " + title), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
         let indexing = titleTarget;
         return Object.defineProperty({
             uiSelectables: indexing.facetIndexables(),
@@ -1839,8 +1839,8 @@ class Facets extends Tracer {
         let then = (this.titleTargeters[title] = t);
         let elements = t.elements();
         this.trace$java_lang_String("> Added targeter: title=" + title + ": elements=" + elements.length);
-        for (let index139 = 0; index139 < elements.length; index139++) {
-            let e = elements[index139];
+        for (let index129 = 0; index129 < elements.length; index129++) {
+            let e = elements[index129];
             this.addTitleTargeters(e);
         }
     }
@@ -1884,14 +1884,14 @@ class Facets extends Tracer {
     setTargetLive(title, live) {
         let target = this.titleTarget(title);
         if (target == null)
-            throw Object.defineProperty(new Error("Null target in " + this), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
+            throw Object.defineProperty(new Error("Null target for " + title), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
         else
             target.setLive(live);
     }
     isTargetLive(title) {
         let target = this.titleTarget(title);
         if (target == null)
-            throw Object.defineProperty(new Error("Null target in " + this), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
+            throw Object.defineProperty(new Error("Null target for " + title), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
         else
             return target.isLive();
     }
@@ -1954,10 +1954,11 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
          */
         getText(t) {
             let getText = (this.c.getText);
+            let title = t.title();
             if (getText == null)
-                throw Object.defineProperty(new Error("Null getText in " + this), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
+                throw Object.defineProperty(new Error("Null getText for " + title), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
             else
-                return (target => (typeof target === 'function') ? target(t.title()) : target.apply(t.title()))(getText);
+                return (target => (typeof target === 'function') ? target(title) : target.apply(title))(getText);
         }
         /**
          *
