@@ -86,6 +86,26 @@ class Util {
             Util.printOut$java_lang_String("Doubles.sigFigs: val=" + sf + " trim=" + trim);
         return trim * signum;
     }
+    static longEquals(now, then) {
+        return then != null && (JSON.stringify(now) === JSON.stringify(then));
+        let equal = false;
+        if (then != null && then.length === now.length) {
+            equal = true;
+            for (let i = 0; i < now.length; i++) {
+                let equals = ((o1, o2) => { if (o1 && o1.equals) {
+                    return o1.equals(o2);
+                }
+                else {
+                    return o1 === o2;
+                } })(now[i], then[i]);
+                if (!equals)
+                    console.info(now[i] + ">" + then[i]);
+                equal = equals && equal;
+            }
+            
+        }
+        return equal;
+    }
 }
 Util.DIGITS_SF = 3;
 Util.DECIMALS_FX = 2;
@@ -110,8 +130,8 @@ class Objects {
             return o1 === o2;
         } })(spacer, "\n");
         let at = 0;
-        for (let index130 = 0; index130 < items.length; index130++) {
-            let item = items[index130];
+        for (let index141 = 0; index141 < items.length; index141++) {
+            let item = items[index141];
             /* add */ (list.push((item == null ? "null" : trim ? item.toString().trim() : item) + (++at === items.length ? "" : spacer)) > 0);
         }
         return ('[' + list.join(', ') + ']');
@@ -134,8 +154,9 @@ class Objects {
             return "null";
         let list = ([]);
         for (let i = 0; i < array.length; i++)
-            (list.push((array[i] == null ? "null" : array[i].toString()) + (i < array.length - 1 ? "\n" : "")) > 0);
-        return ('[' + list.join(', ') + ']').replace(new RegExp("\n", 'g'), " ");
+            (list.push((array[i] == null ? "null" : Debug.info(array[i])) + (i < array.length - 1 ? "\n" : "")) > 0);
+        let lines = ('[' + list.join(', ') + ']');
+        return lines.replace(new RegExp("\n", 'g'), " ");
     }
 }
 Objects.debug = false;
@@ -168,9 +189,10 @@ class Debug {
             let length = text.length;
             return text.substring(0, Math.min(length, 60)) + ("");
         }
-        let name = (c => c["__class"] ? c["__class"].substring(c["__class"].lastIndexOf('.') + 1) : c["name"].substring(c["name"].lastIndexOf('.') + 1))(o.constructor);
+        let classe = o.constructor;
+        let name = (c => c["__class"] ? c["__class"].substring(c["__class"].lastIndexOf('.') + 1) : c["name"].substring(c["name"].lastIndexOf('.') + 1))(classe);
         let id = "";
-        let title = "";
+        let title = (c => c["__class"] ? c["__class"] : c["name"])(classe);
         if (o != null && (o["__interfaces"] != null && o["__interfaces"].indexOf("fjs.util.Identified") >= 0 || o.constructor != null && o.constructor["__interfaces"] != null && o.constructor["__interfaces"].indexOf("fjs.util.Identified") >= 0))
             id = " #" + o.identity();
         if (o != null && (o["__interfaces"] != null && o["__interfaces"].indexOf("fjs.util.Titled") >= 0 || o.constructor != null && o.constructor["__interfaces"] != null && o.constructor["__interfaces"].indexOf("fjs.util.Titled") >= 0))
@@ -302,6 +324,15 @@ class Tracer {
     }
     traceArrayText(array) {
         return Util.arrayPrintString(array);
+        let lines = new String("[\n");
+        for (let index142 = 0; index142 < array.length; index142++) {
+            let o = array[index142];
+            lines += ("  " + Debug.info(o) + "\n");
+        }
+        lines += ("]");
+        console.info(lines);
+        throw Object.defineProperty(new Error("Not implemented in " + this), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
+        return lines;
     }
 }
 Tracer.ids = 0;
@@ -451,8 +482,8 @@ class TargeterCore extends NotifyingCore {
             throw Object.defineProperty(new Error("No targets in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
         if (this.__elements == null) {
             let list = ([]);
-            for (let index127 = 0; index127 < targets.length; index127++) {
-                let t = targets[index127];
+            for (let index138 = 0; index138 < targets.length; index138++) {
+                let t = targets[index138];
                 {
                     let targeter = t.newTargeter();
                     targeter.setNotifiable(this);
@@ -793,7 +824,7 @@ class SIndexing extends TargetCore {
             return indexables;
     }
     facetIndexables() {
-        return this.coupler.getFacetIndexables(this);
+        return this.coupler.getFacetSelectables(this);
     }
     /**
      * Sets a single index into the <code>indexables</code>.
@@ -1587,8 +1618,8 @@ class IndexingFrameTargeter extends TargeterCore {
         super.retarget(frame);
         if (this.__indexing == null) {
             let list = ([]);
-            for (let index128 = 0; index128 < this.__elements.length; index128++) {
-                let e = this.__elements[index128];
+            for (let index139 = 0; index139 < this.__elements.length; index139++) {
+                let e = this.__elements[index139];
                 /* add */ (list.push(e) > 0);
             }
             this.__indexing = ix.newTargeter();
@@ -1823,7 +1854,7 @@ class Facets extends Tracer {
             return () => indexing.indexed();
         })(indexing);
         p.frame = new Facets.Facets$7(this, p.title, indexing, p);
-        this.trace$java_lang_String$java_lang_Object(" > Built frame ", p.frame);
+        this.trace$java_lang_String$java_lang_Object(" > Defined frame ", p.frame);
         return p.frame;
     }
     buildTargeterTree(targetTree) {
@@ -1839,8 +1870,8 @@ class Facets extends Tracer {
         let then = (this.titleTargeters[title] = t);
         let elements = t.elements();
         this.trace$java_lang_String("> Added targeter: title=" + title + ": elements=" + elements.length);
-        for (let index129 = 0; index129 < elements.length; index129++) {
-            let e = elements[index129];
+        for (let index140 = 0; index140 < elements.length; index140++) {
+            let e = elements[index140];
             this.addTitleTargeters(e);
         }
     }
@@ -2057,7 +2088,7 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
          * @param {SIndexing} i
          * @return {Array}
          */
-        getFacetIndexables(i) {
+        getFacetSelectables(i) {
             return (target => (typeof target === 'function') ? target(i.title()) : target.apply(i.title()))(this.c.getUiSelectables);
         }
     }
@@ -2068,6 +2099,8 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
             super();
             this.p = p;
             this.__parent = __parent;
+            this.thenIndexables = null;
+            this.thenSelectables = null;
         }
         /**
          *
@@ -2075,15 +2108,29 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
          * @return {Array}
          */
         getIndexables(i) {
-            return this.p.content.slice(0);
+            let got = this.p.content.slice(0);
+            if (got == null)
+                throw Object.defineProperty(new Error("Null got for " + i.title()), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
+            let equal = Util.longEquals(got, this.thenIndexables);
+            if (!equal)
+                this.__parent.trace(".SIndexing.getIndexables: ", got);
+            this.thenIndexables = got;
+            return got;
         }
         /**
          *
          * @param {SIndexing} i
          * @return {Array}
          */
-        getFacetIndexables(i) {
-            return (target => (typeof target === 'function') ? target() : target.get())(this.p.getUiSelectables);
+        getFacetSelectables(i) {
+            let got = (target => (typeof target === 'function') ? target() : target.get())(this.p.getUiSelectables);
+            if (got == null)
+                throw Object.defineProperty(new Error("Null got for " + i.title()), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
+            let equal = Util.longEquals(got, this.thenSelectables);
+            if (!equal)
+                this.__parent.trace(".SIndexing.getFacetIndexables: ", got);
+            this.thenSelectables = got;
+            return got;
         }
     }
     Facets.Facets$6 = Facets$6;
@@ -2096,7 +2143,9 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
         }
         lazyElements() {
             let supplier = (this.p.newFrameTargets);
-            return supplier == null ? [] : STarget.newTargets((target => (typeof target === 'function') ? target() : target.get())(supplier));
+            let got = (target => (typeof target === 'function') ? target() : target.get())(supplier);
+            this.trace$java_lang_String$java_lang_Object(".lazyElements: ", got);
+            return got == null ? [] : STarget.newTargets(got);
         }
         /**
          *
@@ -2104,6 +2153,7 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
          * @return {SFrameTarget}
          */
         newIndexedFrame(indexed) {
+            this.trace$java_lang_String(".newIndexedFrame: indexed=" + (indexed != null));
             let editTargets = (this.p.newEditTargets);
             return new Facets$7.Facets$7$0(this, this.p.title + ":indexed", indexed, editTargets, indexed);
         }
@@ -2123,7 +2173,9 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
              * @return {Array}
              */
             lazyElements() {
-                return STarget.newTargets((target => (typeof target === 'function') ? target(this.indexed) : target.apply(this.indexed))(this.editTargets));
+                let targets = (target => (typeof target === 'function') ? target(this.indexed) : target.apply(this.indexed))(this.editTargets);
+                this.trace$java_lang_String$java_lang_Object(".newIndexedFrame.lazyElements: targets=", targets);
+                return STarget.newTargets(targets);
             }
         }
         Facets$7.Facets$7$0 = Facets$7$0;
