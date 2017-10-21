@@ -8,6 +8,10 @@ export type SimpleState=string|boolean|number
 Marker interface for Facets implementation of Superficial target.
 */
 export interface Target{}
+export interface Times {
+  setResetWait(wait: number): void;
+  elapsed(): number;
+}
 export interface TargetCoupler {
   /**
    * Called on update of the target constructed with the coupler.
@@ -153,6 +157,7 @@ export function newInstance(trace:boolean):Facets;
 * A Superficial application core.
 */
 export interface Facets{
+  times: Times;
   doTrace: boolean;
   /**
    *

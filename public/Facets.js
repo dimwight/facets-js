@@ -130,8 +130,8 @@ class Objects {
             return o1 === o2;
         } })(spacer, "\n");
         let at = 0;
-        for (let index141 = 0; index141 < items.length; index141++) {
-            let item = items[index141];
+        for (let index225 = 0; index225 < items.length; index225++) {
+            let item = items[index225];
             /* add */ (list.push((item == null ? "null" : trim ? item.toString().trim() : item) + (++at === items.length ? "" : spacer)) > 0);
         }
         return ('[' + list.join(', ') + ']');
@@ -325,8 +325,8 @@ class Tracer {
     traceArrayText(array) {
         return Util.arrayPrintString(array);
         let lines = new String("[\n");
-        for (let index142 = 0; index142 < array.length; index142++) {
-            let o = array[index142];
+        for (let index226 = 0; index226 < array.length; index226++) {
+            let o = array[index226];
             lines += ("  " + Debug.info(o) + "\n");
         }
         lines += ("]");
@@ -482,8 +482,8 @@ class TargeterCore extends NotifyingCore {
             throw Object.defineProperty(new Error("No targets in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
         if (this.__elements == null) {
             let list = ([]);
-            for (let index138 = 0; index138 < targets.length; index138++) {
-                let t = targets[index138];
+            for (let index222 = 0; index222 < targets.length; index222++) {
+                let t = targets[index222];
                 {
                     let targeter = t.newTargeter();
                     targeter.setNotifiable(this);
@@ -1618,8 +1618,8 @@ class IndexingFrameTargeter extends TargeterCore {
         super.retarget(frame);
         if (this.__indexing == null) {
             let list = ([]);
-            for (let index139 = 0; index139 < this.__elements.length; index139++) {
-                let e = this.__elements[index139];
+            for (let index223 = 0; index223 < this.__elements.length; index223++) {
+                let e = this.__elements[index223];
                 /* add */ (list.push(e) > 0);
             }
             this.__indexing = ix.newTargeter();
@@ -1698,74 +1698,10 @@ class IndexingFrame extends TargetCore {
 IndexingFrame["__class"] = "fjs.core.select.IndexingFrame";
 IndexingFrame["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.core.Notifying", "fjs.core.Notifiable", "fjs.util.Titled"];
 
-/* Generated from Java with JSweet 2.0.0-rc1 - http://www.jsweet.org */
-class Times {
-    static minute_$LI$() { if (Times.minute == null)
-        Times.minute = 1000 * 60; return Times.minute; }
-    ;
-    static hour_$LI$() { if (Times.hour == null)
-        Times.hour = Times.minute_$LI$() * 60; return Times.hour; }
-    ;
-    /*private*/ static newMillis() {
-        return Date.now();
-    }
-    static setResetWait(wait) {
-        if (Times.debug)
-            Util.printOut$java_lang_String$java_lang_Object("Times.setResetWait: wait=", wait);
-        Times.start = Times.newMillis();
-        Times.times = true;
-        Times.resetWait = wait;
-    }
-    /**
-     * The time since the last auto-reset.
-     * <p>Interval for reset set by {@link #resetWait}.
-     * @return {number}
-     */
-    static elapsed() {
-        let now = Times.newMillis();
-        if (now - Times.then > Times.resetWait) {
-            Times.start = now;
-            Times.restarted = true;
-            if (Times.debug)
-                Util.printOut$java_lang_String("Times: reset resetWait=" + Times.resetWait);
-        }
-        else
-            Times.restarted = false;
-        return (Times.then = now) - Times.start;
-    }
-    /**
-     * Print {@link #elapsed()} followed by the message.
-     * @param {string} msg
-     */
-    static printElapsed(msg) {
-        if (!Times.times) {
-            if (!Debug.trace) {
-                Times.start = Times.then = Times.newMillis();
-                if (Times.debug)
-                    Util.printOut$java_lang_String$java_lang_Object("Times.printElapsed: times=", Times.times);
-            }
-            return;
-        }
-        let elapsed = Times.elapsed();
-        let elapsedText = true && elapsed > 5 * 1000 ? (Util.fxs(elapsed / 1000.0)) : ("" + elapsed);
-        let toPrint = (Times.restarted ? "\n" : "") + elapsedText + (msg != null ? ":\t" + msg : "");
-        Util.printOut$java_lang_String(toPrint);
-    }
-}
-Times.times = false;
-Times.nanoTime = true;
-Times.resetWait = 1000;
-Times.then = 0;
-Times.start = 0;
-Times.restarted = false;
-Times.debug = false;
-Times["__class"] = "fjs.util.Times";
-Times.hour_$LI$();
-Times.minute_$LI$();
-
 class Facets extends Tracer {
     constructor(top, trace) {
         super(top);
+        this.times = new Facets.Times(this);
         /*private*/ this.titleTargeters = ({});
         /*private*/ this.notifiable = new Facets.Facets$0(this);
         this.doTrace = false;
@@ -1870,8 +1806,8 @@ class Facets extends Tracer {
         let then = (this.titleTargeters[title] = t);
         let elements = t.elements();
         this.trace$java_lang_String("> Added targeter: title=" + title + ": elements=" + elements.length);
-        for (let index140 = 0; index140 < elements.length; index140++) {
-            let e = elements[index140];
+        for (let index224 = 0; index224 < elements.length; index224++) {
+            let e = elements[index224];
             this.addTitleTargeters(e);
         }
     }
@@ -1930,6 +1866,64 @@ class Facets extends Tracer {
 Facets["__class"] = "fjs.globals.Facets";
 Facets["__interfaces"] = ["fjs.util.Identified"];
 (function (Facets) {
+    class Times {
+        constructor(__parent) {
+            this.debug = false;
+            this.__parent = __parent;
+            this.doTime = false;
+            this.resetWait = 1000;
+            this.then = 0;
+            this.start = 0;
+            this.restarted = false;
+        }
+        setResetWait(wait) {
+            if (this.debug)
+                Util.printOut$java_lang_String$java_lang_Object("Times.setResetWait: wait=", wait);
+            this.start = this.newMillis();
+            this.doTime = true;
+            this.resetWait = wait;
+        }
+        /**
+         * The time since the last auto-reset.
+         * <p>Interval for reset set by {@link #resetWait}.
+         * @return {number}
+         */
+        elapsed() {
+            let now = this.newMillis();
+            if (now - this.then > this.resetWait) {
+                this.start = now;
+                this.restarted = true;
+                if (this.debug)
+                    Util.printOut$java_lang_String("Times: reset resetWait=" + this.resetWait);
+            }
+            else
+                this.restarted = false;
+            return (this.then = now) - this.start;
+        }
+        /**
+         * Print {@link #elapsed()} followed by the message.
+         * @param {string} msg
+         */
+        printElapsed(msg) {
+            if (!this.doTime) {
+                if (!Debug.trace) {
+                    this.start = this.then = this.newMillis();
+                    if (this.debug)
+                        Util.printOut$java_lang_String$java_lang_Object("Times.printElapsed: times=", this.doTime);
+                }
+                return;
+            }
+            let elapsed = this.elapsed();
+            let elapsedText = true && elapsed > 5 * 1000 ? (Util.fxs(elapsed / 1000.0)) : ("" + elapsed);
+            let toPrint = (this.restarted ? "\n" : "") + elapsedText + (msg != null ? ":\t" + msg : "");
+            Util.printOut$java_lang_String(toPrint);
+        }
+        newMillis() {
+            return Date.now();
+        }
+    }
+    Facets.Times = Times;
+    Times["__class"] = "fjs.globals.Facets.Times";
     class Facets$0 {
         constructor(__parent) {
             this.__parent = __parent;
@@ -1940,8 +1934,8 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
          */
         notify(notice) {
             let msg = "> Surface for " + Debug.info(this.__parent.targeterTree) + " notified by " + notice;
-            if (Times.times)
-                Times.printElapsed(msg);
+            if (this.__parent.times.doTime)
+                this.__parent.times.printElapsed(msg);
             else
                 this.__parent.trace(msg);
             let targets = this.__parent.targeterTree.target();
@@ -1950,8 +1944,8 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
             this.__parent.onRetargeted();
             this.__parent.targeterTree.retargetFacets();
             msg = "> Facets retargeted in " + Debug.info(this.__parent.targeterTree);
-            if (Times.times)
-                Times.printElapsed(msg);
+            if (this.__parent.times.doTime)
+                this.__parent.times.printElapsed(msg);
             else
                 this.__parent.trace(msg);
         }
@@ -2144,7 +2138,8 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
         lazyElements() {
             let supplier = (this.p.newFrameTargets);
             let got = (target => (typeof target === 'function') ? target() : target.get())(supplier);
-            this.trace$java_lang_String$java_lang_Object(".lazyElements: ", got);
+            if (this.__parent.doTrace)
+                this.trace$java_lang_String$java_lang_Object(".lazyElements: ", got);
             return got == null ? [] : STarget.newTargets(got);
         }
         /**
@@ -2153,7 +2148,8 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
          * @return {SFrameTarget}
          */
         newIndexedFrame(indexed) {
-            this.trace$java_lang_String(".newIndexedFrame: indexed=" + (indexed != null));
+            if (this.__parent.doTrace)
+                this.trace$java_lang_String(".newIndexedFrame: indexed=" + (indexed != null));
             let editTargets = (this.p.newEditTargets);
             return new Facets$7.Facets$7$0(this, this.p.title + ":indexed", indexed, editTargets, indexed);
         }
@@ -2174,7 +2170,8 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
              */
             lazyElements() {
                 let targets = (target => (typeof target === 'function') ? target(this.indexed) : target.apply(this.indexed))(this.editTargets);
-                this.trace$java_lang_String$java_lang_Object(".newIndexedFrame.lazyElements: targets=", targets);
+                if (this.__parent.__parent.doTrace)
+                    this.trace$java_lang_String$java_lang_Object(".newIndexedFrame.lazyElements: targets=", targets);
                 return STarget.newTargets(targets);
             }
         }
