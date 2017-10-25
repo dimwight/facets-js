@@ -132,8 +132,9 @@ export interface SelectingFramePolicy {
    * @param indexed selected with the indexing
    * @returns {Target[]}
    */
-  newEditTargets: (indexed: any) => Target[];
-  /**
+  newEditTargets: (indexed: any, title: string) => Target[];
+  newIndexedTitle: (indexed: any) => string;
+/**
    * Optionally supply Targets exposing the content array.
    * @returns {Target[]}
    */
@@ -142,10 +143,6 @@ export interface SelectingFramePolicy {
    * The wrapping Target
    */
   frame?: Target;
-  /**
-   * Equivalent of IndexingState.indexed
-   */
-  getIndexedContent?: any;
 }
 /**
 * Constructs a new Superficial application core.
