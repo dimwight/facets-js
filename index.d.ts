@@ -79,13 +79,13 @@ export interface IndexingCoupler extends TargetCoupler{
   passIndex:number;
   /**
    * Get the contents to be indexed
-   * @param {string} title identifies the Target
+   * @param {string} title identifies the target
    * @returns {any[]}
    */
   getIndexables: (title: string) => any[];
   /**
-   * Get the strings to represent the contents in the UI
-   * @param {string} title identifies the Target
+   * Get strings to represent the indexable contents in the UI
+   * @param {string} title identifies the target
    * @returns {string[]}
    */
   getUiSelectables: (title: string) => string[];
@@ -104,50 +104,50 @@ interface IndexingState {
   indexed: any;
 }
 /**
- * Enables definition and communication with a Target that wraps
- * content selected with an indexing.
+ * Defines a target that wraps content selected with an indexing.
  */
-export interface SelectingFramePolicy {
+export interface IndexingFramePolicy {
   /**
-   * Title for the wrapping Target.
+   * Title for the wrapping target.
    */
   title: string;
+  /**
+   * Array of items to be indexed.
+   */
+  content: any[];
   /**
    * Title for the wrapped indexing.
    */
   indexingTitle: string;
   /**
-   * Array of items to be selected.
-   */
-  content: any[];
-  /**
    * Supply strings to expose the content in the UI.
-   * Analogue of IndexingCoupler method. 
-   * @param {any[]} content defined by .content
+   * Analogue of IndexingCoupler function. 
+   * @param {any[]} content current state of content
    * @returns {string[]}
    */
   getUiSelectables: () => string[];
   /**
-   * Create Targets exposing the selected content
+   * Provides for supplying different targets
    * @param indexed selected with the indexing
-   * @returns {Target[]}
    */
-  newEditTargets: (indexed: any, title: string) => Target[];
   newIndexedTitle: (indexed: any) => string;
-/**
-   * Optionally supply Targets exposing the content array.
+  /**
+   * Create Targets exposing the indexed content
+   * @param indexed selected with the indexing
+   * @param title from {newIndexedTitle}
    * @returns {Target[]}
    */
-  newFrameTargets?: () => Target[];
-  /**
-   * The wrapping Target
+  newIndexedTargets: (indexed: any, title: string) => Target[];
+/**
+   * Create Targets exposing content independent of the indexing state
+   * @returns {Target[]}
    */
-  frame?: Target;
+  newIndexingTargets: () => Target[];
 }
 /**
 * Constructs a new Superficial application core.
 * @param {boolean} trace
-* @returns {Facets.Facets}
+* @returns {Facets}
 */
 export function newInstance(trace:boolean):Facets;
 /**
@@ -159,26 +159,26 @@ export interface Facets{
   /**
    *
    * @param {string} title identifies the target or its targeter
-   * @param {Facets.TextualCoupler} coupler connects the target to client code
-   * @returns textual {Facets.Target}
+   * @param {TextualCoupler} coupler connects the target to client code
+   * @returns textual {Target}
    */
   newTextualTarget(title:string,coupler:TextualCoupler):Target;
   newTogglingTarget(title: string, c: TogglingCoupler): Target;
   newNumericTarget(title: string, coupler: NumericCoupler): Target;
   newTriggerTarget(title: string, coupler: TargetCoupler): Target;
   /**
-  * Constructs a Target containing others
+  * Constructs a target containing others
   * @param {string} title for the target
-  * @param {Facets.Target} members of the group
-  * @returns group of {Facets.Target}s
+  * @param {Target} members of the group
+  * @returns group of {Target}s
   */
   newTargetGroup(title:string,...members:Target[]):Target;
   newIndexingTarget(title:string,coupler:IndexingCoupler):Target;
   getIndexingState(title: string): IndexingState;
-  buildSelectingFrame(policy: SelectingFramePolicy): Target;
+  buildSelectingFrame(policy: IndexingFramePolicy): Target;
   /**
    * Constructs a tree of targeters using the initial target tree.
-   * @param {Facets.Target} targets the root of the target tree
+   * @param {Target} targets the root of the target tree
    */
   buildTargeterTree(targetTree:Target):void;
   /**
@@ -199,6 +199,11 @@ export interface Facets{
    * @returns {SimpleState} the state
    */
   getTargetState(title:string):SimpleState;
+  /**
+   * Notify the framework of an update and trigger a retargeting. 
+   * @param {string} title identifies the target
+   */
+  notifyTargetUpdated(title: string): void;
   setTargetLive(title: string, live: boolean): void;
   isTargetLive(title: string): boolean;
   attachOnRetargeted(retargeted: ()=>void): void;

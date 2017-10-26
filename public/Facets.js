@@ -130,8 +130,8 @@ class Objects {
             return o1 === o2;
         } })(spacer, "\n");
         let at = 0;
-        for (let index239 = 0; index239 < items.length; index239++) {
-            let item = items[index239];
+        for (let index147 = 0; index147 < items.length; index147++) {
+            let item = items[index147];
             /* add */ (list.push((item == null ? "null" : trim ? item.toString().trim() : item) + (++at === items.length ? "" : spacer)) > 0);
         }
         return ('[' + list.join(', ') + ']');
@@ -196,7 +196,7 @@ class Debug {
         if (o != null && (o["__interfaces"] != null && o["__interfaces"].indexOf("fjs.util.Identified") >= 0 || o.constructor != null && o.constructor["__interfaces"] != null && o.constructor["__interfaces"].indexOf("fjs.util.Identified") >= 0))
             id = " #" + o.identity();
         if (o != null && (o["__interfaces"] != null && o["__interfaces"].indexOf("fjs.util.Titled") >= 0 || o.constructor != null && o.constructor["__interfaces"] != null && o.constructor["__interfaces"].indexOf("fjs.util.Titled") >= 0))
-            title = " \'" + o.title() + "\'";
+            title = " " + o.title();
         return name + id + title;
     }
     /**
@@ -325,8 +325,8 @@ class Tracer {
     traceArrayText(array) {
         return Util.arrayPrintString(array);
         let lines = new String("[\n");
-        for (let index240 = 0; index240 < array.length; index240++) {
-            let o = array[index240];
+        for (let index148 = 0; index148 < array.length; index148++) {
+            let o = array[index148];
             lines += ("  " + Debug.info(o) + "\n");
         }
         lines += ("]");
@@ -473,8 +473,8 @@ class TargeterCore extends NotifyingCore {
             throw Object.defineProperty(new Error("Null targets in " + Debug.info(this)), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
         if (this.__elements == null) {
             let list = ([]);
-            for (let index231 = 0; index231 < targets.length; index231++) {
-                let t = targets[index231];
+            for (let index139 = 0; index139 < targets.length; index139++) {
+                let t = targets[index139];
                 {
                     let add = t.newTargeter();
                     add.setNotifiable(this);
@@ -509,12 +509,12 @@ class TargeterCore extends NotifyingCore {
             Debug.traceEvent("Attached facet " + Debug.info(facet) + " to " + Debug.info(this));
     }
     retargetFacets() {
-        for (let index232 = 0; index232 < this.__elements.length; index232++) {
-            let e = this.__elements[index232];
+        for (let index140 = 0; index140 < this.__elements.length; index140++) {
+            let e = this.__elements[index140];
             e.retargetFacets();
         }
-        for (let index233 = 0; index233 < this.facets.length; index233++) {
-            let f = this.facets[index233];
+        for (let index141 = 0; index141 < this.facets.length; index141++) {
+            let f = this.facets[index141];
             {
                 f.retarget(this.__target);
                 if (Debug.trace)
@@ -645,8 +645,8 @@ class TargetCore extends NotifyingCore {
             let lazy = this.lazyElements();
             this.setElements(lazy);
         }
-        for (let index230 = 0; index230 < this.__elements.length; index230++) {
-            let e = this.__elements[index230];
+        for (let index138 = 0; index138 < this.__elements.length; index138++) {
+            let e = this.__elements[index138];
             if (!e.notifiesTargeter())
                 e.setNotifiable(this);
         }
@@ -1568,11 +1568,11 @@ STrigger["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.core
 
 /**
  * Unique constructor.
- * @param {FrameIndexing} indexed will be the first target of this instance
+ * @param {IndexingFrame} indexed will be the first target of this instance
  * @class
  * @extends TargeterCore
  */
-class FrameIndexingTargeter extends TargeterCore {
+class IndexingFrameTargeter extends TargeterCore {
     constructor(indexed) {
         super(indexed.constructor);
         /*private*/ this.cache = ({});
@@ -1618,9 +1618,9 @@ class FrameIndexingTargeter extends TargeterCore {
         super.retargetFacets();
         this.__indexing.retargetFacets();
         {
-            let array235 = (obj => Object.keys(obj).map(key => obj[key]))(this.cache);
-            for (let index234 = 0; index234 < array235.length; index234++) {
-                let t = array235[index234];
+            let array143 = (obj => Object.keys(obj).map(key => obj[key]))(this.cache);
+            for (let index142 = 0; index142 < array143.length; index142++) {
+                let t = array143[index142];
                 t.retargetFacets();
             }
         }
@@ -1629,9 +1629,9 @@ class FrameIndexingTargeter extends TargeterCore {
         let list = (this.__elements.slice(0).slice(0));
         /* add */ (list.push(this.__indexing) > 0);
         {
-            let array237 = (obj => Object.keys(obj).map(key => obj[key]))(this.cache);
-            for (let index236 = 0; index236 < array237.length; index236++) {
-                let t = array237[index236];
+            let array145 = (obj => Object.keys(obj).map(key => obj[key]))(this.cache);
+            for (let index144 = 0; index144 < array145.length; index144++) {
+                let t = array145[index144];
                 /* add */ (list.push(t) > 0);
             }
         }
@@ -1645,15 +1645,15 @@ class FrameIndexingTargeter extends TargeterCore {
         } })([], list);
     }
 }
-FrameIndexingTargeter["__class"] = "fjs.core.select.FrameIndexingTargeter";
-FrameIndexingTargeter["__interfaces"] = ["fjs.util.Identified", "fjs.core.Notifying", "fjs.core.SRetargetable", "fjs.core.Notifiable", "fjs.util.Titled", "fjs.core.Facetable", "fjs.core.STargeter"];
+IndexingFrameTargeter["__class"] = "fjs.core.select.IndexingFrameTargeter";
+IndexingFrameTargeter["__interfaces"] = ["fjs.util.Identified", "fjs.core.Notifying", "fjs.core.SRetargetable", "fjs.core.Notifiable", "fjs.util.Titled", "fjs.core.Facetable", "fjs.core.STargeter"];
 
 /**
  * {@link TargetCore} that enables editing of the contents of an {@link SIndexing}.
  * @extends TargetCore
  * @class
  */
-class FrameIndexing extends TargetCore {
+class IndexingFrame extends TargetCore {
     constructor(title, indexing) {
         super(title);
         this.__indexing = null;
@@ -1678,11 +1678,11 @@ class FrameIndexing extends TargetCore {
     }
     /**
      * Overrides superclass method.
-     * <p>Returns an {@link FrameIndexingTargeter}.
+     * <p>Returns an {@link IndexingFrameTargeter}.
      * @return {*}
      */
     newTargeter() {
-        return new FrameIndexingTargeter(this);
+        return new IndexingFrameTargeter(this);
     }
     /**
      * Re-implementation returning <code>true</code>.
@@ -1692,8 +1692,8 @@ class FrameIndexing extends TargetCore {
         return true;
     }
 }
-FrameIndexing["__class"] = "fjs.core.select.FrameIndexing";
-FrameIndexing["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.core.Notifying", "fjs.core.Notifiable", "fjs.util.Titled"];
+IndexingFrame["__class"] = "fjs.core.select.IndexingFrame";
+IndexingFrame["__interfaces"] = ["fjs.core.STarget", "fjs.util.Identified", "fjs.core.Notifying", "fjs.core.Notifiable", "fjs.util.Titled"];
 
 class Facets extends Tracer {
     constructor(top, trace) {
@@ -1783,13 +1783,20 @@ class Facets extends Tracer {
     buildSelectingFrame(p) {
         let indexing = new SIndexing(p.indexingTitle, new Facets.Facets$6(this, p));
         indexing.setIndex(0);
-        p.frame = new Facets.Facets$7(this, p.title, indexing, p);
-        this.trace$java_lang_String$java_lang_Object(" > Defined frame ", p.frame);
-        return p.frame;
+        this.trace$java_lang_String$java_lang_Object(" > Created indexing ", indexing);
+        let frame = new Facets.Facets$7(this, p.title, indexing, p);
+        this.trace$java_lang_String$java_lang_Object(" > Created indexing frame ", frame);
+        return frame;
+    }
+    updateTargeterTree() {
+        if (this.targeterTree == null)
+            throw Object.defineProperty(new Error("Null targeterTree in " + this), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
+        this.buildTargeterTree(this.targeterTree.target());
     }
     buildTargeterTree(targetTree) {
-        this.trace$java_lang_String$java_lang_Object(" > Initial retargeting on ", targetTree);
-        this.targeterTree = targetTree.newTargeter();
+        this.trace$java_lang_String$java_lang_Object(" > Retargeting on ", targetTree);
+        if (this.targeterTree == null)
+            this.targeterTree = targetTree.newTargeter();
         this.targeterTree.setNotifiable(this.notifiable);
         this.targeterTree.retarget(targetTree);
         this.updateTitleTargeters(this.targeterTree);
@@ -1802,8 +1809,8 @@ class Facets extends Tracer {
         let elements = t.titleElements();
         if (then == null)
             this.trace$java_lang_String("> Added targeter: title=" + title + (": titleTargeters=" + (obj => Object.keys(obj).map(key => obj[key]))(this.titleTargeters).length));
-        for (let index238 = 0; index238 < elements.length; index238++) {
-            let e = elements[index238];
+        for (let index146 = 0; index146 < elements.length; index146++) {
+            let e = elements[index146];
             this.updateTitleTargeters(e);
         }
     }
@@ -1834,6 +1841,11 @@ class Facets extends Tracer {
         if (target == null)
             throw Object.defineProperty(new Error("Null target for " + title), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
         target.updateState(update);
+    }
+    notifyTargetUpdated(title) {
+        let target = this.titleTarget(title);
+        if (target == null)
+            throw Object.defineProperty(new Error("Null target for " + title), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
         target.notifyParent();
     }
     getTargetState(title) {
@@ -2117,7 +2129,7 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
                 throw Object.defineProperty(new Error("Null got for " + i.title()), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
             let equal = Util.longEquals(got, this.thenIndexables);
             if (!equal)
-                this.__parent.trace(".SIndexing.getIndexables: ", got);
+                this.__parent.trace("> Got indexables: ", got);
             this.thenIndexables = got;
             return got;
         }
@@ -2132,20 +2144,20 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
                 throw Object.defineProperty(new Error("Null got for " + i.title()), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
             let equal = Util.longEquals(got, this.thenSelectables);
             if (!equal)
-                this.__parent.trace(".SIndexing.getFacetIndexables: ", got);
+                this.__parent.trace("> Got new selectables: ", got);
             this.thenSelectables = got;
             return got;
         }
     }
     Facets.Facets$6 = Facets$6;
-    class Facets$7 extends FrameIndexing {
+    class Facets$7 extends IndexingFrame {
         constructor(__parent, __arg0, __arg1, p) {
             super(__arg0, __arg1);
             this.p = p;
             this.__parent = __parent;
         }
         lazyElements() {
-            let supplier = (this.p.newFrameTargets);
+            let supplier = (this.p.newIndexingTargets);
             let got = (target => (typeof target === 'function') ? target() : target.get())(supplier);
             if (false && this.__parent.doTrace)
                 this.trace$java_lang_String$java_lang_Object(".lazyElements: ", got);
@@ -2157,12 +2169,12 @@ Facets["__interfaces"] = ["fjs.util.Identified"];
          * @return {SFrameTarget}
          */
         newIndexedFrame(indexed) {
-            if (this.__parent.doTrace)
+            if (false && this.__parent.doTrace)
                 this.trace$java_lang_String(".newIndexedFrame: indexed=" + (indexed != null));
-            let editTargets = (this.p.newEditTargets);
+            let editTargets = (this.p.newIndexedTargets);
             let newIndexedTitle = (this.p.newIndexedTitle);
             let title = newIndexedTitle == null ? this.p.title + "|indexed" : (target => (typeof target === 'function') ? target(indexed) : target.apply(indexed))(newIndexedTitle);
-            return new Facets.LocalFrameTarget(title, indexed, (this.p.newEditTargets));
+            return new Facets.LocalFrameTarget(title, indexed, (this.p.newIndexedTargets));
         }
     }
     Facets.Facets$7 = Facets$7;
