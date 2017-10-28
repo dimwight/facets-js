@@ -156,6 +156,7 @@ export function newInstance(trace:boolean):Facets;
 export interface Facets{
   times: Times;
   doTrace: boolean;
+  identity():any;
   /**
    *
    * @param {string} title identifies the target or its targeter
