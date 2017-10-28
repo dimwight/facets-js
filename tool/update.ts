@@ -2,7 +2,7 @@ import * as fs from 'fs-extra';
 
 const basePath='C:/Users/Me/ts/',
   fromRoot=basePath+'facets-js/',
-  toRoot=basePath+'react-rollup/',
+  toRoot=basePath+'facets-react/',
   lib='public/Facets.js',
   dTs='index.d.ts',
   modules='node_modules/@types/facets-js/',
