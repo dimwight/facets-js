@@ -1,4 +1,4 @@
-# README for facets-js
+# facets-js
 
 ## [Superficial](http://superficial.sourceforge.net/) in a JS module
 
@@ -9,8 +9,8 @@ with the admirable [JSweet](http://www.jsweet.org
 - Output bundled using [Rollup](https://rollupjs.org 
 )
 - Stupidly simple API in ES6/IIFE 
-- Demo React apps planned using [Blueprint](http://blueprintjs.com/)
-### Getting to libs
+
+### [Getting to libs]
 1. `globals/Globals.java`
 2. Clean `ts/` and copy `ts/Facets/` to `ws-in`
 1. Tidy up _SimpleSurface.ts_ import   
@@ -37,11 +37,7 @@ const base = {
   sourceMap: true,
   plugins: [
     resolve(),
-    commonjs({
-      namedExports: {
-        'node_modules/facets-js/index.js': [ 'Facets' ]
-      }
-    }),
+    commonjs(),
     sourcemaps()
   ]
 };
@@ -50,7 +46,7 @@ const app = Object.assign({}, base, {
   moduleName: 'unused',
 });
 const simple = Object.assign({}, app, {
-  entry: 'in/fjs/SimpleSurface.js',
+  entry: 'in/fjs/' +(false?'SimpleSurface.js':'SelectingSurface.js'),
 });
 const main = Object.assign({}, app, {
   entry: 'src/main.js',
@@ -73,6 +69,6 @@ const appWeb= Object.assign({}, main, {
   globals: {'facets-js': lib.moduleName,}
 });
 
-const bundle = appWeb; //simple|libNode|appNode|libWeb|appWeb
+const bundle = libWeb; //simple|libNode|appNode|libWeb|appWeb
 console.log('Bundling: entry='+bundle.entry+' dest='+bundle.dest + ' format='+bundle.format);
 export default bundle;
