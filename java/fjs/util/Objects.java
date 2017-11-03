@@ -25,8 +25,9 @@ public final class Objects{
 	  ArrayList list=new ArrayList();
 	  for(int i=0;i<array.length;i++)
 	    list.add((array[i]==null?"null"
-	    		:false?Debug.info(array[i]):array[i].toString())
+	    		:true?Debug.info(array[i]):array[i].toString())
 	    	+(i<array.length-1?"\n":""));
-	  return list.toString().replaceAll("\n"," ");
+	  String lines=list.toString();
+		return false?lines:lines.replaceAll("\n"," ");
 	}
 }

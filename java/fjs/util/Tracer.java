@@ -1,5 +1,7 @@
 package fjs.util;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 /**
 Utility superclass that can issue trace messages.
  */
@@ -71,6 +73,11 @@ public abstract class Tracer implements Identified{
 		traceOutput(msg+(false?Debug.info(array):Debug.arrayInfo(array)));		
 	}
 	private String traceArrayText(Object[]array){
-		return Util.arrayPrintString(array);
+		if(false)return Util.arrayPrintString(array);
+		String lines=new String("[\n");
+		for(Object o:array)
+			lines+=("  "+(false?Debug.info(o):o.toString())+"\n");
+		lines+=("]");
+		return lines;
 	}
 }

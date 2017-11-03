@@ -42,7 +42,7 @@ public class TargetCore extends NotifyingCore implements STarget{
 	 members) will be returned as the <code>elements</code> property. 
 	 */
 	final protected void setElements(STarget[]elements){
-		if(elementsSet)throw new RuntimeException("Immutable elements in "
+		if(false&&elementsSet)throw new RuntimeException("Immutable elements in "
 				+Debug.info(this));
 		this.elements=elements;
 		elementsSet=true;
@@ -65,9 +65,8 @@ public class TargetCore extends NotifyingCore implements STarget{
 			if(false)trace(".TargetCore: lazy=",lazy.length);
 			setElements(lazy);
 		}
-		for(int i=0;i<this.elements.length;i++)
-			if(!(this.elements[i].type()==NotifyingType.Frame))
-				this.elements[i].setNotifiable(this);
+		for(STarget e:elements)
+			if(!((TargetCore)e).notifiesTargeter())e.setNotifiable(this);
 		return this.elements;
 	}
 	/**
@@ -110,19 +109,12 @@ public class TargetCore extends NotifyingCore implements STarget{
 	public void setLive(boolean live){
 		this.live=live;
 	}
-	public String toString(){
-		return Debug.info(this);
-	}
 	/**
 	Used to construct the notification tree. 
 	<p><b>NOTE</b> This method must NOT be overridden in application code. 
 	 */
 	protected boolean notifiesTargeter(){
-		return true&&this.elements!=null;
-	}
-	@Override
-	public NotifyingType type(){
-		return NotifyingType.Target;
+		return elements!=null;
 	}
 	@Override
 	public Object state(){
@@ -131,5 +123,8 @@ public class TargetCore extends NotifyingCore implements STarget{
 	@Override
 	public void updateState(Object update){
 		throw new RuntimeException("Not implemented in "+this);
+	}
+	public String toString(){
+		return Debug.info(this);
 	}
 }

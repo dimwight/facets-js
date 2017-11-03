@@ -13,7 +13,7 @@ final public class STrigger extends TargetCore{
 	<p>A {@link Coupler} supplies application-specific mechanism and policy
 	for a {@link STrigger}.
 	 */
-	public static abstract class Coupler implements TargetCoupler{
+	public static abstract class Coupler extends TargetCoupler{
 		/**
 		Called by <code>Trigger.fire</code>. 
 		@param t the calling {@link STrigger}
@@ -41,4 +41,12 @@ final public class STrigger extends TargetCore{
   public void fire(){
   	coupler.fired(this);
   }
+	@Override
+	public Object state(){
+		return "Stateless!";
+	}
+	@Override
+	public void updateState(Object update){
+		fire();
+	}
 }

@@ -12,7 +12,7 @@ final public class SToggling extends TargetCore{
 	<p>A {@link Coupler} supplies application-specific mechanism 
 	for a {@link SToggling}.
 	 */
-	public static class Coupler implements TargetCoupler{
+	public static class Coupler extends TargetCoupler{
 		/**
 		Called by the toggling whenever its state is set. 
 	 */

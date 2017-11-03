@@ -12,7 +12,7 @@ final public class STextual extends TargetCore{
 	<p>A {@link Coupler} is required to supply a {@link STextual}
 	with client-specific policy or mechanism.
 	 */
-	public static class Coupler extends Tracer implements TargetCoupler{
+	public static class Coupler extends TargetCoupler{
 		/**
 		Called when <code>setText</code> is called on <code>t</code>. 
 		 */
@@ -22,14 +22,7 @@ final public class STextual extends TargetCore{
 		<p>Default returns <code>true</code> for non-blank text.
 		 */
 		public boolean isValidText(STextual t,String text){
-			return true||!text.trim().equals("");
-		}
-		/**
-		Can the {@link STextual} accept interim updates? 
-		<p>Default returns <code>false</code>.
-		 */
-		public boolean updateInterim(STextual t){
-			return false;
+			return !text.trim().equals("");
 		}
 		protected String getText(STextual t){
 			throw new RuntimeException("Not implemented in "+Debug.info(this));

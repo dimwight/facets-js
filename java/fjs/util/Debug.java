@@ -21,9 +21,11 @@ public final class Debug{
 			return text.substring(0,Math.min(length,60))
 					+(true?"":(": "+("length="+length)));
 		}
-		String name=o.getClass().getSimpleName(),id="",title=false?"o instanceof Titled":"";
+		Class classe=o.getClass();
+		String name=classe.getSimpleName(),id="",
+				title=false?"o instanceof Titled":classe.getName();
 		if(o instanceof Identified)id=" #"+((Identified)o).identity();
-		if(o instanceof Titled)title=" '"+((Titled)o).title()+"'";
+		if(o instanceof Titled)title=" "+((Titled)o).title();
 		return name+id+title;
 	}
 	/**

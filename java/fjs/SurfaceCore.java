@@ -1,17 +1,16 @@
 package fjs;
+import fjs.core.STarget;
 import fjs.globals.Facets;
 import fjs.globals.Globals;
 import fjs.util.Titled;
 import fjs.util.Tracer;
 public abstract class SurfaceCore extends Tracer implements Titled{
-	public enum TargetTest{Textual,TogglingLive,Indexing,Numeric,Selecting;
+	public enum TargetTest{Textual,TogglingLive,Indexing,Numeric,Trigger,Selecting;
 		public static TargetTest[]simpleValues(){
-			return new TargetTest[]{Textual,TogglingLive,Numeric,Indexing};
+			return new TargetTest[]{Textual,TogglingLive,Indexing,Numeric,Trigger};
 		}
 		public boolean isSimple(){
-			for(TargetTest test:simpleValues())
-				if(test==this)return true;
-			return false;
+			return this.ordinal()<Selecting.ordinal();
 		}
 		public static TargetTest[]selectingValues(){
 			return new TargetTest[]{Selecting};
@@ -25,9 +24,11 @@ public abstract class SurfaceCore extends Tracer implements Titled{
 		this.title=title;
 		this.facets=facets;
 		this.test=true||test==TargetTest.Selecting?test:TargetTest.Indexing;
+		facets.times.doTime=false||facets.doTrace;
 	}
 	public void buildSurface(){
-		Object targets=newTargetTree();
+		trace(" > Creating targets...");
+		STarget targets=newTargetTree();
 		if(targets==null)throw new IllegalStateException("Null targets in "+this);
 		trace(" > Generating targeters...");
 		if(targets==null)throw new IllegalStateException("Null targets in "+this);
@@ -36,7 +37,7 @@ public abstract class SurfaceCore extends Tracer implements Titled{
 		buildLayout();
 		trace(" > Surface built.");
 	}
-	protected abstract Object newTargetTree();
+	protected abstract STarget newTargetTree();
 	protected abstract void buildLayout();
 	@Override
 	public String title(){
@@ -44,7 +45,7 @@ public abstract class SurfaceCore extends Tracer implements Titled{
 	}
 	protected final void generateFacets(String...titles){
 		for(String title:titles){
-			trace(" > Generating facet for ",title);
+			trace(" > Generating facet for title=",title);
 			facets.attachFacet(title,value -> trace(" > Facet '"+title
 					+ "' updated: value=",value));
 		}

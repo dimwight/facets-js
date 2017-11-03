@@ -5,94 +5,52 @@ import fjs.core.STargeter;
 import fjs.core.TargetCore;
 import fjs.util.Debug;
 /**
-{@link SelectingFrame} that selects with an {@link SIndexing}. 
-<p>{@link IndexingFrame} specialises its superclass for
-content that can be selected by index.  
+{@link TargetCore} that enables editing of the contents of an {@link SIndexing}. 
  */
-public abstract class IndexingFrame extends SelectingFrame{
-	private SIndexing indexing;
-  /**
-	Public constructor. 
-	@param title passed to core 
-  @param content  passed to core 
-  @param children passed to {@link #setIndexing(SIndexing)}
-	 */
-	public IndexingFrame(String title,Object content,SIndexing children){
-		this(title,content);
-		children.setIndex(0);
-		setIndexing(children);
-	}
+public abstract class IndexingFrame extends TargetCore{
+	private final SIndexing indexing;
 	/**
-	Core constructor. 
-	<p><b>NOTE</b> Subclass constructors must
-	also pass a suitable {@link SIndexing} to {@link #setIndexing(SIndexing)}. 
+	Unique constructor. 
 	@param title passed to superclass 
-  @param content passed to superclass 
+	@param indexing supplies content for {{@link #newIndexedFrame(Object)}
 	 */
-	protected IndexingFrame(String title,Object content){
-		super(title,content);
+	protected IndexingFrame(String title,SIndexing indexing){
+		super(title);
+		if(indexing==null)throw new IllegalArgumentException(
+				"Null indexing in "+Debug.info(this));
+		this.indexing=indexing;
+		indexing.setNotifiable(this);
 	}
 	/**
-	Re-implementation that creates a suitable {@link SSelection}. 
-	<p>Calls {@link SIndexing#setIndexed(Object)} in {@link #indexing()}
-	with <code>definition</code>, then {@link #setSelection(SSelection)}
-	with a new {@link SSelection} returning as {@link SSelection#single()}
-	the new {@link SIndexing#indexed()} (which will be <code>definition</code>). 
+	<p>Returns the {@link SFrameTarget} created in {@link #newIndexedFrame(Object)}. 
 	 */
-	@Override
-	public SSelection defineSelection(Object definition){
-		if(!indexing.indexed().equals(definition))
-			indexing.setIndexed(definition);
-		return setSelection(new SSelection(){
-			public Object[]multiple(){
-				throw new RuntimeException("Not implemented in " + this);
-			}
-			public Object single(){
-				return indexing.indexed();
-			}
-			public Object content(){
-				return framed;
-			}
-		});
+	final public SFrameTarget indexedFrame(){
+		return newIndexedFrame(indexing.indexed());
 	}
 	/**
-	Re-implementation. 
-	<p>Returns the {@link SFrameTarget} created in 
-	{@link #newIndexedFrame(Object)}. 
-	 */
-	final public SFrameTarget selectionFrame() {
-		return newIndexedFrame(selection().single());
-	}
-	/**
-	Create a {@link SFrameTarget} complying with {@link #selectionFrame()}. 
-	@param indexed the currently indexed member of {@link #framed}
+	@param indexed the currently indexed member of {@link #indexing}
 	 */
 	protected abstract SFrameTarget newIndexedFrame(Object indexed);
 	/** 
-	Sets an {@link SIndexing} that can index into content of {@link #framed}.
-	<p>Also calls {@link #defineSelection(Object)} with the current 
-	{@link SIndexing#indexed()}.
-	@param indexing must have {@link SIndexing#indexables()}
-	matching the current state of {@link #framed}. 
+	Sets an {@link SIndexing} containing content to be exposed.
 	 */
-	public void setIndexing(SIndexing indexing){
-		if(indexing==null)throw new IllegalArgumentException(
-				"Null children in "+Debug.info(this));
-		(this.indexing=indexing).setNotifiable(this);
-		defineSelection(indexing.indexed());
-	}
 	/**
-	The indexing last set with {@link #setIndexing(SIndexing)}. 
+	The indexing passed to the constructor. 
 	 */
 	public final SIndexing indexing(){
-	  if(indexing==null)throw new IllegalStateException("No indexing in "+Debug.info(this));
 	  return indexing;
 	}
   /**
 	Overrides superclass method. 
-	<p>Must return an {@link IndexingFrameTargeter}. 
+	<p>Returns an {@link IndexingFrameTargeter}. 
 	 */
-	public STargeter newTargeter(){
+	final public STargeter newTargeter(){
 		return new IndexingFrameTargeter(this);
+	}
+	/**
+	Re-implementation returning <code>true</code>. 
+	 */
+	final protected boolean notifiesTargeter(){
+		return true;
 	}
 }

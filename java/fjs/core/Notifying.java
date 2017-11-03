@@ -48,5 +48,4 @@ public interface Notifying extends Notifiable{
 	@param impact suggests the level of retargeting required 
 			 */
 	void notifyParent();
-	NotifyingType type();
 }

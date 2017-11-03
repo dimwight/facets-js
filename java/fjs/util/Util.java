@@ -1,4 +1,7 @@
 package fjs.util;
+
+import java.util.Arrays;
+
 public final class Util{
 	private static int DIGITS_SF=3,DECIMALS_FX=2;
 	public static void printOut(String s){
@@ -20,7 +23,7 @@ public final class Util{
 			sfs=sf.replaceAll("(\\d{"+DIGITS_SF+",})\\.0(\\D?)","$1$2").replaceAll("\\.0\\z","");
 		return false?("["+sf+">"+sfs+"]"):sfs;
 	}
-	static String fxs(double val){
+	public static String fxs(double val){
 		return "0."+(DECIMALS_FX==1?"0"
 				:DECIMALS_FX==2?"00":"000");
 	}
@@ -47,5 +50,19 @@ public final class Util{
 		double trim=sf;
 		if(trim!=sf)printOut("Doubles.sigFigs: val="+sf+" trim="+trim);
 		return trim*signum;
+	}
+	public static boolean longEquals(Object[]now,Object[]then){
+		if(true)return then!=null&&Arrays.deepEquals(now,then);
+		boolean equal=false;
+		if(then!=null&&then.length==now.length){
+			equal=true;
+			for(int i=0;i<now.length;i++){
+				boolean equals=now[i].equals(then[i]);
+				if(false&&!equals)System.out.println("longEquals: equal="+equal
+						+ " "+now[i]+">"+then[i]);
+				equal&=equals;
+			}
+		}
+		return equal;
 	}
 }

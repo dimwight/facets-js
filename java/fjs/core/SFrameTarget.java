@@ -1,5 +1,4 @@
 package fjs.core;
-import fjs.SelectingSurface.TextContent;
 import fjs.util.Debug;
 import fjs.util.Titled;
 /**
@@ -34,10 +33,8 @@ public class SFrameTarget extends TargetCore{
 		if(toFrame==null)throw new IllegalArgumentException(
 				"Null framed in "+Debug.info(this));
 		framed=toFrame;
-		if(false&&framed instanceof TextContent)
-			trace(".SFrameTarget: ?framed=",((TextContent)framed).text);
 	}
-  protected final boolean notifiesTargeter(){
+	protected final boolean notifiesTargeter(){
 		return true;
 	}
 	public String title(){

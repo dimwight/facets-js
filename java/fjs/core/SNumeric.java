@@ -15,7 +15,7 @@ final public class SNumeric extends TargetCore{
 	<p>A {@link Coupler} supplies policy and/or client-specific 
 	  mechanism to a {@link SNumeric}. 
 	 */
-	public static class Coupler implements TargetCoupler{
+	public static class Coupler extends TargetCoupler{
 		/**
 		Returns the policy to be used by a {@link fjs.core.SNumeric} 
 		constructed with this {@link Coupler}.
@@ -45,12 +45,7 @@ final public class SNumeric extends TargetCore{
 		policy=coupler.policy(this);
 		if(policy==null)throw new IllegalStateException("No policy in "+Debug.info(this));
 	  setValue(value);
-	}	/**
-	Returns the last valid value set.
-	 <p>The value returned will that set using <code>setValue</code> or 
-	 during construction; if {@link #doRangeChecks} is set to <code>true</code>
-	 it will be checked against the number policy minimum and maximum values.     
-	 */
+	}	
 	public double value(){
 		if(value!=value)throw new IllegalStateException("Not a number in "+Debug.info(this));
 		else if(doRangeChecks){
