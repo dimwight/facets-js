@@ -1,6 +1,5 @@
 node_modules
 *.log
-java/fjs/swing/
 public/index.js*
 src/**/*.js
 src/**/*.js.map
