@@ -45,7 +45,7 @@ public abstract class IndexingFrame extends TargetCore{
 	<p>Returns an {@link IndexingFrameTargeter}. 
 	 */
 	final public STargeter newTargeter(){
-		return new IndexingFrameTargeter(this);
+		return new IndexingFrameTargeter();
 	}
 	/**
 	Re-implementation returning <code>true</code>. 

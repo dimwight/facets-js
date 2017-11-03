@@ -33,11 +33,11 @@ public final class Facets extends Tracer{
 	  private long then,start;
 		private boolean restarted;
 	  private final boolean debug=false;
-	  public void setResetWait(int wait){
-	  	if(debug)Util.printOut("Times.setResetWait: wait=",wait);
+	  public void setResetWait(int millis){
+	  	if(debug)Util.printOut("Times.setResetWait: wait=",millis);
 	  	start=newMillis();
 			doTime=true;
-			resetWait=wait;
+			resetWait=millis;
 		}
 		/**
 		The time since the last auto-reset. 
@@ -112,7 +112,7 @@ public final class Facets extends Tracer{
 			STarget targets=targeterTree.target();
 			targeterTree.retarget(targets);
 		  trace("> Targeters retargeted on ",targets);
-		  updateTitleTargeters(targeterTree);
+		  putTitleTargeters(targeterTree);
 		  onRetargeted();
 			targeterTree.retargetFacets();
 			msg="> Facets retargeted in "+Debug.info(targeterTree);
@@ -260,20 +260,24 @@ public final class Facets extends Tracer{
 		public String indexingTitle;
 		public Supplier<Object[]>getIndexables;
 		public Supplier<String[]>getUiSelectables;
+		@Optional
 		public Supplier<STarget[]>newIndexingTargets;
+		@Optional
 		public Function<Object,String>newIndexedTitle;
+		@Optional
 		public BiFunction<Object,String,STarget[]>newIndexedTargets;
 	}
 	private static final class LocalFrameTarget extends SFrameTarget{
-		private final BiFunction<Object,String,STarget[]>newEditTargets;
+		private final BiFunction<Object,String,STarget[]>newIndexedTargets;
 		private LocalFrameTarget(String title,Object toFrame,
-				BiFunction<Object,String,STarget[]>newEditTargets){
+				BiFunction<Object,String,STarget[]>newIndexedTargets){
 			super(title,toFrame);
-			this.newEditTargets=newEditTargets;
+			this.newIndexedTargets=newIndexedTargets;
 		}
 		@Override
 		protected STarget[]lazyElements(){
-			STarget[]targets=newEditTargets.apply(framed,title());
+			STarget[]targets=newIndexedTargets==null?new STarget[]{}
+					:newIndexedTargets.apply(framed,title());
 			return STarget.newTargets(targets);
 		}
 	}
@@ -313,7 +317,7 @@ public final class Facets extends Tracer{
 			protected SFrameTarget newIndexedFrame(Object indexed){
 				if(false&&doTrace)trace(".newIndexedFrame: indexed="+(indexed!=null));
 				BiFunction<Object,String,STarget[]>editTargets=p.newIndexedTargets;
-				Function<Object,String> newIndexedTitle=p.newIndexedTitle;
+				Function<Object,String>newIndexedTitle=p.newIndexedTitle;
 				String title=newIndexedTitle==null?p.frameTitle+"|indexed"
 						:newIndexedTitle.apply(indexed);
 				return new LocalFrameTarget(title,indexed,p.newIndexedTargets);
@@ -327,15 +331,10 @@ public final class Facets extends Tracer{
 		if(targeterTree==null)targeterTree=((TargetCore)targetTree).newTargeter();
 		targeterTree.setNotifiable(notifiable);
 		targeterTree.retarget(targetTree);
-		updateTitleTargeters(targeterTree);
+		putTitleTargeters(targeterTree);
 		onRetargeted();
 	}
-	public void updateTargeterTree(){
-		if(targeterTree==null)throw new IllegalStateException(
-				"Null targeterTree in "+this);
-		buildTargeterTree(targeterTree.target());
-	}
-	private void updateTitleTargeters(STargeter t){
+	private void putTitleTargeters(STargeter t){
 		String title=t.title();
 		STargeter then=titleTargeters.get(title);
 		titleTargeters.put(title,t);
@@ -343,7 +342,7 @@ public final class Facets extends Tracer{
 		if(then==null)trace("> Added targeter: title="+title+
 				(false?(": elements="+elements.length)
 				:(": titleTargeters="+titleTargeters.values().size())));
-		for(STargeter e:elements)updateTitleTargeters(e);
+		for(STargeter e:elements)putTitleTargeters(e);
 	}
 	private STarget titleTarget(String title){
 		STargeter targeter=titleTargeters.get(title);

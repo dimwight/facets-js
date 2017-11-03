@@ -11,15 +11,10 @@ Implements {@link STargeter}.
 public class TargeterCore extends NotifyingCore implements STargeter{
 	protected transient STargeter[]elements;
 	private transient ArrayList<SFacet>facets=new ArrayList();
-	private transient STarget target;  
-  private final Class targetType;
-  /**
-	Construct a {@link TargeterCore} to match <code>target</code>. 
-	@param targetType set as {@link #targetType}.
-	   */
-	public TargeterCore(Class targetType){
+	private transient STarget target;
+	private String targetTitle;  
+	public TargeterCore(){
 		super("Untargeted");
-		this.targetType=targetType;
 	  if(Debug.trace)Debug.traceEvent("Created " +//"targeter " +targeters+" "+
 				this);
 	}
@@ -27,6 +22,9 @@ public class TargeterCore extends NotifyingCore implements STargeter{
 	  if(target==null)throw new IllegalArgumentException(
 	  		"Null target in "+Debug.info(this));
 	  else this.target=target;
+	  String checkTitle=target.title();
+		if(targetTitle!=null&&!checkTitle.equals(targetTitle))throw new IllegalStateException(
+				"Bad target title="+targetTitle);
 		if(((TargetCore)target).notifiesTargeter())target.setNotifiable(this);
 	  if(false)trace(": retargeting on "+Debug.info(target));
 		STarget[]targets=target.elements();

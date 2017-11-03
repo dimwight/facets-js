@@ -99,7 +99,7 @@ public class TargetCore extends NotifyingCore implements STarget{
 	 
 	 */
 	public STargeter newTargeter(){
-		return new TargeterCore(getClass());
+		return new TargeterCore();
 	}
 	public boolean isLive(){
 		Notifiable n=notifiable();

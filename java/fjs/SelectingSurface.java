@@ -27,17 +27,16 @@ public abstract class SelectingSurface extends SurfaceCore implements SelectingT
 	}
 	@Override
 	final protected void traceOutput(String msg){
-		if(true||facets.doTrace)super.traceOutput(msg);
+		if(false||facets.doTrace)super.traceOutput(msg);
 	}
 	public final IndexingFramePolicy frame;
-	private boolean firstPass=true;
 	private final List<TextContent>list=new ArrayList(Arrays.asList(new Object[]{
 			new TextContent("Hello world!"),
 			new TextContent("Hello Dolly!"),
 			new TextContent("Hello, good evening and welcome!")
 		}));
 	protected SelectingSurface(){
-		super(TargetTest.Selecting.name(),Globals.newInstance(true),
+		super(TargetTest.Selecting.name(),Globals.newInstance(false),
 				TargetTest.Selecting);
 		if(false){
 			Object[]content_=new Object[]{
@@ -90,7 +89,7 @@ public abstract class SelectingSurface extends SurfaceCore implements SelectingT
 	@Override
 	public void buildSurface(){
 		super.buildSurface();
-		if(false)return;
+		if(true)return;
 		Consumer add=arg->{
 			list.add(new TextContent("Hello sailor!"));
 			trace(" > Simulating input: update=",list.get(list.size()-1).text);
@@ -111,16 +110,11 @@ public abstract class SelectingSurface extends SurfaceCore implements SelectingT
 		for(Consumer update:new Consumer[]{
 				add,
 				edit,
-				select}
+				select
+			}
 		)update.accept("");
 	}
 	protected void onRetargeted(){
-		if(firstPass){
-			firstPass=false;
-			int updateThen=(int)facets.getTargetState(TITLE_SELECT);
-			ContentType.updateTargeterTree(list,facets,this);
-			facets.updateTargetState(TITLE_SELECT,updateThen);
-		}
 		boolean live=(boolean)facets.getTargetState(TITLE_LIVE);
 		ContentType type=ContentType.getIndexedType(facets);
 		String tail=type.titleTail();
