@@ -1,8 +1,4 @@
-package fjs.core.select;
-import fjs.core.SFrameTarget;
-import fjs.core.SIndexing;
-import fjs.core.STargeter;
-import fjs.core.TargetCore;
+package fjs.core;
 import fjs.util.Debug;
 /**
 {@link TargetCore} that enables editing of the contents of an {@link SIndexing}. 
@@ -24,10 +20,12 @@ public abstract class IndexingFrame extends TargetCore{
 	/**
 	<p>Returns the {@link SFrameTarget} created in {@link #newIndexedFrame(Object)}. 
 	 */
-	final public SFrameTarget indexedFrame(){
-		return newIndexedFrame(indexing.indexed());
+	final public STarget indexedTarget(){
+		Object indexed=indexing.indexed();
+		return indexed instanceof STarget?(STarget)indexed:newIndexedFrame(indexed);
 	}
 	/**
+	Create
 	@param indexed the currently indexed member of {@link #indexing}
 	 */
 	protected abstract SFrameTarget newIndexedFrame(Object indexed);

@@ -9,7 +9,7 @@ import fjs.globals.Facets.Times;
 import fjs.globals.Globals;
 public class SimpleSurface extends SurfaceCore implements SimpleTitles{
 	public SimpleSurface(String title,TargetTest test){
-		super(title,Globals.newInstance(false),test);
+		super(Globals.newInstance(false),test);
 	}
 	@Override
 	final protected void traceOutput(String msg){

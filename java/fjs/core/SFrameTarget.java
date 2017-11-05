@@ -3,11 +3,10 @@ import fjs.util.Debug;
 import fjs.util.Titled;
 /**
 Extends {@link TargetCore} by framing 
-  application content to be exposed directly to facets. 
+application content exposable with simple targets. 
  */
 public class SFrameTarget extends TargetCore{
-	private static int frames;
-	/**Immutable framed framed by the {@link SFrameTarget}.*/
+	/**Immutable content framed by the {@link SFrameTarget}.*/
 	final public Object framed;
 	/**
  	Core constructor. 
@@ -32,13 +31,10 @@ public class SFrameTarget extends TargetCore{
 	  super(title);
 		if(toFrame==null)throw new IllegalArgumentException(
 				"Null framed in "+Debug.info(this));
-		framed=toFrame;
+		else framed=toFrame;
 	}
+	@Override
 	protected final boolean notifiesTargeter(){
 		return true;
-	}
-	public String title(){
-		return framed==null||!(framed instanceof Titled)?super.title()
-			:((Titled)framed).title();
 	}
 }

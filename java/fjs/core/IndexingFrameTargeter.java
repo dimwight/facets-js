@@ -1,55 +1,45 @@
-package fjs.core.select;
+package fjs.core;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import fjs.core.SFrameTarget;
-import fjs.core.SIndexing;
-import fjs.core.STarget;
-import fjs.core.STargeter;
-import fjs.core.TargetCore;
-import fjs.core.TargeterCore;
 import fjs.util.Debug;
 public class IndexingFrameTargeter extends TargeterCore{
   final private Map<String,STargeter>titleTargeters=new HashMap();
 	private STargeter indexing,indexed;
-	private SIndexing ix;
-	private SFrameTarget indexedFrame;
-	private String indexedTitle,frameTitle;
+	private SIndexing indexingTarget;
+	private STarget indexedTarget;
+	private String indexedTitle;
 	public void retarget(STarget target){
 		super.retarget(target);
 		updateToTarget();
 		if(indexing==null){
-	  	indexing=ix.newTargeter();
+	  	indexing=indexingTarget.newTargeter();
 	  	indexing.setNotifiable(this);
 	  }
-		indexing.retarget(ix);
 		if(titleTargeters.isEmpty()){
-			int atThen=ix.index();
-			for(int at=0;at<ix.indexables().length;at++){
-				ix.setIndex(at);
+			int atThen=indexingTarget.index();
+			for(int at=0;at<indexingTarget.indexables().length;at++){
+				indexingTarget.setIndex(at);
 				updateToTarget();
-				indexed=indexedFrame.newTargeter();
-				indexed.setNotifiable(this);
-				indexed.retarget(indexedFrame);
+				indexed=((TargetCore)indexedTarget).newTargeter();
+				indexed.setNotifiable(this); 
+				indexed.retarget(indexedTarget);
 				titleTargeters.put(indexedTitle,indexed);
 			}
-			ix.setIndex(atThen);
+			indexingTarget.setIndex(atThen);
 			updateToTarget();
 		}
+		indexing.retarget(indexingTarget);
 		indexed=titleTargeters.get(indexedTitle);
 		if(indexed==null)throw new IllegalStateException("Null indexed in "+this);
-	  indexed.retarget(indexedFrame);
+	  indexed.retarget(indexedTarget);
 	}
 	private void updateToTarget(){
 		IndexingFrame frame=(IndexingFrame)target();
-		String checkTitle=frame.title();
-		if(frameTitle!=null&&!checkTitle.equals(frameTitle))
-			throw new IllegalStateException("Bad frame title="+checkTitle);
-		frameTitle=checkTitle;
-		ix=frame.indexing();
-		indexedFrame=frame.indexedFrame();
-		indexedTitle=indexedFrame.title();
+		indexingTarget=frame.indexing();
+		indexedTarget=frame.indexedTarget();
+		indexedTitle=indexedTarget.title();
 	}
   public void retargetFacets(){
     super.retargetFacets();

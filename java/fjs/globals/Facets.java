@@ -1,4 +1,5 @@
 package fjs.globals;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.function.BiConsumer;
@@ -7,6 +8,8 @@ import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import fjs.SelectingSurface.TextContent;
+import fjs.core.IndexingFrame;
 import fjs.core.Notifiable;
 import fjs.core.SFacet;
 import fjs.core.SFrameTarget;
@@ -19,7 +22,6 @@ import fjs.core.SToggling;
 import fjs.core.STrigger;
 import fjs.core.TargetCore;
 import fjs.core.TargeterCore;
-import fjs.core.select.IndexingFrame;
 import fjs.util.Debug;
 import fjs.util.NumberPolicy;
 import fjs.util.Tracer;
@@ -259,9 +261,9 @@ public final class Facets extends Tracer{
 		public String frameTitle;
 		public String indexingTitle;
 		public Supplier<Object[]>getIndexables;
-		public Supplier<String[]>getUiSelectables;
+		public Function<Object,String>newUiSelectable;
 		@Optional
-		public Supplier<STarget[]>newIndexingTargets;
+		public Supplier<STarget[]>newFrameTargets;
 		@Optional
 		public Function<Object,String>newIndexedTitle;
 		@Optional
@@ -296,8 +298,12 @@ public final class Facets extends Tracer{
 			}
 			@Override
 			protected String[]getFacetSelectables(SIndexing i){
-				String[]got=p.getUiSelectables.get();
-				if(got==null)throw new IllegalStateException("Null selectables for "+i.title());
+				Function<Object,String>getter=p.newUiSelectable;
+				if(getter==null)throw new IllegalStateException(
+						"Null newUiSelectable in "+this);
+				List<String>selectables=new ArrayList();
+				for(Object each:i.indexables())selectables.add(getter.apply(each));
+				String[]got=selectables.toArray(new String[]{});
 				boolean equal=Util.longEquals(got,thenSelectables);
 				if(!equal)trace("> Got new selectables: ",got.length);
 				thenSelectables=got;
@@ -308,7 +314,7 @@ public final class Facets extends Tracer{
 		trace(" > Created indexing ",indexing);
 		IndexingFrame frame=new IndexingFrame(p.frameTitle,indexing){
 			protected STarget[]lazyElements(){
-				Supplier<STarget[]>s=p.newIndexingTargets;
+				Supplier<STarget[]>s=p.newFrameTargets;
 				STarget[]got=s!=null?s.get():new STarget[]{};
 				if(false&&doTrace)trace(".lazyElements: ",got);
 				return got==null?new STarget[]{}:STarget.newTargets(got);

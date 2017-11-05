@@ -1,6 +1,6 @@
 node_modules
 *.log
-public/ index.js*
+public/index.js*
 src/**/*.js
 src/**/*.js.map
 tool/*.js

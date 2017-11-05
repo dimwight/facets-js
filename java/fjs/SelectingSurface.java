@@ -3,15 +3,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
+import fjs.SurfaceCore.TargetTest;
 import fjs.core.STarget;
 import fjs.globals.Facets.IndexingFramePolicy;
 import fjs.globals.Facets.TextualCoupler;
 import fjs.globals.Facets.TogglingCoupler;
+import fjs.globals.Facets;
 import fjs.globals.Globals;
 import fjs.util.Util;
 import jsweet.lang.Interface;
 import jsweet.lang.Optional;
-public abstract class SelectingSurface extends SurfaceCore implements SelectingTitles{
+public class SelectingSurface extends SurfaceCore implements SelectingTitles{
 	public static class TextContent{
 		public String text;
 		public TextContent(String text){
@@ -26,39 +28,27 @@ public abstract class SelectingSurface extends SurfaceCore implements SelectingT
 		}
 	}
 	@Override
-	final protected void traceOutput(String msg){
+	protected void traceOutput(String msg){
 		if(false||facets.doTrace)super.traceOutput(msg);
 	}
-	public final IndexingFramePolicy frame;
 	private final List<TextContent>list=new ArrayList(Arrays.asList(new Object[]{
 			new TextContent("Hello world!"),
 			new TextContent("Hello Dolly!"),
 			new TextContent("Hello, good evening and welcome!")
 		}));
-	protected SelectingSurface(){
-		super(TargetTest.Selecting.name(),Globals.newInstance(false),
-				TargetTest.Selecting);
-		if(false){
-			Object[]content_=new Object[]{
-				new TextContent("Hello world!"),
-				new TextContent("Hello Dolly!"),
-				new TextContent("Hello, good evening and welcome!")
-			};
-			Object[]content=list.toArray();
-			trace(".SelectingSurface: content1=",content);
-			((TextContent)content_[0]).text="Hello";
-			trace("equal="+Util.longEquals(content,content_),content_);
-		}
-		frame=new IndexingFramePolicy(){{
-			frameTitle=TITLE_FRAME;
+	protected SelectingSurface(Facets facets,TargetTest test){
+		super(facets,test);
+		facets.onRetargeted=arg->onRetargeted();
+	}
+	@Override
+	protected STarget newTargetTree(){
+		String appTitle=TargetTest.Selecting.name();
+		return facets.newIndexingFrame(new IndexingFramePolicy(){{
+			frameTitle=appTitle;
 			indexingTitle=TITLE_SELECT;
 			getIndexables=()->list.toArray();
-			getUiSelectables=()->{
-				List<String>selectables=new ArrayList();
-				for(TextContent c:list)selectables.add(c.text);
-				return selectables.toArray(new String[]{});
-			};
-			newIndexingTargets=()->new STarget[]{
+			newUiSelectable=indexable->((TextContent)indexable).text;
+			newFrameTargets=()->new STarget[]{
 					facets.newTextualTarget(SimpleTitles.TITLE_INDEXED,new TextualCoupler(){{
 						getText=titley->{
 							Integer index=(Integer)facets.getTargetState(TITLE_SELECT);
@@ -71,7 +61,7 @@ public abstract class SelectingSurface extends SurfaceCore implements SelectingT
 					}})
 			};		
 			newIndexedTitle=indexed->{
-				return TITLE_FRAME+(((TextContent)indexed).text.length()>20?TAIL_SHOW_CHARS:"");
+				return appTitle+(((TextContent)indexed).text.length()>20?TAIL_SHOW_CHARS:"");
 			};
 			newIndexedTargets=(indexed,indexedTitle)->!indexedTitle.endsWith(TAIL_SHOW_CHARS)?
 					new STarget[]{newEditTarget(indexed,"")}
@@ -79,12 +69,7 @@ public abstract class SelectingSurface extends SurfaceCore implements SelectingT
 					newEditTarget(indexed,TAIL_SHOW_CHARS),
 					newCharsTarget()
 				};
-		}};
-		facets.onRetargeted=arg->onRetargeted();
-	}
-	@Override
-	protected STarget newTargetTree(){
-		return facets.newIndexingFrame(frame);
+		}});
 	}
 	@Override
 	public void buildSurface(){
@@ -116,10 +101,10 @@ public abstract class SelectingSurface extends SurfaceCore implements SelectingT
 	}
 	protected void onRetargeted(){
 		boolean live=(boolean)facets.getTargetState(TITLE_LIVE);
-		ContentType type=ContentType.getIndexedType(facets);
+		SelectingTargetType type=getIndexedType();
 		String tail=type.titleTail();
 		facets.setTargetLive(TITLE_EDIT+tail,live);
-		if(type==ContentType.ShowChars)facets.setTargetLive(TITLE_CHARS+tail,live);
+		if(type==SelectingTargetType.ShowChars)facets.setTargetLive(TITLE_CHARS+tail,live);
 	}
 	@Override
 	protected void buildLayout(){
@@ -136,8 +121,12 @@ public abstract class SelectingSurface extends SurfaceCore implements SelectingT
 			getText=(title)->""+((String)facets.getTargetState(TITLE_EDIT+TAIL_SHOW_CHARS)).length();
 		}});
 	}
-	private static final class LocalSurface extends SelectingSurface{}
+	public SelectingTargetType getIndexedType(){
+		return ((TextContent)facets.getIndexingState(test.indexingTitle()).indexed
+				).text.length()>20?SelectingTargetType.ShowChars:SelectingTargetType.Standard;
+	}
 	public static void main(String[]args){
-		new LocalSurface().buildSurface();
+		(false?new SelectingSurface(Globals.newInstance(true),TargetTest.Selecting)
+				:new ContentingSurface()).buildSurface();
 	}
 }

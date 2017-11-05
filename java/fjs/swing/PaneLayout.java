@@ -27,20 +27,24 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.text.Document;
+import fjs.SelectingSurface;
 import fjs.SimpleTitles;
+import fjs.SurfaceCore;
 import fjs.SurfaceCore.TargetTest;
 import fjs.globals.Facets;
 import fjs.globals.Facets.IndexingState;
 import fjs.globals.Facets.IndexingFramePolicy;
 import fjs.util.Tracer;
 abstract class PaneLayout extends Tracer{
-	protected final TargetTest test;
-	protected final Facets facets;
 	protected final Container pane;
-	PaneLayout(Container pane,TargetTest test,Facets facets){
+	protected final TargetTest test;
+	protected final SurfaceCore surface;
+	protected final Facets facets;
+	PaneLayout(Container pane,TargetTest test,SurfaceCore surface){
 		this.pane=pane;
 		this.test=test;
-		this.facets=facets;
+		this.surface=surface;
+		this.facets=surface.facets;
 	}
 	public abstract void build();
 	protected SwingFacet newButtonFacet(String title){
