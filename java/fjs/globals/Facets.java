@@ -258,39 +258,27 @@ public final class Facets extends Tracer{
 	}
 	@Interface
 	public static class IndexingFramePolicy{
-		public String frameTitle;
 		public String indexingTitle;
 		public Supplier<Object[]>getIndexables;
+		@Optional
+		public String indexingFrameTitle;
+		@Optional
 		public Function<Object,String>newUiSelectable;
 		@Optional
 		public Supplier<STarget[]>newFrameTargets;
 		@Optional
-		public Function<Object,String>newIndexedTitle;
+		public Function<Object,String>newIndexedTargetsTitle;
 		@Optional
-		public BiFunction<Object,String,STarget[]>newIndexedTargets;
+		public BiFunction<Object,String,STarget>newIndexedTargets;
 	}
-	private static final class LocalFrameTarget extends SFrameTarget{
-		private final BiFunction<Object,String,STarget[]>newIndexedTargets;
-		private LocalFrameTarget(String title,Object toFrame,
-				BiFunction<Object,String,STarget[]>newIndexedTargets){
-			super(title,toFrame);
-			this.newIndexedTargets=newIndexedTargets;
-		}
-		@Override
-		protected STarget[]lazyElements(){
-			STarget[]targets=newIndexedTargets==null?new STarget[]{}
-					:newIndexedTargets.apply(framed,title());
-			return STarget.newTargets(targets);
-		}
-	}
+	private int indexingFrames;
 	public STarget newIndexingFrame(IndexingFramePolicy p){
-		SIndexing indexing=new SIndexing(p.indexingTitle,
-				new SIndexing.Coupler(){
+		SIndexing indexing=new SIndexing(p.indexingTitle,new SIndexing.Coupler(){
 			private Object[]thenIndexables,thenSelectables;
 			@Override
 			protected Object[]getIndexables(SIndexing i){
 				Object[]got=p.getIndexables.get();
-				if(got==null)throw new IllegalStateException("Null indexables for "+i.title());
+				if(got==null)throw new IllegalStateException("Null getIndexables for "+i.title());
 				boolean equal=Util.longEquals(got,thenIndexables);
 				if(!equal)trace("> Got new indexables: ",got.length);
 				thenIndexables=got;
@@ -299,10 +287,11 @@ public final class Facets extends Tracer{
 			@Override
 			protected String[]getFacetSelectables(SIndexing i){
 				Function<Object,String>getter=p.newUiSelectable;
-				if(getter==null)throw new IllegalStateException(
-						"Null newUiSelectable in "+this);
 				List<String>selectables=new ArrayList();
-				for(Object each:i.indexables())selectables.add(getter.apply(each));
+				int at=0;
+				for(Object each:i.indexables())selectables.add(
+						getter!=null?getter.apply(each):"Selectable"+String.valueOf(at++)
+					);
 				String[]got=selectables.toArray(new String[]{});
 				boolean equal=Util.longEquals(got,thenSelectables);
 				if(!equal)trace("> Got new selectables: ",got.length);
@@ -312,25 +301,54 @@ public final class Facets extends Tracer{
 		});
 		indexing.setIndex(0);
 		trace(" > Created indexing ",indexing);
-		IndexingFrame frame=new IndexingFrame(p.frameTitle,indexing){
+		String title=p.indexingFrameTitle;
+		IndexingFrame frame=new IndexingFrame(title!=null?title:"IndexingFrame"+indexingFrames++,
+				indexing){
 			protected STarget[]lazyElements(){
-				Supplier<STarget[]>s=p.newFrameTargets;
-				STarget[]got=s!=null?s.get():new STarget[]{};
+				Supplier<STarget[]>getter=p.newFrameTargets;
+				STarget[]got=getter!=null?getter.get():new STarget[]{};
 				if(false&&doTrace)trace(".lazyElements: ",got);
 				return got==null?new STarget[]{}:STarget.newTargets(got);
 			};
 			@Override
-			protected SFrameTarget newIndexedFrame(Object indexed){
-				if(false&&doTrace)trace(".newIndexedFrame: indexed="+(indexed!=null));
-				BiFunction<Object,String,STarget[]>editTargets=p.newIndexedTargets;
-				Function<Object,String>newIndexedTitle=p.newIndexedTitle;
-				String title=newIndexedTitle==null?p.frameTitle+"|indexed"
-						:newIndexedTitle.apply(indexed);
-				return new LocalFrameTarget(title,indexed,p.newIndexedTargets);
+			protected STarget newIndexedTargets(Object indexed){
+				if(false&&doTrace)trace(".newIndexedTargets: indexed="+(indexed!=null));
+				Function<Object,String>titler=p.newIndexedTargetsTitle;
+				String indexedTargetsTitle=titler==null?title+"|indexed"
+						:titler.apply(indexed);
+				return p.newIndexedTargets==null?new TargetCore(indexedTargetsTitle)
+						:p.newIndexedTargets.apply(indexed,indexedTargetsTitle);
 			}
 		};
 		trace(" > Created indexing frame ",frame);
 		return frame;
+	}
+	private Object getTargetFramed(String title){
+		SFrameTarget frame=(SFrameTarget)titleTarget(title);
+		if(frame==null)throw new IllegalStateException("Null frame for "+title);
+		return frame.framed;
+	}
+	private STarget newFrameTarget(String title,Object toFrame,Object[]editTargets){
+		STarget[]asTargets=STarget.newTargets(editTargets);
+		return false?new LocalFrameTarget(title,toFrame,asTargets)
+				:new SFrameTarget(title,toFrame){
+			@Override
+			protected STarget[]lazyElements(){
+				return asTargets;
+			}
+		};
+	}
+	private static final class LocalFrameTarget extends SFrameTarget{
+		private final STarget[]newIndexedTargets;
+		private LocalFrameTarget(String title,Object toFrame,
+				STarget[]newIndexedTargets){
+			super(title,toFrame);
+			this.newIndexedTargets=newIndexedTargets;
+		}
+		@Override
+		protected STarget[]lazyElements(){
+			return newIndexedTargets;
+		}
 	}
 	public void buildTargeterTree(STarget targetTree){
 		trace(" > Retargeting on ",targetTree);

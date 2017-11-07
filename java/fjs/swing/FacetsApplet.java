@@ -1,5 +1,5 @@
 package fjs.swing;
-import static fjs.SelectingTargetType.*;
+import static fjs.IndexableType.*;
 import static fjs.SurfaceCore.TargetTest.*;
 import static javax.swing.BorderFactory.*;
 import java.awt.BorderLayout;
@@ -43,7 +43,7 @@ public class FacetsApplet extends JApplet{
 			return;
 		}
 		TargetTest[]simples=simpleValues(),tests=false?simples
-				:new TargetTest[]{true?Selecting:Contenting};
+				:new TargetTest[]{false?Selecting:Contenting};
 		content.setLayout(new GridLayout(tests==simples?3:2,1));
 		Color color=Color.CYAN;
 		for(TargetTest test:tests){

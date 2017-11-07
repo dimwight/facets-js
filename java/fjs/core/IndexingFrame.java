@@ -8,7 +8,7 @@ public abstract class IndexingFrame extends TargetCore{
 	/**
 	Unique constructor. 
 	@param title passed to superclass 
-	@param indexing supplies content for {{@link #newIndexedFrame(Object)}
+	@param indexing supplies content for {{@link #newIndexedTargets(Object)}
 	 */
 	protected IndexingFrame(String title,SIndexing indexing){
 		super(title);
@@ -18,17 +18,17 @@ public abstract class IndexingFrame extends TargetCore{
 		indexing.setNotifiable(this);
 	}
 	/**
-	<p>Returns the {@link SFrameTarget} created in {@link #newIndexedFrame(Object)}. 
+	<p>Returns the {@link STarget} created in {@link #newIndexedTargets(Object)}. 
 	 */
 	final public STarget indexedTarget(){
 		Object indexed=indexing.indexed();
-		return indexed instanceof STarget?(STarget)indexed:newIndexedFrame(indexed);
+		return indexed instanceof STarget?(STarget)indexed:newIndexedTargets(indexed);
 	}
 	/**
 	Create
 	@param indexed the currently indexed member of {@link #indexing}
 	 */
-	protected abstract SFrameTarget newIndexedFrame(Object indexed);
+	protected abstract STarget newIndexedTargets(Object indexed);
 	/** 
 	Sets an {@link SIndexing} containing content to be exposed.
 	 */
