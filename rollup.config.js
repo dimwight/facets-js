@@ -16,10 +16,10 @@ const app = Object.assign({}, base, {
   moduleName: 'unused',
 });
 const simple = Object.assign({}, app, {
-  entry: 'in/fjs/' +(false?'SimpleSurface.js':'SelectingSurface.js'),
+  entry: 'in/fjs/' +(false?'SimpleSurface.js':'ContentingSurface.js'),
 });
 const main = Object.assign({}, app, {
-  entry: 'src/main.js',
+  entry: false?'src/main.js':'in/fjs/SelectingSurface.js',
 });
 const lib = Object.assign({}, base, {
   entry: 'in/fjs/globals/' +(false?'Facets.js':'Globals.js'),
