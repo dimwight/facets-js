@@ -15,7 +15,7 @@ function newTargetTree():Facets.Target{
   };
   const first:Facets.Target=core.newTextualTarget(TITLE_FIRST,coupler),
     second:Facets.Target=core.newTextualTarget(TITLE_SECOND,coupler);
-  return core.newTargetGroup('Textuals',first,second);
+  return core.newTargetGroup('Textuals',[first,second]);
 }
 function buildLayout(){
   trace('.buildLayout');
