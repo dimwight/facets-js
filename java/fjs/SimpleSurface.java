@@ -9,11 +9,11 @@ import fjs.globals.Facets.Times;
 import fjs.globals.Globals;
 public class SimpleSurface extends SurfaceCore implements SimpleTitles{
 	public SimpleSurface(String title,TargetTest test){
-		super(Globals.newInstance(false),test);
+		super(Globals.newInstance(true),test);
 	}
 	@Override
-	final protected void traceOutput(String msg){
-		if(true&&facets.doTrace)super.traceOutput(msg);
+	final protected void doTraceMsg(String msg){
+		if(true&&facets.doTrace)super.doTraceMsg(msg);
 	}
 	final protected STarget newTrigger(String title){
 		return facets.newTriggerTarget(title,new Facets.TargetCoupler(){{
@@ -57,7 +57,7 @@ public class SimpleSurface extends SurfaceCore implements SimpleTitles{
 		trace(" > Generating indexing target state=",indexStart);
 		Facets.IndexingCoupler coupler=new Facets.IndexingCoupler(){{
 			getIndexables=title->indexables;
-			getUiSelectables=title->indexables;
+			newUiSelectable=indexable->(String)indexable;
 			passIndex=indexStart;
 		}};
 
@@ -107,18 +107,29 @@ public class SimpleSurface extends SurfaceCore implements SimpleTitles{
 	protected STarget newTargetTree(){
 		trace(" > Generating targets");
 		String treeTitle=test.name()+" Test";
-		return test==TargetTest.Textual?facets.newTargetGroup(treeTitle,
-				newTextual(TITLE_TEXTUAL_FIRST),newTextual(TITLE_TEXTUAL_SECOND))
-			:test==TargetTest.TogglingLive?facets.newTargetGroup(treeTitle,
-				newToggling(TITLE_TOGGLING,TOGGLE_START),newTextual(TITLE_TOGGLED))
-			:test==TargetTest.Indexing?facets.newTargetGroup(treeTitle,
+		STarget[]members=test==TargetTest.Textual?
+				new STarget[]{newTextual(
+						TITLE_TEXTUAL_FIRST),
+						newTextual(TITLE_TEXTUAL_SECOND)
+				}
+			:test==TargetTest.TogglingLive?new STarget[]{
+					newToggling(TITLE_TOGGLING,TOGGLE_START),newTextual(TITLE_TOGGLED)
+				}
+			:test==TargetTest.Indexing?new STarget[]{
 					newIndexing(TITLE_INDEXING,new String[]{TITLE_TEXTUAL_FIRST,TITLE_TEXTUAL_SECOND},
 							INDEX_START),
-					newTextual(TITLE_INDEX),newTextual(TITLE_INDEXED))
-			:test==TargetTest.Numeric?facets.newTargetGroup(treeTitle,
-					newNumeric(TITLE_NUMERIC_FIELD),newTextual(TITLE_NUMERIC_LABEL))
-			:facets.newTargetGroup(treeTitle,
-					newTrigger(TITLE_TRIGGER),newTextual(TITLE_TRIGGERINGS));
+					newTextual(TITLE_INDEX),newTextual(TITLE_INDEXED)
+				}
+			:test==TargetTest.Numeric?new STarget[]{
+					newNumeric(
+						TITLE_NUMERIC_FIELD),
+						newTextual(TITLE_NUMERIC_LABEL)
+				}
+			:new STarget[]{
+					newTrigger(TITLE_TRIGGER),
+					newTextual(TITLE_TRIGGERINGS)
+				};
+		return facets.newTargetGroup(treeTitle,members);
 	}
 	@Override
 	protected void buildLayout(){

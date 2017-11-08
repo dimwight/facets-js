@@ -1,7 +1,5 @@
 package fjs.util;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+
 /**
 Utility superclass that can issue trace messages.
  */
@@ -14,8 +12,8 @@ public abstract class Tracer implements Identified{
 			this.top=top;
 		}
 		@Override
-		protected void traceOutput(String msg){
-			if(doTrace())super.traceOutput(msg);
+		protected void doTraceMsg(String msg){
+			if(doTrace())super.doTraceMsg(msg);
 		}
 		protected boolean doTrace(){
 			return true;
@@ -36,47 +34,21 @@ public abstract class Tracer implements Identified{
 	public Tracer(){
 		top=null;
 	}
+	final public void trace(String msg){
+		doTraceMsg(msg);
+	}
 	final public void trace(String msg,Object o){
-		traceOutput(msg+Debug.info(o));		
+		if(o instanceof Object[])doTraceMsg(msg+newArrayText((Object[])o));		
+		else doTraceMsg(msg+Debug.info(o));		
 	}
-	/**
-	Outputs complete trace messages to console or elsewhere. 
-	<p>Default prepends helpful classname to message.  
-	@param msg passed from one of the <code>public</code> methods
-	 */
-	protected void traceOutput(String msg){
-		traceOutputWithId(""+msg);
-	}
-	final public void traceOutputWithId(String msg){
+	protected void doTraceMsg(String msg){
 		Util.printOut((top!=null?(top+" #"+id):Debug.info(this))+" "+msg);
 	}
-	final public void trace(String msg){
-		traceOutput(msg);
-	}
-	final public void trace(String msg,Throwable t,boolean stack){
-		if(stack&=t!=null){
-			traceOutput(msg);		
-			t.printStackTrace();
-		}
-		else traceOutput(msg+Debug.info(t));		
-	}
-	final public void trace(String msg,Collection c){
-		traceOutput(msg+traceArrayText(c.toArray()));		
-	}
-	final public void trace(String msg,Object[]array){
-		traceOutput(msg+traceArrayText(array));		
-	}
-	final public void traceDebug(String msg,Object o){
-		traceOutput(msg+Debug.info(o));
-	}
-	final public void traceDebug(String msg,Object[]array){
-		traceOutput(msg+(false?Debug.info(array):Debug.arrayInfo(array)));		
-	}
-	private String traceArrayText(Object[]array){
+	private String newArrayText(Object[]array){
 		if(false)return Util.arrayPrintString(array);
 		String lines=new String("[\n");
 		for(Object o:array)
-			lines+=("  "+(false?Debug.info(o):o.toString())+"\n");
+			lines+="  "+(true?Debug.info(o):o.toString())+"\n";
 		lines+=("]");
 		return lines;
 	}

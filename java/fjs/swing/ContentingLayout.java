@@ -36,8 +36,8 @@ final class ContentingLayout extends SelectingLayout{
 				card.add(newTextFieldFacet(TITLE_EDIT_TEXT+tail,20,false).mount);
 				if(type==IndexableType.ShowChars)
 					card.add(newLabelFacet(TITLE_CHARS+tail).mount);
-				card.add(newButtonFacet(TITLE_CANCEL).mount);
-				card.add(newButtonFacet(TITLE_SAVE).mount);
+				card.add(newButtonFacet(TITLE_SAVE+tail).mount);
+				card.add(newButtonFacet(TITLE_CANCEL+tail).mount);
 			}
 			adjustCards();
 		}

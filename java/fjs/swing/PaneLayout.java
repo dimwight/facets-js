@@ -48,7 +48,7 @@ abstract class PaneLayout extends Tracer{
 	}
 	public abstract void build();
 	protected SwingFacet newButtonFacet(String title){
-		JButton button=new JButton(title);
+		JButton button=new JButton(SwingFacet.stripTitleTail(title));
 		return new SwingFacet<JButton,String>(button,title,facets){
 			@Override
 			protected void addFieldListener(){

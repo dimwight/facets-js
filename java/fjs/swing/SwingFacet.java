@@ -20,11 +20,14 @@ abstract class SwingFacet<C extends JComponent,T> extends Tracer
 		this.field=field;
 		this.title=title;
 		mount=new JPanel(new FlowLayout(FlowLayout.LEFT));
-		label=new JLabel(title.replaceAll("\\|.*",""));
+		label=new JLabel(stripTitleTail(title));
 		if(!(field instanceof JButton))mount.add(label);
 		mount.add(field);
 		addFieldListener();
 		(this.facets=facets).attachFacet(title,this);
+	}
+	final static String stripTitleTail(String title){
+		return title.replaceAll("\\|.*","");
 	}
 	@Override
 	final public void accept(T update){

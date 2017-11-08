@@ -8,7 +8,6 @@ import java.util.function.BiPredicate;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import fjs.SelectingSurface.TextContent;
 import fjs.core.IndexingFrame;
 import fjs.core.Notifiable;
 import fjs.core.SFacet;
@@ -137,8 +136,8 @@ public final class Facets extends Tracer{
 		this.doTrace=trace;
 	}
 	@Override
-	protected void traceOutput(String msg){
-		if(doTrace||(Debug.trace&&msg.startsWith(">>")))super.traceOutput(msg);
+	protected void doTraceMsg(String msg){
+		if(doTrace||(Debug.trace&&msg.startsWith(">>")))super.doTraceMsg(msg);
 	}
 	public STarget newTextualTarget(String title,TextualCoupler c){
 		STextual textual=new STextual(title,new STextual.Coupler(){
@@ -202,7 +201,7 @@ public final class Facets extends Tracer{
 			}
 		});
 	}
-	public STarget newTargetGroup(String title,STarget...members){
+	public STarget newTargetGroup(String title,STarget[]members){
 		TargetCore group=new TargetCore(title,members);
 		trace(" > Created target group "+Debug.info(group)+" ",members);
 		return group;
@@ -219,7 +218,7 @@ public final class Facets extends Tracer{
 	public static class IndexingCoupler extends TargetCoupler{
 		public int passIndex;
 		public Function<String,Object[]>getIndexables;
-		public Function<String,String[]>getUiSelectables;
+		public Function<Object,String>newUiSelectable;
 	}
 	public STarget newIndexingTarget(String title,IndexingCoupler c){
 		SIndexing indexing=new SIndexing(title,new SIndexing.Coupler(){
@@ -233,7 +232,13 @@ public final class Facets extends Tracer{
 			}
 			@Override
 			protected String[]getFacetSelectables(SIndexing i){
-				return c.getUiSelectables.apply(i.title());
+				Function<Object,String>getter=c.newUiSelectable;
+				List<String>selectables=new ArrayList();
+				int at=0;
+				for(Object each:i.indexables())selectables.add(
+						getter!=null?getter.apply(each):"Selectable"+String.valueOf(at++)
+					);
+				 return selectables.toArray(new String[]{});
 			}
 		});
 		Integer passIndex=c.passIndex;
@@ -261,17 +266,39 @@ public final class Facets extends Tracer{
 		public String indexingTitle;
 		public Supplier<Object[]>getIndexables;
 		@Optional
-		public String indexingFrameTitle;
+		public String frameTitle;
 		@Optional
 		public Function<Object,String>newUiSelectable;
 		@Optional
 		public Supplier<STarget[]>newFrameTargets;
 		@Optional
-		public Function<Object,String>newIndexedTargetsTitle;
+		public Function<Object,String>newIndexedTreeTitle;
 		@Optional
-		public BiFunction<Object,String,STarget>newIndexedTargets;
+		public BiFunction<Object,String,STarget>newIndexedTree;
 	}
 	private int indexingFrames;
+	private static final class LocalIndexingFrame extends IndexingFrame{
+		private final IndexingFramePolicy p;
+		private LocalIndexingFrame(String title,SIndexing indexing,IndexingFramePolicy p){
+			super(title,indexing);
+			this.p=p;
+		}
+		protected STarget[]lazyElements(){
+			Supplier<STarget[]>getter=p.newFrameTargets;
+			STarget[]got=getter!=null?getter.get():new STarget[]{};
+			if(false)trace(".lazyElements: ",got);
+			return got==null?new STarget[]{}:STarget.newTargets(got);
+		}
+		@Override
+		protected STarget newIndexedTargets(Object indexed){
+			if(false)trace(".newIndexedTargets: indexed="+(indexed!=null));
+			Function<Object,String>titler=p.newIndexedTreeTitle;
+			String indexedTargetsTitle=titler==null?title()+"|indexed"
+					:titler.apply(indexed);
+			return p.newIndexedTree==null?new TargetCore(indexedTargetsTitle)
+					:p.newIndexedTree.apply(indexed,indexedTargetsTitle);
+		}
+	}
 	public STarget newIndexingFrame(IndexingFramePolicy p){
 		SIndexing indexing=new SIndexing(p.indexingTitle,new SIndexing.Coupler(){
 			private Object[]thenIndexables,thenSelectables;
@@ -280,7 +307,7 @@ public final class Facets extends Tracer{
 				Object[]got=p.getIndexables.get();
 				if(got==null)throw new IllegalStateException("Null getIndexables for "+i.title());
 				boolean equal=Util.longEquals(got,thenIndexables);
-				if(!equal)trace("> Got new indexables: ",got.length);
+				if(!equal)trace("> Got new indexables: ",got);
 				thenIndexables=got;
 				return got;
 			}
@@ -294,32 +321,16 @@ public final class Facets extends Tracer{
 					);
 				String[]got=selectables.toArray(new String[]{});
 				boolean equal=Util.longEquals(got,thenSelectables);
-				if(!equal)trace("> Got new selectables: ",got.length);
+				if(!equal)trace("> Got new selectables: ",got);
 				thenSelectables=got;
 				return got;
 			}
 		});
 		indexing.setIndex(0);
 		trace(" > Created indexing ",indexing);
-		String title=p.indexingFrameTitle;
-		IndexingFrame frame=new IndexingFrame(title!=null?title:"IndexingFrame"+indexingFrames++,
-				indexing){
-			protected STarget[]lazyElements(){
-				Supplier<STarget[]>getter=p.newFrameTargets;
-				STarget[]got=getter!=null?getter.get():new STarget[]{};
-				if(false&&doTrace)trace(".lazyElements: ",got);
-				return got==null?new STarget[]{}:STarget.newTargets(got);
-			};
-			@Override
-			protected STarget newIndexedTargets(Object indexed){
-				if(false&&doTrace)trace(".newIndexedTargets: indexed="+(indexed!=null));
-				Function<Object,String>titler=p.newIndexedTargetsTitle;
-				String indexedTargetsTitle=titler==null?title+"|indexed"
-						:titler.apply(indexed);
-				return p.newIndexedTargets==null?new TargetCore(indexedTargetsTitle)
-						:p.newIndexedTargets.apply(indexed,indexedTargetsTitle);
-			}
-		};
+		String title=p.frameTitle!=null?p.frameTitle
+				:"IndexingFrame"+indexingFrames++;
+		IndexingFrame frame=new LocalIndexingFrame(title,indexing,p);
 		trace(" > Created indexing frame ",frame);
 		return frame;
 	}

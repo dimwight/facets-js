@@ -16,7 +16,7 @@ public class ContentingSurface extends SelectingSurface{
 	private final List<STarget>switchTrees=new ArrayList();
 	private TextContent active,edit;
 	private final STarget chooser=facets.newIndexingFrame(new IndexingFramePolicy(){{
-		indexingFrameTitle=TITLE_CHOOSER;
+		frameTitle=TITLE_CHOOSER;
 		indexingTitle=TITLE_SELECT;
 		getIndexables=()->list.toArray();
 		newUiSelectable=indexable->((TextContent)indexable).text;
@@ -34,7 +34,7 @@ public class ContentingSurface extends SelectingSurface{
 		};		
 	}});
 	public ContentingSurface(){
-		super(Globals.newInstance(false),TargetTest.Contenting);
+		super(Globals.newInstance(true),TargetTest.Contenting);
 		facets.onRetargeted=arg->onRetargeted();
 	}
 	@Override
@@ -50,17 +50,19 @@ public class ContentingSurface extends SelectingSurface{
 		switchTrees.add(chooser);
 		for(TextContent content:contents){
 			IndexableType type=IndexableType.getContentType(content);
-			String frameTitle=type.title();
+			String frameTitle=type.title(),
+				tail=type==IndexableType.Standard?"":TAIL_SHOW_CHARS;
+			trace(".updateSwitchTrees: tail=",tail);
 			List<STarget>elements=new ArrayList<>();
-			elements.add(newEditTarget(content,type));
-			if(type==IndexableType.ShowChars)elements.add(newCharsTarget());
-			elements.add(facets.newTriggerTarget(TITLE_SAVE,new TargetCoupler(){{
+			elements.add(newEditTarget(content,tail));
+			if(type==IndexableType.ShowChars)elements.add(newCharsTarget(tail));
+			elements.add(facets.newTriggerTarget(TITLE_SAVE+tail,new TargetCoupler(){{
 				targetStateUpdated=(state,title)->{
 					active.copyClone(edit);
 					setSwitcher(switcherChooserAt);
 				};
 			}}));
-			elements.add(facets.newTriggerTarget(TITLE_CANCEL,new TargetCoupler(){{
+			elements.add(facets.newTriggerTarget(TITLE_CANCEL+tail,new TargetCoupler(){{
 				targetStateUpdated=(state,title)->setSwitcher(switcherChooserAt);
 			}}));
 			switchTrees.add(facets.newTargetGroup(frameTitle,elements.toArray(new STarget[]{})));

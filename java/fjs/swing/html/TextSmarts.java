@@ -26,9 +26,9 @@ import fjs.util.Util;
 final class TextSmarts extends Tracer{
 	final private JTextComponent field;
 	final private UndoManager undo;
-	protected void traceOutput(String msg){
+	protected void doTraceMsg(String msg){
 		if(false)Util.printOut(Debug.info(field)+msg);
-		else super.traceOutput(msg);
+		else super.doTraceMsg(msg);
 	};
 	TextSmarts(JTextComponent c){
 		field=c;
@@ -76,7 +76,6 @@ final class TextSmarts extends Tracer{
 				editingThen="";
 				edit.end();
 				added=super.addEdit(edit);
-				if(false)traceDebug(".endEdit: edits="+edits.size()+" ",this);
 				edit=null;
 				return added;
 			}
@@ -93,14 +92,12 @@ final class TextSmarts extends Tracer{
 			@Override
 			public synchronized void redo()throws CannotRedoException{
 				super.redo();
-				if(false)traceDebug(".undo: ",editToBeRedone());
 			}
 			private CompoundEdit newCompoundEdit(){
 				return new CompoundEdit(){
 					@Override
 					public boolean addEdit(UndoableEdit anEdit){
 						boolean added=super.addEdit(anEdit);
-						if(false)traceDebug(".addEdit: edits="+edits.size()+" ",this);
 						return added;
 					}
 				};

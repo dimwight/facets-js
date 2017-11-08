@@ -3,16 +3,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
-import fjs.SurfaceCore.TargetTest;
 import fjs.core.STarget;
+import fjs.globals.Facets;
 import fjs.globals.Facets.IndexingFramePolicy;
 import fjs.globals.Facets.TextualCoupler;
 import fjs.globals.Facets.TogglingCoupler;
-import fjs.globals.Facets;
 import fjs.globals.Globals;
-import fjs.util.Util;
-import jsweet.lang.Interface;
-import jsweet.lang.Optional;
 public class SelectingSurface extends SurfaceCore implements SelectingTitles{
 	public static class TextContent{
 		public String text;
@@ -36,8 +32,8 @@ public class SelectingSurface extends SurfaceCore implements SelectingTitles{
 		}
 	}
 	@Override
-	protected void traceOutput(String msg){
-		if(true||facets.doTrace)super.traceOutput(msg);
+	protected void doTraceMsg(String msg){
+		if(true||facets.doTrace)super.doTraceMsg(msg);
 	}
 	protected final List<TextContent>list=new ArrayList(Arrays.asList(new Object[]{
 			new TextContent("Hello world!"),
@@ -52,28 +48,29 @@ public class SelectingSurface extends SurfaceCore implements SelectingTitles{
 	protected STarget newTargetTree(){
 		String appTitle=TargetTest.Selecting.name();
 		return facets.newIndexingFrame(new IndexingFramePolicy(){{
-			indexingFrameTitle=appTitle;
+			frameTitle=appTitle;
 			indexingTitle=TITLE_SELECT;
 			getIndexables=()->list.toArray();
 			newUiSelectable=indexable->((TextContent)indexable).text;
 			newFrameTargets=()->
 				new STarget[]{
 					facets.newTextualTarget(SimpleTitles.TITLE_INDEXED,new TextualCoupler(){{
-						getText=titley->list.get((Integer)facets.getTargetState(TITLE_SELECT)).text;
+						getText=title->list.get((Integer)facets.getTargetState(TITLE_SELECT)).text;
 					}}),
 					facets.newTogglingTarget(TITLE_LIVE,new TogglingCoupler(){{
 						passSet=true;
 					}})
-				};		
-			newIndexedTargetsTitle=indexed->
-			indexingFrameTitle+IndexableType.getContentType((TextContent)indexed).titleTail();
-			newIndexedTargets=(indexed,indexedTargetsTitle)->{
+				};	
+			newIndexedTreeTitle=indexed->
+				appTitle+IndexableType.getContentType((TextContent)indexed).titleTail();
+			newIndexedTree=(indexed,indexedTreeTitle)->{
 				IndexableType type=IndexableType.getContentType((TextContent)indexed);
-				return facets.newTargetGroup(indexedTargetsTitle,type==IndexableType.Standard?
-						new STarget[]{newEditTarget(indexed,type)}
+				String tail=type.titleTail();
+				return facets.newTargetGroup(indexedTreeTitle,type==IndexableType.Standard?
+						new STarget[]{newEditTarget(indexed,tail)}
 					:new STarget[]{
-						newEditTarget(indexed,type),
-						newCharsTarget()
+						newEditTarget(indexed,tail),
+						newCharsTarget(tail)
 					});
 			};
 		}});
@@ -117,15 +114,14 @@ public class SelectingSurface extends SurfaceCore implements SelectingTitles{
 	protected void buildLayout(){
 		generateFacets(TITLE_SELECT,TITLE_EDIT_TEXT);
 	}
-	protected final STarget newEditTarget(Object indexed,IndexableType type){
-		String tail=type==IndexableType.Standard?"":TAIL_SHOW_CHARS;
+	protected final STarget newEditTarget(Object indexed,String tail){
 		return facets.newTextualTarget(TITLE_EDIT_TEXT+tail,new TextualCoupler(){{
 			passText=((TextContent)indexed).text;
 			targetStateUpdated=(state,title)->((TextContent)indexed).text=(String)state;
 		}});
 	}
-	protected final STarget newCharsTarget(){
-		return facets.newTextualTarget(TITLE_CHARS+TAIL_SHOW_CHARS,new TextualCoupler(){{
+	protected final STarget newCharsTarget(String tail){
+		return facets.newTextualTarget(TITLE_CHARS+tail,new TextualCoupler(){{
 			getText=(title)->""+((String)facets.getTargetState(TITLE_EDIT_TEXT+TAIL_SHOW_CHARS)).length();
 		}});
 	}
@@ -136,8 +132,8 @@ public class SelectingSurface extends SurfaceCore implements SelectingTitles{
 	}
 	public static void main(String[]args){
 		(
-			new ContentingSurface()
-//			new SelectingSurface(Globals.newInstance(true),TargetTest.Selecting)
+//			new ContentingSurface()
+			new SelectingSurface(Globals.newInstance(true),TargetTest.Selecting)
 			).buildSurface();
 	}
 }
