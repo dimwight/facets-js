@@ -1,5 +1,5 @@
 package fjs.swing;
-import static fjs.IndexableType.*;
+import static fjs.SelectableType.*;
 import static fjs.SurfaceCore.TargetTest.*;
 import static javax.swing.BorderFactory.*;
 import java.awt.BorderLayout;
@@ -65,26 +65,22 @@ public class FacetsApplet extends JApplet{
 				}
 			}
 			:test==Contenting?new ContentingSurface(){
-				private ContentingLayout layout=new ContentingLayout(pane,test,this);
+				private SelectingLayout layout=new ContentingLayout(pane,test,this);
 				@Override
-				protected void onRetargeted(){
-					super.onRetargeted();
-					layout.adjustCards();
+				protected void onRetargeted(String activeTitle){
+					super.onRetargeted(activeTitle);
+					layout.adjustCards(activeTitle);
 				}
 				@Override
 				protected void buildLayout(){
 					layout.build();
 				}
 			}:new SelectingSurface(Globals.newInstance(false),TargetTest.Selecting){
-				private SelectingLayout layout;
-				protected SelectingLayout newLayout(JPanel pane){
-					return new SelectingLayout(pane,test,this);
-				}
+				private SelectingLayout layout=new SelectingLayout(pane,test,this);
 				@Override
-				protected void onRetargeted(){
-					super.onRetargeted();
-					if(layout==null)layout=newLayout(pane);
-					layout.adjustCards();
+				protected void onRetargeted(String activeTitle){
+					super.onRetargeted(activeTitle);
+					layout.adjustCards(activeTitle);
 				}
 				@Override
 				protected void buildLayout(){

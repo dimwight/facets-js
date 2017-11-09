@@ -51,8 +51,7 @@ public final class Util{
 		if(trim!=sf)printOut("Doubles.sigFigs: val="+sf+" trim="+trim);
 		return trim*signum;
 	}
-	public static boolean longEquals(Object[]now,Object[]then){
-		if(true)return then!=null&&Arrays.deepEquals(now,then);
+	public static boolean arraysEqual(Object[]now,Object[]then){
 		boolean equal=false;
 		if(then!=null&&then.length==now.length){
 			equal=true;

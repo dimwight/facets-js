@@ -1,6 +1,9 @@
 package fjs.core;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
+import java.util.function.Function;
 import fjs.util.Debug;
 import fjs.util.Titled;
 /**
@@ -30,7 +33,13 @@ final public class SIndexing extends TargetCore{
 		/**
 		Return strings to represent the indexables.  
 		 */
-		protected abstract String[]getFacetSelectables(SIndexing i);
+		protected String[]getFacetSelectables(SIndexing i){
+			List<String>selectables=new ArrayList();
+			String top=i.title();
+			int at=0;
+			for(Object each:i.indexables())selectables.add(top+String.valueOf(at++));
+			return selectables.toArray(new String[]{});
+		}
 	}
 	/**
 	The <code>Indexing.Coupler</code> passed to the core constructor. 
@@ -53,6 +62,14 @@ final public class SIndexing extends TargetCore{
 		return index;
 	}
   /**
+	Sets a single index into the <code>indexables</code>. 
+		 */
+	public void setIndex(int index){
+		boolean first=this.index==null;
+		this.index=index;
+	  if(!first)coupler.indexSet(this);
+	}
+	/**
 	The items exposed to indexing. 
 	<p>These will either have been set during construction or be read 
 	dynamically from the coupler. 
@@ -63,16 +80,8 @@ final public class SIndexing extends TargetCore{
 	  		"Null or empty indexables in "+this);
 	  else return indexables;
 	}
-	public String[]facetIndexables(){
+	public String[]facetSelectables(){
 		return coupler.getFacetSelectables(this);
-	}
-	/**
-	Sets a single index into the <code>indexables</code>. 
-		 */
-	public void setIndex(int index){
-		boolean first=this.index==null;
-		this.index=index;
-	  if(!first)coupler.indexSet(this);
 	}
 	/**
 	The item denoted by the current <code>index</code>. 
@@ -80,6 +89,14 @@ final public class SIndexing extends TargetCore{
 	public Object indexed(){
 	  if(index==null)throw new IllegalStateException("No index in "+Debug.info(this));
 	  else return indexables()[index];
+	}
+	public void setIndexed(Object indexable){
+		Object[]indexables=indexables();
+		for(int i=0;i<indexables.length;i++)
+			if(indexables[i]==indexable) {
+				setIndex(i);
+				break;
+			}
 	}
 	@Override
 	public Object state(){

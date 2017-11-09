@@ -26,23 +26,26 @@ public abstract class SurfaceCore extends Tracer implements Titled{
 		facets.times.doTime=false||facets.doTrace;
 	}
 	public void buildSurface(){
-		trace(" > Creating targets...");
-		STarget targets=newTargetTree();
-		if(targets==null)throw new IllegalStateException("Null targets in "+this);
-		trace(" > Generating targeters...");
-		if(targets==null)throw new IllegalStateException("Null targets in "+this);
-		facets.buildTargeterTree(targets);
+		trace(" > Building content...");
+		buildContentTrees();
 		trace(" > Building layout...");
 		buildLayout();
 		trace(" > Surface built.");
+	}
+	protected void buildContentTrees(){
+		STarget targets=newTargetTree();
+		if(targets==null)throw new IllegalStateException("Null targets in "+this);
+		trace(" > Generating targeters...");
+		facets.addContentTree(targets);
+		facets.buildTargeterTree();
 	}
 	protected abstract STarget newTargetTree();
 	protected abstract void buildLayout();
 	protected final void generateFacets(String...titles){
 		for(String title:titles){
 			trace(" > Generating facet for title=",title);
-			facets.attachFacet(title,value -> trace(" > Facet '"+title
-					+ "' updated: value=",value));
+			facets.attachFacet(title,value -> trace(" > Facet for "+title
+					+ " updated: value=",value));
 		}
 	}
 	@Override

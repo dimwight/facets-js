@@ -28,54 +28,91 @@ import fjs.util.Util;
 import jsweet.lang.Interface;
 import jsweet.lang.Optional;
 public final class Facets extends Tracer{
-	public final class Times{
-		public boolean doTime=false;
-		private long resetWait=1000;
-	  private long then,start;
-		private boolean restarted;
-	  private final boolean debug=false;
-	  public void setResetWait(int millis){
-	  	if(debug)Util.printOut("Times.setResetWait: wait=",millis);
-	  	start=newMillis();
-			doTime=true;
-			resetWait=millis;
-		}
-		/**
-		The time since the last auto-reset. 
-		<p>Interval for reset set by {@link #resetWait}. 
-		 */
-	  public long elapsed(){
-	  	long now=newMillis();
-	  	if(now-then>resetWait){
-	  		start=now;
-	  		restarted=true;
-	  		if(debug)Util.printOut("Times: reset resetWait="+resetWait);
-	  	}
-	  	else restarted=false;
-			return(then=now)-start;
-	  }
-	  /**
-		Print {@link #elapsed()} followed by the message. 
-		 */
-		void traceElapsed(String msg){
-	    if(!doTime){
-	    	if(!Debug.trace){
-	    		start=then=newMillis();
-	    		if(debug)Util.printOut("Times.printElapsed: times=",doTime);
-	    	}
-	    	return;
-	    }
-			long elapsed=elapsed();
-	    String elapsedText=true&&elapsed>5*1000?(Util.fxs(elapsed/1000d))
-	    		:(""+elapsed), 
-	    	toPrint=(restarted?"\n":"")+elapsedText+(msg!=null?":\t"+msg:"");
-			Util.printOut(toPrint);
-	  }
-		private long newMillis(){
-			return System.currentTimeMillis();
-		}
-	}
 	public final Times times=new Times();
+	public final boolean doTrace;
+	private final HashMap<String,STargeter>titleTargeters=new HashMap();
+	private final HashMap<String,STarget>titleTrees=new HashMap();
+	private final IndexingFrame root;
+	private final Notifiable notifiable=new Notifiable(){
+		@Override
+		public void notify(Object notice){
+			String msg="> Surface for "+Debug.info(rootTargeter)+" notified by "+notice;
+			if(times.doTime)times.traceElapsed(msg);
+			else trace(msg);
+			STarget target=rootTargeter.target();
+			rootTargeter.retarget(target);
+		  msg="> Targeters retargeted on "+Debug.info(target);
+			if(times.doTime)times.traceElapsed(msg);
+			else trace(msg);
+		  if(false)putTitleTargeters(rootTargeter);
+		  onRetargeted();
+			rootTargeter.retargetFacets();
+			msg="> Facets retargeted in "+Debug.info(rootTargeter);
+			if(times.doTime)times.traceElapsed(msg);
+			else trace(msg);
+		}
+		@Override
+		public String title(){
+			throw new RuntimeException("Not implemented in "+this);
+		}
+	};
+	private STargeter rootTargeter;
+	@Override
+	protected void doTraceMsg(String msg){
+		if(doTrace||(Debug.trace&&msg.startsWith(">>")))super.doTraceMsg(msg);
+	}
+	Facets(String top,boolean trace){
+		super(top);
+		this.doTrace=trace;
+		SIndexing indexing=new SIndexing("RootIndexing",new SIndexing.Coupler(){
+			private Object[]thenIndexables;
+			@Override
+			protected Object[]getIndexables(SIndexing i){
+				Object[]trees=titleTrees.values().toArray();
+				boolean equal=Util.arraysEqual(trees,thenIndexables);
+				if(!equal)trace("> New trees: ",trees);
+				thenIndexables=trees;
+				return trees;
+			}
+		});
+		root=new IndexingFrame("RootFrame",indexing);
+		trace(" > Created trees root ",root);
+	}
+	public void addContentTree(STarget add){
+		String title=add.title();
+		titleTrees.put(title,add);
+		root.indexing().setIndexed(add);
+	}
+	public void activateContentTree(String title){
+		root.indexing().setIndexed(titleTrees.get(title));
+		notifiable.notify(root);
+	}
+	public void buildTargeterTree(){
+		trace(" > Building targeter tree for root=",root);
+		if(rootTargeter==null)rootTargeter=((TargetCore)root).newTargeter();
+		rootTargeter.setNotifiable(notifiable);
+		rootTargeter.retarget(root);
+		putTitleTargeters(rootTargeter);
+		trace(" > Created targeters="+titleTargeters.values().size());
+		onRetargeted();
+	}
+	private void putTitleTargeters(STargeter t){
+		String title=t.title();
+		STargeter then=titleTargeters.get(title);
+		titleTargeters.put(title,t);
+		STargeter[]elements=((TargeterCore)t).titleElements();
+		if(false&&then==null)trace("> Added targeter: title="+title+
+				(false?(": elements="+elements.length)
+				:(": titleTargeters="+titleTargeters.values().size())));
+		for(STargeter e:elements)putTitleTargeters(e);
+	}
+	public Consumer<String>onRetargeted;
+	private void onRetargeted(){
+		if(onRetargeted==null)return;
+		String title=titleTrees.isEmpty()?"No trees set":root.indexedTarget().title();
+	  trace("> Calling onRetargeted with active="+title);
+		onRetargeted.accept(title);
+	}
 	@Interface
 	public static class TargetCoupler{
 		@Optional
@@ -99,45 +136,6 @@ public final class Facets extends Tracer{
 		public Double passValue;
 		public Double min;
 		public Double max;
-	}
-	public final boolean doTrace;
-	public Consumer onRetargeted;
-	private final HashMap<String,STargeter>titleTargeters=new HashMap();
-	private STargeter targeterTree;
-	private final Notifiable notifiable=new Notifiable(){
-		@Override
-		public void notify(Object notice){
-			String msg="> Surface for "+Debug.info(targeterTree)+" notified by "+notice;
-			if(times.doTime)times.traceElapsed(msg);
-			else trace(msg);
-			STarget targets=targeterTree.target();
-			targeterTree.retarget(targets);
-		  trace("> Targeters retargeted on ",targets);
-		  putTitleTargeters(targeterTree);
-		  onRetargeted();
-			targeterTree.retargetFacets();
-			msg="> Facets retargeted in "+Debug.info(targeterTree);
-			if(times.doTime)times.traceElapsed(msg);
-			else trace(msg);
-		}
-		@Override
-		public String title(){
-			throw new RuntimeException("Not implemented in "+this);
-		}
-	};
-	private void onRetargeted(){
-		if(onRetargeted!=null){
-		  trace("> Calling onRetargeted...");
-	  	onRetargeted.accept(null);
-	  }
-	}
-	Facets(String top,boolean trace){
-		super(top);
-		this.doTrace=trace;
-	}
-	@Override
-	protected void doTraceMsg(String msg){
-		if(doTrace||(Debug.trace&&msg.startsWith(">>")))super.doTraceMsg(msg);
 	}
 	public STarget newTextualTarget(String title,TextualCoupler c){
 		STextual textual=new STextual(title,new STextual.Coupler(){
@@ -173,7 +171,6 @@ public final class Facets extends Tracer{
 				updatedTarget(target,c);
 			}
 		});
-		if(false)toggling.set(passSet);
 		trace(" > Created toggling ",toggling);
 		return toggling;
 	}
@@ -233,11 +230,10 @@ public final class Facets extends Tracer{
 			@Override
 			protected String[]getFacetSelectables(SIndexing i){
 				Function<Object,String>getter=c.newUiSelectable;
+				if(getter==null)return super.getFacetSelectables(i);
 				List<String>selectables=new ArrayList();
 				int at=0;
-				for(Object each:i.indexables())selectables.add(
-						getter!=null?getter.apply(each):"Selectable"+String.valueOf(at++)
-					);
+				for(Object each:i.indexables())selectables.add(getter.apply(each));
 				 return selectables.toArray(new String[]{});
 			}
 		});
@@ -257,7 +253,7 @@ public final class Facets extends Tracer{
 		if(titleTarget==null)throw new IllegalStateException("Null target for "+title);
 		SIndexing indexing=(SIndexing)titleTarget;
 		return new IndexingState(){{
-			uiSelectables=indexing.facetIndexables();
+			uiSelectables=indexing.facetSelectables();
 			indexed=indexing.indexed();
 		}};
 	}
@@ -306,7 +302,7 @@ public final class Facets extends Tracer{
 			protected Object[]getIndexables(SIndexing i){
 				Object[]got=p.getIndexables.get();
 				if(got==null)throw new IllegalStateException("Null getIndexables for "+i.title());
-				boolean equal=Util.longEquals(got,thenIndexables);
+				boolean equal=Util.arraysEqual(got,thenIndexables);
 				if(!equal)trace("> Got new indexables: ",got);
 				thenIndexables=got;
 				return got;
@@ -314,20 +310,18 @@ public final class Facets extends Tracer{
 			@Override
 			protected String[]getFacetSelectables(SIndexing i){
 				Function<Object,String>getter=p.newUiSelectable;
+				if(getter==null)return super.getFacetSelectables(i);
 				List<String>selectables=new ArrayList();
 				int at=0;
-				for(Object each:i.indexables())selectables.add(
-						getter!=null?getter.apply(each):"Selectable"+String.valueOf(at++)
-					);
+				for(Object each:i.indexables())selectables.add(getter.apply(each));
 				String[]got=selectables.toArray(new String[]{});
-				boolean equal=Util.longEquals(got,thenSelectables);
+				boolean equal=Util.arraysEqual(got,thenSelectables);
 				if(!equal)trace("> Got new selectables: ",got);
 				thenSelectables=got;
 				return got;
 			}
 		});
 		indexing.setIndex(0);
-		trace(" > Created indexing ",indexing);
 		String title=p.frameTitle!=null?p.frameTitle
 				:"IndexingFrame"+indexingFrames++;
 		IndexingFrame frame=new LocalIndexingFrame(title,indexing,p);
@@ -338,46 +332,6 @@ public final class Facets extends Tracer{
 		SFrameTarget frame=(SFrameTarget)titleTarget(title);
 		if(frame==null)throw new IllegalStateException("Null frame for "+title);
 		return frame.framed;
-	}
-	private STarget newFrameTarget(String title,Object toFrame,Object[]editTargets){
-		STarget[]asTargets=STarget.newTargets(editTargets);
-		return false?new LocalFrameTarget(title,toFrame,asTargets)
-				:new SFrameTarget(title,toFrame){
-			@Override
-			protected STarget[]lazyElements(){
-				return asTargets;
-			}
-		};
-	}
-	private static final class LocalFrameTarget extends SFrameTarget{
-		private final STarget[]newIndexedTargets;
-		private LocalFrameTarget(String title,Object toFrame,
-				STarget[]newIndexedTargets){
-			super(title,toFrame);
-			this.newIndexedTargets=newIndexedTargets;
-		}
-		@Override
-		protected STarget[]lazyElements(){
-			return newIndexedTargets;
-		}
-	}
-	public void buildTargeterTree(STarget targetTree){
-		trace(" > Retargeting on ",targetTree);
-		if(targeterTree==null)targeterTree=((TargetCore)targetTree).newTargeter();
-		targeterTree.setNotifiable(notifiable);
-		targeterTree.retarget(targetTree);
-		putTitleTargeters(targeterTree);
-		onRetargeted();
-	}
-	private void putTitleTargeters(STargeter t){
-		String title=t.title();
-		STargeter then=titleTargeters.get(title);
-		titleTargeters.put(title,t);
-		STargeter[]elements=((TargeterCore)t).titleElements();
-		if(then==null)trace("> Added targeter: title="+title+
-				(false?(": elements="+elements.length)
-				:(": titleTargeters="+titleTargeters.values().size())));
-		for(STargeter e:elements)putTitleTargeters(e);
 	}
 	private STarget titleTarget(String title){
 		STargeter targeter=titleTargeters.get(title);
@@ -396,7 +350,7 @@ public final class Facets extends Tracer{
 			public void retarget(STarget target){
 				Object state=target.state();
 				String title=target.title();
-				trace(" > Updating UI for '"+title+ "' with state=",state);
+				trace(" > Updating UI for "+title+ " with state=",state);
 				facetUpdated.accept(state);
 			}
 			@Override
@@ -438,5 +392,74 @@ public final class Facets extends Tracer{
 		STarget target=titleTarget(title);
 		if(target==null)throw new IllegalStateException("Null target for "+title);
 		else return target.isLive();
+	}
+	public final class Times{
+		public boolean doTime=false;
+		private long resetWait=1000;
+	  private long then,start;
+		private boolean restarted;
+	  private final boolean debug=false;
+	  public void setResetWait(int millis){
+	  	if(debug)Util.printOut("Times.setResetWait: wait=",millis);
+	  	start=newMillis();
+			doTime=true;
+			resetWait=millis;
+		}
+		/**
+		The time since the last auto-reset. 
+		<p>Interval for reset set by {@link #resetWait}. 
+		 */
+	  public long elapsed(){
+	  	long now=newMillis();
+	  	if(now-then>resetWait){
+	  		start=now;
+	  		restarted=true;
+	  		if(debug)Util.printOut("Times: reset resetWait="+resetWait);
+	  	}
+	  	else restarted=false;
+			return(then=now)-start;
+	  }
+	  /**
+		Print {@link #elapsed()} followed by the message. 
+		 */
+		void traceElapsed(String msg){
+	    if(!doTime){
+	    	if(!Debug.trace){
+	    		start=then=newMillis();
+	    		if(debug)Util.printOut("Times.printElapsed: times=",doTime);
+	    	}
+	    	return;
+	    }
+			long elapsed=elapsed();
+	    String elapsedText=true&&elapsed>5*1000?(Util.fxs(elapsed/1000d))
+	    		:(""+elapsed), 
+	    	toPrint=(restarted?"\n":"")+elapsedText+(msg!=null?":\t"+msg:"");
+			Util.printOut(toPrint);
+	  }
+		private long newMillis(){
+			return System.currentTimeMillis();
+		}
+	}
+	private STarget _newFrameTarget(String title,Object toFrame,Object[]editTargets){
+		STarget[]asTargets=STarget.newTargets(editTargets);
+		return false?new _LocalFrameTarget(title,toFrame,asTargets)
+				:new SFrameTarget(title,toFrame){
+			@Override
+			protected STarget[]lazyElements(){
+				return asTargets;
+			}
+		};
+	}
+	private static final class _LocalFrameTarget extends SFrameTarget{
+		private final STarget[]newIndexedTargets;
+		private _LocalFrameTarget(String title,Object toFrame,
+				STarget[]newIndexedTargets){
+			super(title,toFrame);
+			this.newIndexedTargets=newIndexedTargets;
+		}
+		@Override
+		protected STarget[]lazyElements(){
+			return newIndexedTargets;
+		}
 	}
 }

@@ -1,13 +1,13 @@
 package fjs.swing;
-import static fjs.IndexableType.ShowChars;
-import static fjs.IndexableType.Standard;
+import static fjs.SelectableType.ShowChars;
+import static fjs.SelectableType.Standard;
 import java.awt.CardLayout;
 import java.awt.Container;
 import java.awt.GridLayout;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import fjs.SelectingSurface;
-import fjs.IndexableType;
+import fjs.SelectableType;
 import fjs.SelectingTitles;
 import fjs.SelectingSurface.TextContent;
 import fjs.SurfaceCore.TargetTest;
@@ -20,10 +20,8 @@ class SelectingLayout extends PaneLayout implements SelectingTitles{
 		super(pane,test,surface);
 		pane.setLayout(new GridLayout(2,1));
 	}
-	final void adjustCards(){
-		String title=((SelectingSurface)surface).getIndexedType().title();
-		if(false)trace(".adjustCards: title=",title);
-		cards.show(cardsParent,title);
+	protected void adjustCards(String activeTitle){
+		cards.show(cardsParent,activeTitle);
 	}
 	@Override
 	public void build(){
@@ -34,14 +32,15 @@ class SelectingLayout extends PaneLayout implements SelectingTitles{
 				new JPanel(new GridLayout(5,1)),
 				new JPanel(new GridLayout(5,1))}){
 			cardsParent.add(card);
-			IndexableType type=IndexableType.values[at++];
-			cards.addLayoutComponent(card,type.title());
+			SelectableType type=SelectableType.values[at++];
+			String activeTitle=type.title();
+			cards.addLayoutComponent(card,activeTitle);
 			String tail=type.titleTail();
 			card.add(newTextFieldFacet(TITLE_EDIT_TEXT+tail,20,false).mount);
-			if(type==IndexableType.ShowChars)
+			if(type==SelectableType.ShowChars)
 				card.add(newLabelFacet(TITLE_CHARS+tail).mount);
 			card.add(newCheckBoxFacet(TITLE_LIVE).mount);
-			adjustCards();
+			adjustCards(activeTitle);
 		}
 	}
 }

@@ -1,16 +1,16 @@
 package fjs.swing;
-import static fjs.IndexableType.Chooser;
-import static fjs.IndexableType.ShowChars;
-import static fjs.IndexableType.Standard;
+import static fjs.SelectableType.Chooser;
+import static fjs.SelectableType.ShowChars;
+import static fjs.SelectableType.Standard;
 import java.awt.Container;
 import java.awt.GridLayout;
 import javax.swing.JPanel;
 import fjs.ContentingSurface;
-import fjs.IndexableType;
+import fjs.SelectableType;
 import fjs.SurfaceCore.TargetTest;
 import fjs.core.STarget;
 import fjs.globals.Facets;
-final class ContentingLayout extends SelectingLayout{
+class ContentingLayout extends SelectingLayout{
 	ContentingLayout(Container pane,TargetTest test,ContentingSurface surface){
 		super(pane,test,surface);
 	}
@@ -24,9 +24,10 @@ final class ContentingLayout extends SelectingLayout{
 				new JPanel(new GridLayout(8,1)),
 				new JPanel(new GridLayout(4,1))}){
 			cardsParent.add(card);
-			IndexableType type=IndexableType.values[at++];
-			cards.addLayoutComponent(card,type.title());
-			if(type==IndexableType.Chooser){
+			SelectableType type=SelectableType.values[at++];
+			String typeTitle=type.title();
+			cards.addLayoutComponent(card,typeTitle);
+			if(type==SelectableType.Chooser){
 				card.add(newListFacet(TITLE_SELECT).mount);
 				card.add(newLabelFacet(TITLE_INDEXED).mount);
 				card.add(newButtonFacet(TITLE_OPEN).mount);
@@ -34,12 +35,12 @@ final class ContentingLayout extends SelectingLayout{
 			else{
 				String tail=type.titleTail();
 				card.add(newTextFieldFacet(TITLE_EDIT_TEXT+tail,20,false).mount);
-				if(type==IndexableType.ShowChars)
+				if(type==SelectableType.ShowChars)
 					card.add(newLabelFacet(TITLE_CHARS+tail).mount);
 				card.add(newButtonFacet(TITLE_SAVE+tail).mount);
 				card.add(newButtonFacet(TITLE_CANCEL+tail).mount);
 			}
-			adjustCards();
+			adjustCards(typeTitle);
 		}
 	}
 }

@@ -3,14 +3,14 @@ import fjs.util.Debug;
 /**
 {@link TargetCore} that enables editing of the contents of an {@link SIndexing}. 
  */
-public abstract class IndexingFrame extends TargetCore{
+public class IndexingFrame extends TargetCore{
 	private final SIndexing indexing;
 	/**
 	Unique constructor. 
 	@param title passed to superclass 
 	@param indexing supplies content for {{@link #newIndexedTargets(Object)}
 	 */
-	protected IndexingFrame(String title,SIndexing indexing){
+	public IndexingFrame(String title,SIndexing indexing){
 		super(title);
 		if(indexing==null)throw new IllegalArgumentException(
 				"Null indexing in "+Debug.info(this));
@@ -25,10 +25,13 @@ public abstract class IndexingFrame extends TargetCore{
 		return indexed instanceof STarget?(STarget)indexed:newIndexedTargets(indexed);
 	}
 	/**
-	Create
+	Create targets exposing non-{STarget) indexed. 
+	Default is invalid stub.
 	@param indexed the currently indexed member of {@link #indexing}
 	 */
-	protected abstract STarget newIndexedTargets(Object indexed);
+	protected STarget newIndexedTargets(Object indexed){
+		throw new RuntimeException("Not implemented in "+this);
+	}
 	/** 
 	Sets an {@link SIndexing} containing content to be exposed.
 	 */
