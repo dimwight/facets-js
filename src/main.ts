@@ -22,7 +22,8 @@ function buildLayout(){
   core.attachFacet(TITLE_FIRST,update=>trace('Facet updating with '+update));
 }
 trace('Building surface');
-core.buildTargeterTree(newTargetTree());
+core.addContentTree(newTargetTree());
+core.buildTargeterTree();
 trace('Built targets, created targeters');
 buildLayout();
 trace('Attached and laid out facets');
