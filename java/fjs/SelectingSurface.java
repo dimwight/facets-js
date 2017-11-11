@@ -42,7 +42,7 @@ public class SelectingSurface extends SurfaceCore implements SelectingTitles{
 		}));
 	protected SelectingSurface(Facets facets,TargetTest test){
 		super(facets,test);
-		facets.onRetargeted=arg->onRetargeted(arg);
+		facets.callOnRetargeted=arg->callOnRetargeted(arg);
 	}
 	@Override
 	protected STarget newTargetTree(){
@@ -104,7 +104,7 @@ public class SelectingSurface extends SurfaceCore implements SelectingTitles{
 			}
 		)update.accept("");
 	}
-	protected void onRetargeted(String activeTitle){
+	protected void callOnRetargeted(String activeTitle){
 		boolean live=(boolean)facets.getTargetState(TITLE_LIVE);
 		SelectableType type=getIndexedType();
 		String tail=type.titleTail();

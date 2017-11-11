@@ -67,8 +67,8 @@ public class FacetsApplet extends JApplet{
 			:test==Contenting?new ContentingSurface(){
 				private SelectingLayout layout=new ContentingLayout(pane,test,this);
 				@Override
-				protected void onRetargeted(String activeTitle){
-					super.onRetargeted(activeTitle);
+				protected void callOnRetargeted(String activeTitle){
+					super.callOnRetargeted(activeTitle);
 					layout.adjustCards(activeTitle);
 				}
 				@Override
@@ -78,8 +78,8 @@ public class FacetsApplet extends JApplet{
 			}:new SelectingSurface(Globals.newInstance(false),TargetTest.Selecting){
 				private SelectingLayout layout=new SelectingLayout(pane,test,this);
 				@Override
-				protected void onRetargeted(String activeTitle){
-					super.onRetargeted(activeTitle);
+				protected void callOnRetargeted(String activeTitle){
+					super.callOnRetargeted(activeTitle);
 					layout.adjustCards(activeTitle);
 				}
 				@Override

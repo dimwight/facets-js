@@ -10,7 +10,7 @@ public class ContentingSurface extends SelectingSurface{
 	private TextContent active,edit;
 	public ContentingSurface(){
 		super(Globals.newInstance(true),TargetTest.Contenting);
-		facets.onRetargeted=title->onRetargeted(title);
+		facets.callOnRetargeted=title->callOnRetargeted(title);
 	}
 	@Override
 	protected void buildContentTrees(){
@@ -56,7 +56,7 @@ public class ContentingSurface extends SelectingSurface{
 		facets.activateContentTree(TITLE_CHOOSER);
 	}
 	@Override
-	protected void onRetargeted(String activeTitle){}
+	protected void callOnRetargeted(String activeTitle){}
 	@Override
 	protected void buildLayout(){
 		generateFacets(TITLE_SELECT,TITLE_EDIT_TEXT,TITLE_EDIT_TEXT+TAIL_SHOW_CHARS,

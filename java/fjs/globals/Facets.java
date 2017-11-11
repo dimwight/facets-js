@@ -45,7 +45,7 @@ public final class Facets extends Tracer{
 			if(times.doTime)times.traceElapsed(msg);
 			else trace(msg);
 		  if(false)putTitleTargeters(rootTargeter);
-		  onRetargeted();
+		  callOnRetargeted();
 			rootTargeter.retargetFacets();
 			msg="> Facets retargeted in "+Debug.info(rootTargeter);
 			if(times.doTime)times.traceElapsed(msg);
@@ -94,7 +94,7 @@ public final class Facets extends Tracer{
 		rootTargeter.retarget(root);
 		putTitleTargeters(rootTargeter);
 		trace(" > Created targeters="+titleTargeters.values().size());
-		onRetargeted();
+		callOnRetargeted();
 	}
 	private void putTitleTargeters(STargeter t){
 		String title=t.title();
@@ -106,12 +106,12 @@ public final class Facets extends Tracer{
 				:(": titleTargeters="+titleTargeters.values().size())));
 		for(STargeter e:elements)putTitleTargeters(e);
 	}
-	public Consumer<String>onRetargeted;
-	private void onRetargeted(){
-		if(onRetargeted==null)return;
+	public Consumer<String>callOnRetargeted;
+	private void callOnRetargeted(){
+		if(callOnRetargeted==null)return;
 		String title=titleTrees.isEmpty()?"No trees set":root.indexedTarget().title();
-	  trace("> Calling onRetargeted with active="+title);
-		onRetargeted.accept(title);
+	  trace("> Calling callOnRetargeted with active="+title);
+		callOnRetargeted.accept(title);
 	}
 	@Interface
 	public static class TargetCoupler{
