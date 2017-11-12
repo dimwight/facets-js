@@ -286,7 +286,7 @@ export type newFacetsTargetTrees=(facets: Facets)=>Target|Target[]
 export type buildFacetsLayout=(facets: Facets)=>void
 /** For attachment as {@link onRetargeted()}
  * */
-export type addOnRetargeted=(activeTarget: string)=>void
+export type addOnRetargeted=(facets: Facets,activeTarget?: string)=>void
 /** Create a new {@link Facets} instance.
  *  @param trace should the instance log lifecycle events?
  * */
