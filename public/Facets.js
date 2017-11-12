@@ -1717,6 +1717,19 @@ class Facets extends Tracer {
         this.root = new IndexingFrame("RootFrame", indexing);
         this.trace$java_lang_String$java_lang_Object(" > Created trees root ", this.root);
     }
+    buildSurface(newTrees, buildLayout) {
+        this.trace('Building surface...');
+        const trees = newTrees(this);
+        if (trees instanceof Array)
+            trees.forEach(each => this.addContentTree(each));
+        else
+            this.addContentTree(trees);
+        this.buildTargeterTree();
+        this.trace('Built targets, created targeters');
+        buildLayout(this);
+        this.trace('Attached and laid out facets');
+        this.trace('Surface built.');
+    }
     /**
      *
      * @param {string} msg
@@ -1727,11 +1740,16 @@ class Facets extends Tracer {
     }
     addContentTree(add) {
         let title = add.title();
+        this.trace$java_lang_String(" > Adding content title=" + title);
         /* put */ (this.titleTrees[title] = add);
         this.root.indexing().setIndexed(add);
     }
     activateContentTree(title) {
-        this.root.indexing().setIndexed(/* get */ ((m, k) => m[k] ? m[k] : null)(this.titleTrees, title));
+        this.trace$java_lang_String(" > Activating content title=" + title);
+        let tree = ((m, k) => m[k] ? m[k] : null)(this.titleTrees, title);
+        if (tree == null)
+            throw Object.defineProperty(new Error("Null tree in " + this), '__classes', { configurable: true, value: ['java.lang.Throwable', 'java.lang.IllegalStateException', 'java.lang.Object', 'java.lang.RuntimeException', 'java.lang.Exception'] });
+        this.root.indexing().setIndexed(tree);
         this.notifiable.notify(this.root);
     }
     buildTargeterTree() {

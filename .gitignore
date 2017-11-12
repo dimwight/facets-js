@@ -6,3 +6,4 @@ src/**/*.js.map
 tool/*.js
 .idea/workspace.xml
 in/
+!/in/fjs/globals/Facets.ts
