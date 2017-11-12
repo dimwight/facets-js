@@ -19,5 +19,5 @@ const doCopy=function(src,dest){
   console.log(`${dest}=${stats.size}`)
 };
 [frLib].forEach(dest=>doCopy(fjsLib,dest));
-[fjsModules,frModules,frTop].forEach(
+[fjsModules,frModules].forEach(
   (dest)=>doCopy(fjsTop,dest));
