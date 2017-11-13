@@ -2,9 +2,10 @@ package fjs;
 import fjs.core.STarget;
 import fjs.globals.Facets;
 import fjs.globals.Globals;
+import fjs.globals.Facets.FacetsApp;
 import fjs.util.Titled;
 import fjs.util.Tracer;
-public abstract class SurfaceCore extends Tracer implements Titled{
+public abstract class SurfaceCore extends Tracer implements Titled,FacetsApp{
 	public enum TargetTest{Textual,TogglingLive,Indexing,Numeric,Trigger,Selecting,Contenting;
 		public static TargetTest[]simpleValues(){
 			return new TargetTest[]{Textual,TogglingLive,Indexing,Numeric,Trigger};
@@ -26,21 +27,8 @@ public abstract class SurfaceCore extends Tracer implements Titled{
 		facets.times.doTime=false||facets.doTrace;
 	}
 	public void buildSurface(){
-		trace(" > Building content...");
-		buildContentTrees();
-		trace(" > Building layout...");
-		buildLayout();
-		trace(" > Surface built.");
+		facets.buildApp(this);
 	}
-	protected void buildContentTrees(){
-		STarget targets=newTargetTree();
-		if(targets==null)throw new IllegalStateException("Null targets in "+this);
-		trace(" > Generating targeters...");
-		facets.addContentTree(targets);
-		facets.buildTargeterTree();
-	}
-	protected abstract STarget newTargetTree();
-	protected abstract void buildLayout();
 	protected final void generateFacets(String...titles){
 		for(String title:titles){
 			trace(" > Generating facet for title=",title);

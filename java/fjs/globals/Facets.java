@@ -61,6 +61,11 @@ public final class Facets extends Tracer{
 	protected void doTraceMsg(String msg){
 		if(doTrace||(Debug.trace&&msg.startsWith(">>")))super.doTraceMsg(msg);
 	}
+  public interface FacetsApp{
+		Object getContentTrees();
+		void onRetargeted(String activeTitle);
+		void buildLayout();
+	}
 	Facets(String top,boolean trace){
 		super(top);
 		this.doTrace=trace;
@@ -76,18 +81,17 @@ public final class Facets extends Tracer{
 			}
 		});
 		root=new IndexingFrame("RootFrame",indexing);
-		trace(" > Created trees root ",root);
+		if(false)trace(" > Created trees root ",root);
 	}
-	public void addContentTree(STarget add){
-		String title=add.title();
-		titleTrees.put(title,add);
-		root.indexing().setIndexed(add);
-	}
-	public void activateContentTree(String title){
-		root.indexing().setIndexed(titleTrees.get(title));
-		notifiable.notify(root);
-	}
-	public void buildTargeterTree(){
+	public void buildApp(FacetsApp app){
+		this.onRetargeted=title->{
+			app.onRetargeted(title);
+		};
+	  trace("Building surface...");
+	  Object trees=app.getContentTrees();
+	  if(trees instanceof Object[])
+	  	for(Object each:(Object[])trees)addContentTree((STarget)each);
+	  else addContentTree((STarget)trees);
 		trace(" > Building targeter tree for root=",root);
 		if(rootTargeter==null)rootTargeter=((TargetCore)root).newTargeter();
 		rootTargeter.setNotifiable(notifiable);
@@ -95,6 +99,23 @@ public final class Facets extends Tracer{
 		putTitleTargeters(rootTargeter);
 		trace(" > Created targeters="+titleTargeters.values().size());
 		callOnRetargeted();
+	  this.trace("Built targets, created targeters");
+	  app.buildLayout();
+	  this.trace("Attached and laid out facets");
+	  this.trace("Surface built.");
+	}
+	public void activateContentTree(String title){
+		trace(" > Activating content title="+title);
+		STarget tree=titleTrees.get(title);
+		if(tree==null)throw new IllegalStateException("Null tree in "+this);
+		root.indexing().setIndexed(tree);
+		notifiable.notify(root);
+	}
+	public void addContentTree(STarget add){
+		String title=add.title();
+		trace(" > Adding content title="+title);
+		titleTrees.put(title,add);
+		root.indexing().setIndexed(add);
 	}
 	private void putTitleTargeters(STargeter t){
 		String title=t.title();
@@ -106,12 +127,11 @@ public final class Facets extends Tracer{
 				:(": titleTargeters="+titleTargeters.values().size())));
 		for(STargeter e:elements)putTitleTargeters(e);
 	}
-	public Consumer<String>callOnRetargeted;
+	private Consumer<String>onRetargeted;
 	private void callOnRetargeted(){
-		if(callOnRetargeted==null)return;
-		String title=titleTrees.isEmpty()?"No trees set":root.indexedTarget().title();
-	  trace("> Calling callOnRetargeted with active="+title);
-		callOnRetargeted.accept(title);
+		String title=root.indexedTarget().title();
+	  trace(" > Calling onRetargeted with active="+title);
+		onRetargeted.accept(title);
 	}
 	@Interface
 	public static class TargetCoupler{
@@ -191,12 +211,14 @@ public final class Facets extends Tracer{
 		return numeric;
 	}
 	public STarget newTriggerTarget(String title,TargetCoupler c){
-		return new STrigger(title,new STrigger.Coupler(){
+		STrigger trigger=new STrigger(title,new STrigger.Coupler(){
 			@Override
 			public void fired(STrigger t){
 				updatedTarget(t,c);
 			}
 		});
+		trace(" > Created trigger ",trigger);
+		return trigger;
 	}
 	public STarget newTargetGroup(String title,STarget[]members){
 		TargetCore group=new TargetCore(title,members);
@@ -257,6 +279,7 @@ public final class Facets extends Tracer{
 			indexed=indexing.indexed();
 		}};
 	}
+	private int indexingFrames;
 	@Interface
 	public static class IndexingFramePolicy{
 		public String indexingTitle;
@@ -272,7 +295,6 @@ public final class Facets extends Tracer{
 		@Optional
 		public BiFunction<Object,String,STarget>newIndexedTree;
 	}
-	private int indexingFrames;
 	private static final class LocalIndexingFrame extends IndexingFrame{
 		private final IndexingFramePolicy p;
 		private LocalIndexingFrame(String title,SIndexing indexing,IndexingFramePolicy p){
@@ -296,14 +318,18 @@ public final class Facets extends Tracer{
 		}
 	}
 	public STarget newIndexingFrame(IndexingFramePolicy p){
-		SIndexing indexing=new SIndexing(p.indexingTitle,new SIndexing.Coupler(){
+		String frameTitle=p.frameTitle!=null?p.frameTitle
+				:"IndexingFrame"+indexingFrames++,
+			indexingTitle=p.indexingTitle!=null?p.indexingTitle
+					:frameTitle+".Indexing";
+		SIndexing indexing=new SIndexing(indexingTitle,new SIndexing.Coupler(){
 			private Object[]thenIndexables,thenSelectables;
 			@Override
 			protected Object[]getIndexables(SIndexing i){
 				Object[]got=p.getIndexables.get();
 				if(got==null)throw new IllegalStateException("Null getIndexables for "+i.title());
 				boolean equal=Util.arraysEqual(got,thenIndexables);
-				if(!equal)trace("> Got new indexables: ",got);
+				if(!equal)trace("> Got new indexables in "+Debug.info(i)+": ",got);
 				thenIndexables=got;
 				return got;
 			}
@@ -316,15 +342,13 @@ public final class Facets extends Tracer{
 				for(Object each:i.indexables())selectables.add(getter.apply(each));
 				String[]got=selectables.toArray(new String[]{});
 				boolean equal=Util.arraysEqual(got,thenSelectables);
-				if(!equal)trace("> Got new selectables: ",got);
+				if(!equal)trace("> Got new selectables in "+Debug.info(i)+": ",got);
 				thenSelectables=got;
 				return got;
 			}
 		});
 		indexing.setIndex(0);
-		String title=p.frameTitle!=null?p.frameTitle
-				:"IndexingFrame"+indexingFrames++;
-		IndexingFrame frame=new LocalIndexingFrame(title,indexing,p);
+		IndexingFrame frame=new LocalIndexingFrame(frameTitle,indexing,p);
 		trace(" > Created indexing frame ",frame);
 		return frame;
 	}

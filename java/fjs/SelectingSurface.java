@@ -3,8 +3,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
+import fjs.SelectingSurface.TextContent;
 import fjs.core.STarget;
 import fjs.globals.Facets;
+import fjs.globals.Facets.FacetsApp;
 import fjs.globals.Facets.IndexingFramePolicy;
 import fjs.globals.Facets.TextualCoupler;
 import fjs.globals.Facets.TogglingCoupler;
@@ -42,10 +44,9 @@ public class SelectingSurface extends SurfaceCore implements SelectingTitles{
 		}));
 	protected SelectingSurface(Facets facets,TargetTest test){
 		super(facets,test);
-		facets.callOnRetargeted=arg->callOnRetargeted(arg);
 	}
 	@Override
-	protected STarget newTargetTree(){
+	public Object getContentTrees(){
 		String appTitle=TargetTest.Selecting.name();
 		return facets.newIndexingFrame(new IndexingFramePolicy(){{
 			frameTitle=appTitle;
@@ -55,7 +56,10 @@ public class SelectingSurface extends SurfaceCore implements SelectingTitles{
 			newFrameTargets=()->
 				new STarget[]{
 					facets.newTextualTarget(SimpleTitles.TITLE_INDEXED,new TextualCoupler(){{
-						getText=title->list.get((Integer)facets.getTargetState(TITLE_SELECT)).text;
+						getText=title->{
+							TextContent indexed=(TextContent)facets.getIndexingState(TITLE_SELECT).indexed;
+							return SelectableType.getContentType(indexed).title();
+						};
 					}}),
 					facets.newTogglingTarget(TITLE_LIVE,new TogglingCoupler(){{
 						passSet=true;
@@ -104,7 +108,7 @@ public class SelectingSurface extends SurfaceCore implements SelectingTitles{
 			}
 		)update.accept("");
 	}
-	protected void callOnRetargeted(String activeTitle){
+	public void onRetargeted(String activeTitle){
 		boolean live=(boolean)facets.getTargetState(TITLE_LIVE);
 		SelectableType type=getIndexedType();
 		String tail=type.titleTail();
@@ -112,7 +116,7 @@ public class SelectingSurface extends SurfaceCore implements SelectingTitles{
 		if(type==SelectableType.ShowChars)facets.setTargetLive(TITLE_CHARS+tail,live);
 	}
 	@Override
-	protected void buildLayout(){
+	public void buildLayout(){
 		generateFacets(TITLE_SELECT,TITLE_EDIT_TEXT);
 	}
 	protected final STarget newEditTarget(TextContent indexed,String tail){
@@ -123,7 +127,7 @@ public class SelectingSurface extends SurfaceCore implements SelectingTitles{
 	}
 	protected final STarget newCharsTarget(String tail){
 		return facets.newTextualTarget(TITLE_CHARS+tail,new TextualCoupler(){{
-			getText=(title)->""+((String)facets.getTargetState(TITLE_EDIT_TEXT+TAIL_SHOW_CHARS)).length();
+			getText=(title)->""+((String)facets.getTargetState(TITLE_EDIT_TEXT+SELECTABLE_SHOW_CHARS)).length();
 		}});
 	}
 	public SelectableType getIndexedType(){

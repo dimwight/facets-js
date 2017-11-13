@@ -18,7 +18,8 @@ final class HtmlSurface extends SimpleSurface{
 		this.pane=pane;
 	}
 	@Override
-	final protected void buildLayout(){
+	public
+	final void buildLayout(){
 		if(test==TargetTest.TogglingLive)
 			facets.setTargetLive(TITLE_TOGGLED,(boolean)facets.getTargetState(TITLE_TOGGLING));
 		final String _LABEL="_";
@@ -76,10 +77,6 @@ final class HtmlSurface extends SimpleSurface{
 		};
 		pane.add(new JScrollPane(paneMaster.getPane()));
 		paneMaster.setCode(builder.buildForm());
-	}
-	@Override
-	protected STarget newTargetTree(){
-		return super.newTargetTree();
 	}
 
 }

@@ -16,7 +16,7 @@ public class SelectableType implements Titled{
 		this.title=title;
 	}
 	public String titleTail(){
-		return this==ShowChars?SelectingTitles.TAIL_SHOW_CHARS:"";
+		return this==ShowChars?SelectingTitles.SELECTABLE_SHOW_CHARS:"";
 	}
 	@Override
 	public String title(){

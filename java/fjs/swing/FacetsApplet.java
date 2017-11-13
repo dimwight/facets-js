@@ -13,8 +13,10 @@ import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
 import fjs.ContentingSurface;
+import fjs.SelectableType;
 import fjs.SelectingSurface;
 import fjs.SimpleSurface;
+import fjs.SimpleTitles;
 import fjs.SurfaceCore;
 import fjs.SurfaceCore.TargetTest;
 import fjs.globals.Facets.IndexingState;
@@ -55,7 +57,7 @@ public class FacetsApplet extends JApplet{
 			content.add(pane);
 			SurfaceCore surface=test.isSimple()?new SimpleSurface(test.name(),test){
 				@Override
-				protected void buildLayout(){
+				public void buildLayout(){
 					facets.times.setResetWait(50);
 					facets.times.doTime=false;
 					if(test==TogglingLive)
@@ -67,23 +69,14 @@ public class FacetsApplet extends JApplet{
 			:test==Contenting?new ContentingSurface(){
 				private SelectingLayout layout=new ContentingLayout(pane,test,this);
 				@Override
-				protected void callOnRetargeted(String activeTitle){
-					super.callOnRetargeted(activeTitle);
-					layout.adjustCards(activeTitle);
-				}
-				@Override
-				protected void buildLayout(){
+				public void buildLayout(){
 					layout.build();
 				}
 			}:new SelectingSurface(Globals.newInstance(false),TargetTest.Selecting){
-				private SelectingLayout layout=new SelectingLayout(pane,test,this);
+				private SelectingLayout layout=new SelectingLayout(pane,test,this,
+						SimpleTitles.TITLE_INDEXED);
 				@Override
-				protected void callOnRetargeted(String activeTitle){
-					super.callOnRetargeted(activeTitle);
-					layout.adjustCards(activeTitle);
-				}
-				@Override
-				protected void buildLayout(){
+				public void buildLayout(){
 					layout.build();
 				}
 			};

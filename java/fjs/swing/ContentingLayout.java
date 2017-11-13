@@ -12,10 +12,11 @@ import fjs.core.STarget;
 import fjs.globals.Facets;
 class ContentingLayout extends SelectingLayout{
 	ContentingLayout(Container pane,TargetTest test,ContentingSurface surface){
-		super(pane,test,surface);
+		super(pane,test,surface,TITLE_INDEXED);
 	}
 	@Override
 	public void build(){
+		buildFacet();
 		pane.setLayout(new GridLayout(1,1));
 		pane.add(cardsParent);
 		int at=0;
@@ -40,7 +41,6 @@ class ContentingLayout extends SelectingLayout{
 				card.add(newButtonFacet(TITLE_SAVE+tail).mount);
 				card.add(newButtonFacet(TITLE_CANCEL+tail).mount);
 			}
-			adjustCards(typeTitle);
 		}
 	}
 }

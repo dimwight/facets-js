@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 import fjs.SelectingSurface;
 import fjs.SelectableType;
 import fjs.SelectingTitles;
+import fjs.SimpleTitles;
 import fjs.SelectingSurface.TextContent;
 import fjs.SurfaceCore.TargetTest;
 import fjs.core.STarget;
@@ -16,15 +17,16 @@ import fjs.globals.Facets;
 class SelectingLayout extends PaneLayout implements SelectingTitles{
 	final CardLayout cards=new CardLayout();
 	final JComponent cardsParent=new JPanel(cards);
-	SelectingLayout(Container pane,TargetTest test,SelectingSurface surface){
+	private final String facetTitle;
+	SelectingLayout(Container pane,TargetTest test,SelectingSurface surface,
+			String facetTitle){
 		super(pane,test,surface);
 		pane.setLayout(new GridLayout(2,1));
-	}
-	protected void adjustCards(String activeTitle){
-		cards.show(cardsParent,activeTitle);
+		this.facetTitle=facetTitle;
 	}
 	@Override
 	public void build(){
+		buildFacet();
 		pane.add(newListFacet(TITLE_SELECT).mount);
 		pane.add(cardsParent);
 		int at=0;
@@ -40,7 +42,20 @@ class SelectingLayout extends PaneLayout implements SelectingTitles{
 			if(type==SelectableType.ShowChars)
 				card.add(newLabelFacet(TITLE_CHARS+tail).mount);
 			card.add(newCheckBoxFacet(TITLE_LIVE).mount);
-			adjustCards(activeTitle);
 		}
+	}
+	final protected void buildFacet(){
+		new SwingFacet<JComponent,String>(cardsParent,facetTitle,facets){
+			@Override
+			protected void addFieldListener(){}
+			@Override
+			protected String getFieldState(){
+				return "getFieldState";
+			}
+			@Override
+			protected void updateField(String update){
+				cards.show(cardsParent,update);
+			}
+		};
 	}
 }

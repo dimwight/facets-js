@@ -104,7 +104,7 @@ public class SimpleSurface extends SurfaceCore implements SimpleTitles{
 		}};
 	}
 	@Override
-	protected STarget newTargetTree(){
+	public Object getContentTrees(){
 		trace(" > Generating targets");
 		String treeTitle=test.name()+" Test";
 		STarget[]members=test==TargetTest.Textual?
@@ -132,7 +132,9 @@ public class SimpleSurface extends SurfaceCore implements SimpleTitles{
 		return facets.newTargetGroup(treeTitle,members);
 	}
 	@Override
-	protected void buildLayout(){
+	public void onRetargeted(String title){}
+	@Override
+	public void buildLayout(){
 		if(test==TargetTest.Textual)generateFacets(TITLE_TEXTUAL_FIRST);
 		else if(test==TargetTest.TogglingLive)generateFacets(TITLE_TOGGLING,TITLE_TOGGLED);
 		else if(test==TargetTest.Numeric)generateFacets(TITLE_NUMERIC_FIELD,TITLE_NUMERIC_LABEL);
