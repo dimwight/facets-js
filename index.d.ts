@@ -10,10 +10,10 @@ export type SimpleState=string|boolean|number
 export interface TargetCoupler {
   /**
    * Called on update of the {@link Target} constructed with the coupler.
-   * @param state the updated state
+   * @param {any} state the new state
    * @param {string} title identifies the {@link Target}
    */
-  targetStateUpdated?: (state: SimpleState, title: string) => void;
+  targetStateUpdated? (state: SimpleState, title: string) : void;
 }
 /**
  Connects a textual {@link Target} with client code.
@@ -28,9 +28,9 @@ export interface TextualCoupler extends TargetCoupler {
    * Supply state for the {@link Target}.
    * Must be supplied in the absence of{@link passText}.
    * @param {string} title identifies the {@link Target}
-   * @returns {string} the state
+   * @returns {string} the textual state
    */
-  getText?: (title: string) => string;
+  getText?(title: string) : string;
   /**
    * Allows validation of changed text state
    * @param {string} text to validate
@@ -44,7 +44,7 @@ export interface TextualCoupler extends TargetCoupler {
  */
 export interface TogglingCoupler extends TargetCoupler {
   /**
-   Sets initial state of the toggling.
+   Sets initial state of the {@link Target}.
    */
   passSet: boolean;
 }
@@ -66,22 +66,22 @@ export interface NumericCoupler extends TargetCoupler {
   max: number;
 }
 /**
- Connects an indexing (list-type) {@link Target} with client code.
+ Connects an indexing (array-based) {@link Target} with client code.
  */
 export interface IndexingCoupler extends TargetCoupler {
   /**
-   Sets initial state of the {@link Target} (the index into its contents).
+   Sets initial index into the array exposed by the {@link Target}.
    */
   passIndex: number;
   /**
-   * Get the contents to be indexed
-   * @param title identifies the {@link Target}
+   * Get the current contents to be indexed.
+   * @param {string} title identifies the {@link Target}
    * @returns {any[]} the contents
    */
   getIndexables (title: string) : any[];
   /**
-   * Get string to represent indexable content in the UI
-   * @param {string} title identifies the {@link Target}
+   * Get string to represent content member in the UI.
+   * @param {any} indexable to stringify
    * @returns the string
    */
   newUiSelectable? (indexable: any) : string;
@@ -91,7 +91,7 @@ export interface IndexingCoupler extends TargetCoupler {
  */
 interface IndexingState {
   /**
-   * As last created by {@link IndexingCoupler}
+   * As last created by the {@link IndexingCoupler}
    */
   uiSelectables: string[];
   /**
@@ -104,26 +104,26 @@ interface IndexingState {
  */
 export interface IndexingFramePolicy {
   /**
-   * Title for the wrapping {@link Target}.
+   * Title for the wrapping {@link Target}. 
    */
   frameTitle?: string;
   /**
    * Title for the wrapped indexing {@link Target}.
    */
-  indexingTitle: string;
+  indexingTitle?: string;
   /**
-   * Get items to be indexed.
+   * Get current items to be indexed.
    */
   getIndexables () : any[];
   /**
    * Supply  string to expose content item in the UI.
    * Analogue of {@link IndexingCoupler} function.
-   * @param {any} content to stringify
+   * @param {any} indexable to stringify
    * @returns {string} the string
    */
   newUiSelectable? (indexable: any):string;
   /**
-   * Create {@link Target}s to be attached to the framing {@link Target}
+   * Create {@link Target}s to be children of the framing {@link Target}
    * @returns {Target[]} the targets
    */
   newFrameTargets? () :Target[];
@@ -139,16 +139,20 @@ export interface IndexingFramePolicy {
    * @param title from {@link newIndexedTreeTitle} or created by framework
    * @returns {Target} root of tree
    */
-  newIndexedTree? (indexed: any, indexedTreeTitle: string) : Target;
+  newIndexedTree ? (indexed: any, title: string) : Target;
 }
-/** Manages time tracing by the {@link Facets} instance. */
+/** Manages time tracing by its containing {@link Facets}. */
 export interface Times {
-  /** Should trace messages include times? */
+  /**
+   *  Should trace messages include times?
+   */
   doTime: boolean;
-  /** Set the automatic reset timeout and reset {@link elapsed()}
-   *  */
-  setResetWait(millis: number): void;
-  /** Time since the last (usually automatic) reset.
+  /** 
+   * Set the automatic reset timeout and reset {@link elapsed()}. 
+   */
+  setResetWait(ms: number): void;
+  /**
+   * Time in ms since the last (usually automatic) reset.
    */
   elapsed(): number;
   /**
@@ -158,59 +162,63 @@ export interface Times {
   traceElapsed(msg: string): void;
 }
 /**
- * A Superficial application core.
+ * Superficial application core.
  */
 export interface Facets {
-  /** Built-in instance. */
-  times: Times;
-  /** Should the {@link Facets} instance issue trace messages? */
+  /**
+   *  Built-in instance.
+   */
+  readonly times: Times;
+  /**
+   * Should the {@link Facets} instance issue trace messages? 
+   */
   doTrace: boolean;
   /** Creates a textual {@link Target}.
-   *  @param {string} title identifies the {@link Target}
+   *  @param {string} title to identify the {@link Target}
    * @param {TextualCoupler} coupler connects the {@link Target} to client code
    * @returns the {@link Target}
    */
   newTextualTarget(title: string, coupler: TextualCoupler): Target;
   /** Creates a boolean {@link Target}.
-   *  @param {string} title identifies the {@link Target}
+   *  @param {string} title to identify the {@link Target}
    * @param {TextualCoupler} coupler connects the {@link Target} to client code
    * @returns the {@link Target}
    */
   newTogglingTarget(title: string, c: TogglingCoupler): Target;
   /** Creates a numeric {@link Target}.
-   *  @param {string} title identifies the {@link Target}
+   *  @param {string} title to identify the {@link Target}
    * @param {TextualCoupler} coupler connects the {@link Target} to client code
    * @returns the {@link Target}
    */
   newNumericTarget(title: string, coupler: NumericCoupler): Target;
   /** Creates a stateless 'action' {@link Target}.
-   *  @param {string} title identifies the {@link Target}
+   *  @param {string} title to identify the {@link Target}
    * @param {TextualCoupler} coupler connects the {@link Target} to client code
    * @returns the {@link Target}
    */
   newTriggerTarget(title: string, coupler: TargetCoupler): Target;
   /** Creates a {@link Target} containing others.
-   * @param {string} title for the {@link Target}
+   * @param {string} title to identify the {@link Target}
    * @param {{@link Target}} members of the group
    * @returns group of {Target}s
    */
   newTargetGroup(title: string, members: Target[]): Target;
   /** Creates a {@link Target} that indexes a list.
-   *  @param {string} title identifies the {@link Target}
+   *  @param {string} title to identify the {@link Target}
    * @param {TextualCoupler} coupler connects the {@link Target} to client code
    * @returns the {@link Target}
    */
   newIndexingTarget(title: string, coupler: IndexingCoupler): Target;
   /** Provides information on the current state of an indexing {@link Target}
-   *  @param {string} title identifies the {@link Target}
+   *  @param {string} title to identify the {@link Target}
    */
   getIndexingState(title: string): IndexingState;
   /** Creates a {@link Target} framing an indexing {@link Target}.
    *  @param {IndexingFramePolicy} policy defines both {@link Target}s
    *  */
   newIndexingFrame(policy: IndexingFramePolicy): Target;
-  /* Adds the content tree to the application.
-   * The tree added becomes the active tree
+  /** Adds a content tree to the application.
+   * The tree added becomes the active tree with its title passed to {@link }
    * @param {@link Target} tree to be added
    */
   addContentTree(add: Target): void;
@@ -219,11 +227,6 @@ export interface Facets {
    * @param {string} title identifies the tree
    */
   activateContentTree(title: string): void;
-  /**
-   * Constructs a tree of targeters using the initial {@link Target} tree.
-   * @param {{@link Target}} targetTree the root of the {@link Target} tree
-   */
-  buildTargeterTree(): void;
   /**
    * Attach an internal facet to the targeter with the {@link Target} title passed.
    * @param {string} title identifies the targeter
@@ -257,37 +260,34 @@ export interface Facets {
   setTargetLive(title: string, live: boolean): void;
   /** */
   isTargetLive(title: string): boolean;
-  /**
-   * If supplied by client code, called after retargeting the {@link Target} tree but
-   * before retargeting facets.
-   * @param {string} activeTitle of the last content activated with
-   * {@link activateContentTree()}.
-   */
-  onRetargeted (activeTitle:string)
   /** */
   supplement: any;
   /**
-   * Construct a new surface using the callbacks passed.
-   * @param newTrees to define the initial content; returns passed successively to
-   * {@link addContentTree()}
-   * @param  buildLayout to construct the UI
+   * Construct app surface using callbacks in {@link FacetsApp}.
    * @param  onRetargeted set as {@link onRetargeted}
    */
-  buildSurface(newTrees: newFacetsTargetTrees, buildLayout: buildFacetsLayout,
-               onRetargeted?:addOnRetargeted): void;
+  buildApp(app: FacetsApp): void;
 }
-/**
- * Documents callback required by {@link buildSurface()}
+/** Facets-aware application. 
  */
-export type newFacetsTargetTrees=(facets: Facets)=>Target|Target[]
-/**
- * Documents callback required by {@link buildSurface()}
- */
-export type buildFacetsLayout=(facets: Facets)=>void
-/** For attachment as {@link onRetargeted()}
- * */
-export type addOnRetargeted=(facets: Facets,activeTarget?: string)=>void
+interface FacetsApp {
+  /** Define at least one tree of {@link Target}s to be exposed in the UI.  
+   */
+  getContentTrees(): Target|Target[];
+  /** Called by framework after retargeting {@link Target} trees but
+   * before updating facets in the UI.
+   * @param {string} activeTitle the {@link Target} last created in {@link getContentTrees()}
+   * or {@link Facets#addContentTree()},
+   * or whose title was last passed to {@link Facets#activateContentTree()}.
+   */
+  onRetargeted(activeTitle: string): void;
+  /** Construct a UI with facets exposing {@link Target}s defined
+   * in {@link getContentTrees()}.
+   */
+  buildLayout(): void;
+}
 /** Create a new {@link Facets} instance.
  *  @param trace should the instance log lifecycle events?
  * */
 export function newInstance(trace: boolean): Facets;
+
