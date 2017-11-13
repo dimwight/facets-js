@@ -184,23 +184,23 @@ export interface Facets {
    * @param {TextualCoupler} coupler connects the {@link Target} to client code
    * @returns the {@link Target}
    */
-  newTogglingTarget(title: string, c: TogglingCoupler): Target;
+  newTogglingTarget(title: string, coupler: TogglingCoupler): Target;
   /** Creates a numeric {@link Target}.
    *  @param {string} title to identify the {@link Target}
-   * @param {TextualCoupler} coupler connects the {@link Target} to client code
+   * @param {TogglingCoupler} coupler connects the {@link Target} to client code
    * @returns the {@link Target}
    */
   newNumericTarget(title: string, coupler: NumericCoupler): Target;
   /** Creates a stateless 'action' {@link Target}.
    *  @param {string} title to identify the {@link Target}
-   * @param {TextualCoupler} coupler connects the {@link Target} to client code
+   * @param {NumericCoupler} coupler connects the {@link Target} to client code
    * @returns the {@link Target}
    */
   newTriggerTarget(title: string, coupler: TargetCoupler): Target;
   /** Creates a {@link Target} containing others.
    * @param {string} title to identify the {@link Target}
-   * @param {{@link Target}} members of the group
-   * @returns group of {Target}s
+   * @param {Target[]} members of the group
+   * @returns group of {@link Target}s
    */
   newTargetGroup(title: string, members: Target[]): Target;
   /** Creates a {@link Target} that indexes a list.
@@ -219,7 +219,7 @@ export interface Facets {
   newIndexingFrame(policy: IndexingFramePolicy): Target;
   /** Adds a content tree to the application.
    * The tree added becomes the active tree with its title passed to {@link }
-   * @param {@link Target} tree to be added
+   * @param {Target} add tree to be added
    */
   addContentTree(add: Target): void;
   /**
@@ -264,7 +264,7 @@ export interface Facets {
   supplement: any;
   /**
    * Construct app surface using callbacks in {@link FacetsApp}.
-   * @param  onRetargeted set as {@link onRetargeted}
+   * @param  {FacetsApp}app the app
    */
   buildApp(app: FacetsApp): void;
 }
