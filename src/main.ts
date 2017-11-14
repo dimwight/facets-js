@@ -23,7 +23,7 @@ function buildLayout(){
 }
 trace('Building surface');
 core.addContentTree(newTargetTree());
-core.buildTargeterTree();
+throw new Error('Not implemented');
 trace('Built targets, created targeters');
 buildLayout();
 trace('Attached and laid out facets');
