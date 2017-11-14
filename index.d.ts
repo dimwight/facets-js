@@ -104,7 +104,7 @@ interface IndexingState {
  */
 export interface IndexingFramePolicy {
   /**
-   * Title for the wrapping {@link Target}. 
+   * Title for the wrapping {@link Target}.
    */
   frameTitle?: string;
   /**
@@ -147,8 +147,8 @@ export interface Times {
    *  Should trace messages include times?
    */
   doTime: boolean;
-  /** 
-   * Set the automatic reset timeout and reset {@link elapsed()}. 
+  /**
+   * Set the automatic reset timeout and reset {@link elapsed()}.
    */
   setResetWait(ms: number): void;
   /**
@@ -166,11 +166,16 @@ export interface Times {
  */
 export interface Facets {
   /**
+   * Identifies built-in textual {@link Target} exposing active content title.
+   * Any attempt to update state will throw an error.
+   */
+  readonly activeContentTitle: string;
+  /**
    *  Built-in instance.
    */
   readonly times: Times;
   /**
-   * Should the {@link Facets} instance issue trace messages? 
+   * Should the {@link Facets} instance issue trace messages?
    */
   doTrace: boolean;
   /** Creates a textual {@link Target}.
@@ -268,10 +273,10 @@ export interface Facets {
    */
   buildApp(app: FacetsApp): void;
 }
-/** Facets-aware application. 
+/** Facets-aware application.
  */
 interface FacetsApp {
-  /** Define at least one tree of {@link Target}s to be exposed in the UI.  
+  /** Define at least one tree of {@link Target}s to be exposed in the UI.
    */
   getContentTrees(): Target|Target[];
   /** Called by framework after retargeting {@link Target} trees but
