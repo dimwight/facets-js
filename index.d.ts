@@ -6,7 +6,13 @@ export interface Target{}
  * For passing state in and out of a simple {@link Target}.
  */
 export type SimpleState=string|boolean|number
-/** */
+/**
+ * For passing a {@link SimpleState} to the UI.
+ */
+export type FacetUpdater=(state: SimpleState) => void
+/**
+ * Connects a {@link Target} with client code.
+ */
 export interface TargetCoupler {
   /**
    * Called on update of the {@link Target} constructed with the coupler.
@@ -150,7 +156,7 @@ export interface Times {
   /**
    * Set the automatic reset timeout and reset {@link elapsed()}.
    */
-  setResetWait(ms: number): void;
+  setResetWait(millis: number): void;
   /**
    * Time in ms since the last (usually automatic) reset.
    */
@@ -167,7 +173,7 @@ export interface Times {
 export interface Facets {
   /**
    * Identifies built-in textual {@link Target} exposing active content title.
-   * Any attempt to update state will throw an error.
+   * Updating state directly using this title will throw an error.
    */
   readonly activeContentTitle: string;
   /**
@@ -186,19 +192,19 @@ export interface Facets {
   newTextualTarget(title: string, coupler: TextualCoupler): Target;
   /** Creates a boolean {@link Target}.
    *  @param {string} title to identify the {@link Target}
-   * @param {TextualCoupler} coupler connects the {@link Target} to client code
+   * @param {TogglingCoupler} coupler connects the {@link Target} to client code
    * @returns the {@link Target}
    */
   newTogglingTarget(title: string, coupler: TogglingCoupler): Target;
   /** Creates a numeric {@link Target}.
    *  @param {string} title to identify the {@link Target}
-   * @param {TogglingCoupler} coupler connects the {@link Target} to client code
+   * @param {NumericCoupler} coupler connects the {@link Target} to client code
    * @returns the {@link Target}
    */
   newNumericTarget(title: string, coupler: NumericCoupler): Target;
   /** Creates a stateless 'action' {@link Target}.
    *  @param {string} title to identify the {@link Target}
-   * @param {NumericCoupler} coupler connects the {@link Target} to client code
+   * @param {TargetCoupler} coupler connects the {@link Target} to client code
    * @returns the {@link Target}
    */
   newTriggerTarget(title: string, coupler: TargetCoupler): Target;
@@ -210,7 +216,7 @@ export interface Facets {
   newTargetGroup(title: string, members: Target[]): Target;
   /** Creates a {@link Target} that indexes a list.
    *  @param {string} title to identify the {@link Target}
-   * @param {TextualCoupler} coupler connects the {@link Target} to client code
+   * @param {IndexingCoupler} coupler connects the {@link Target} to client code
    * @returns the {@link Target}
    */
   newIndexingTarget(title: string, coupler: IndexingCoupler): Target;
@@ -223,8 +229,11 @@ export interface Facets {
    *  */
   newIndexingFrame(policy: IndexingFramePolicy): Target;
   /** Adds a content tree to the application.
-   * The tree added becomes the active tree with its title passed to {@link }
-   * @param {Target} add tree to be added
+   * The tree added becomes the active tree with its title passed
+   * to {@link FacetsApp#onRetargeted};
+   * it replaces any existing tree with the same title, thus ensuring
+   * synchronisation of the UI.
+   * @param {Target} add the new tree
    */
   addContentTree(add: Target): void;
   /**
@@ -233,11 +242,12 @@ export interface Facets {
    */
   activateContentTree(title: string): void;
   /**
-   * Attach an internal facet to the targeter with the {@link Target} title passed.
-   * @param {string} title identifies the targeter
-   * @param {(state) => void} facetUpdated callback to update the UI with the {@link Target} state
+   * Attach an abstract facet to the framework targeter tree.
+   * @param {string} title identifies the targeter via its {@link Target}
+   * @param {FacetUpdater} updater callback to
+   * update the UI with the {@link SimpleState} of the current {@link Target}
    */
-  attachFacet(title: string, facetUpdated: (state: SimpleState) => void): void;
+  attachFacet(title: string, updater: FacetUpdater): void;
   /**
    * Update the state of the {@link Target} identified.
    * @param {string} title identifies the {@link Target}
@@ -261,15 +271,24 @@ export interface Facets {
    * @param {SimpleState} update for {@link Target} state
    */
   updateTargetWithNotify(title: string, update: SimpleState): void;
-  /** */
+  /** Sets the 'enabled' state of a {@link Target}.
+   * Provides for disabling of UI facet.
+   * @param {string} title identifies the {@link Target}
+   * @param {boolean} live the new state
+   */
   setTargetLive(title: string, live: boolean): void;
-  /** */
+  /** Gets the 'enabled' state of a {@link Target}
+   * UI facets can query to find the state to display.
+   * @param {string} title identifies the {@link Target}
+   */
   isTargetLive(title: string): boolean;
-  /** */
+  /**
+   * Provides for attachment of arbitrary code (eg for use in the UI).
+   */
   supplement: any;
   /**
    * Construct app surface using callbacks in {@link FacetsApp}.
-   * @param  {FacetsApp}app the app
+   * @param  {FacetsApp}app defined in client code
    */
   buildApp(app: FacetsApp): void;
 }
@@ -277,11 +296,14 @@ export interface Facets {
  */
 interface FacetsApp {
   /** Define at least one tree of {@link Target}s to be exposed in the UI.
+   * To ensure construction of a complete targeter tree, {@link Target} trees
+   * should include an example of each possible tree.
    */
   getContentTrees(): Target|Target[];
   /** Called by framework after retargeting {@link Target} trees but
    * before updating facets in the UI.
-   * @param {string} activeTitle the {@link Target} last created in {@link getContentTrees()}
+   * @param {string} activeTitle the {@link Target} last created
+   * in {@link getContentTrees()}
    * or {@link Facets#addContentTree()},
    * or whose title was last passed to {@link Facets#activateContentTree()}.
    */
